@@ -6,6 +6,7 @@ source ${workspace}/utils.sh
 size=$((${BSC_CLUSTER_SIZE}))
 nodeurl="http://localhost:26657"
 standalone=false
+stateScheme="hash"
 
 function exit_previous() {
 	# stop client
@@ -130,20 +131,22 @@ function prepare_config() {
     done
 
     cd ${workspace}/genesis/
-    node generate-validator.js
-    node generate-initHolders.js --initHolders ${INIT_HOLDER}
+    git stash push -- contracts/
+    sed -i -e "s/'0x' + publicKey.pop()/vs[4]/g" scripts/generate-validator.js
+    node scripts/generate-validator.js
+    node scripts/generate-initHolders.js --initHolders ${INIT_HOLDER}
     if [ ${standalone} = false ]; then
         initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${nodeurl} -network-type 0)
-        node generate-genesis.js --chainid ${BSC_CHAIN_ID} --network 'local' --whitelist1Address ${INIT_HOLDER} --initConsensusStateBytes  ${initConsensusStateBytes}
+        bash scripts/generate.sh local --chainId ${BSC_CHAIN_ID} --whitelist1Address ${INIT_HOLDER} --initConsensusStateBytes ${initConsensusStateBytes}
     else
-        node generate-genesis.js --chainid ${BSC_CHAIN_ID} --network 'local' --whitelist1Address ${INIT_HOLDER}
+        bash scripts/generate.sh local --chainId ${BSC_CHAIN_ID} --whitelist1Address ${INIT_HOLDER}
     fi
 
 }
 
 function initNetwork_k8s() {
-   cd ${workspace}
-   ${workspace}/bin/geth init-network --init.dir ${workspace}/.local/bsc/clusterNetwork --init.ips=${ips_string} --init.size=${size} --config ${workspace}/config.toml ${workspace}/genesis/genesis.json
+    cd ${workspace}
+    ${workspace}/bin/geth init-network --init.dir ${workspace}/.local/bsc/clusterNetwork --init.ips=${ips_string} --init.size=${size} --config ${workspace}/config.toml ${workspace}/genesis/genesis.json
     for ((i=0;i<${size};i++));do
         staticPeers=$(generate_static_peers ${size} ${i})
         line=`grep -n -e 'StaticNodes' ${workspace}/.local/bsc/clusterNetwork/node${i}/config.toml | cut -d : -f 1`
@@ -153,13 +156,16 @@ function initNetwork_k8s() {
         rm -f ${workspace}/.local/bsc/clusterNetwork/node${i}/config.toml
         mv ${workspace}/.local/bsc/clusterNetwork/node${i}/config.toml-e ${workspace}/.local/bsc/clusterNetwork/node${i}/config.toml
     done
-   rm -rf  ${workspace}/*bsc.log*
+    rm -rf  ${workspace}/*bsc.log*
 }
 
 function initNetwork() {
     cd ${workspace}
     ${workspace}/bin/geth init-network --init.dir ${workspace}/.local/bsc/clusterNetwork --init.size=${size} --config ${workspace}/config.toml ${workspace}/genesis/genesis.json
     rm -rf  ${workspace}/*bsc.log*
+    for ((i=0;i<${size};i++));do
+        sed -i -e '/"<nil>"/d' ${workspace}/.local/bsc/clusterNetwork/node${i}/config.toml
+    done
 }
 
 function prepare_k8s_config() {
@@ -217,7 +223,7 @@ function native_start() {
 
         cp ${workspace}/bin/geth ${workspace}/.local/bsc/clusterNetwork/node${i}/geth${i}
         # init genesis
-        ${workspace}/.local/bsc/clusterNetwork/node${i}/geth${i} init --datadir ${workspace}/.local/bsc/clusterNetwork/node${i} genesis/genesis.json
+        ${workspace}/.local/bsc/clusterNetwork/node${i}/geth${i} init --state.scheme ${stateScheme} --datadir ${workspace}/.local/bsc/clusterNetwork/node${i} genesis/genesis.json
         # run BSC node
         nohup  ${workspace}/.local/bsc/clusterNetwork/node${i}/geth${i} --config ${workspace}/.local/bsc/clusterNetwork/node${i}/config.toml \
                             --datadir ${workspace}/.local/bsc/clusterNetwork/node${i} \
@@ -227,7 +233,7 @@ function native_start() {
                             -unlock ${cons_addr} --miner.etherbase ${cons_addr} --rpc.allow-unprotected-txs --allow-insecure-unlock  \
                             --ws.addr 0.0.0.0 --ws.port ${WSPort} --http.addr 0.0.0.0 --http.port ${HTTPPort} --http.corsdomain "*" \
                             --metrics --metrics.addr localhost --metrics.port ${MetricsPort} --metrics.expensive \
-                            --gcmode archive --syncmode=full --mine --vote --monitor.maliciousvote \
+                            --gcmode archive --state.scheme ${stateScheme} --syncmode=full --mine --vote --monitor.maliciousvote \
                             > ${workspace}/.local/bsc/clusterNetwork/node${i}/bsc-node.log 2>&1 &
     done
 }

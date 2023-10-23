@@ -2,14 +2,14 @@
 
 ## Installation
 
-Before proceeding to the next steps, please ensure that the following packages and softwares are well installed in your local machine: 
-- solc: 0.6.4
+Before proceeding to the next steps, please ensure that the following packages and software are well installed in your local machine:
 - nodejs: 12.18.3 
 - npm: 6.14.6
 - go: 1.18
 - expect
 - jq
-If you would setup nodes on k8s environment, the following packages and softwares are neccessary:
+- foundry
+If you would set up nodes on k8s environment, the following packages and software are necessary:
 - helm: 3.9.4
 - minikube: 1.29.0
 - docker: 20.10.22
@@ -25,6 +25,7 @@ git clone https://github.com/bnb-chain/node-deploy.git
 2. For the first time, please execute the following command
 ```bash
 git submodule update --init --recursive
+cd genesis && forge install --no-git --no-commit foundry-rs/forge-std@v1.7.1 && npm install
 ```
 
 3. Make `geth`, `bootnode`, `bnbchaind`, `tbnbcli` binary files, and put them into `bin/` folder.
@@ -124,7 +125,6 @@ curl -X POST "http://localhost:8545" -H "Content-Type: application/json"  --data
 
 8. Execute cross chain transaction by sending BNB from BSC to BC
 ```
-
 ./bin/test-crosschain-transfer --amount 1 --rpc-url http://localhost:8545 --to 0x0cdce3d8d17c0553270064cee95c73f17534d5a0
 ```
 
