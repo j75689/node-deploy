@@ -233,7 +233,7 @@ function native_start() {
                             -unlock ${cons_addr} --miner.etherbase ${cons_addr} --rpc.allow-unprotected-txs --allow-insecure-unlock  \
                             --ws.addr 0.0.0.0 --ws.port ${WSPort} --http.addr 0.0.0.0 --http.port ${HTTPPort} --http.corsdomain "*" \
                             --metrics --metrics.addr localhost --metrics.port ${MetricsPort} --metrics.expensive \
-                            --gcmode archive --state.scheme ${stateScheme} --syncmode=full --mine --vote --monitor.maliciousvote \
+                            --gcmode archive --state.scheme ${stateScheme} --syncmode full --mine --vote --monitor.maliciousvote \
                             > ${workspace}/.local/bsc/clusterNetwork/node${i}/bsc-node.log 2>&1 &
     done
 }

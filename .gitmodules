@@ -1,5 +1,5 @@
 [submodule "genesis"]
 	path = genesis
-	url = ../bsc-genesis-contract.git
-	branch = master
+	url = https://github.com/Pythonberg1997/bsc-genesis-contract.git
+	branch = fusion-local-test
 	ignore = dirty
