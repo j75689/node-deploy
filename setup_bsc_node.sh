@@ -102,7 +102,7 @@ function initNetwork() {
 
         cp ${workspace}/bin/geth ${workspace}/clusterNetwork/node${i}/geth${i}
         # init genesis
-        ${workspace}/clusterNetwork/node${i}/geth${i} init --state.scheme ${stateScheme} --datadir ${workspace}/clusterNetwork/node${i} genesis/genesis.json
+        ${workspace}/clusterNetwork/node${i}/geth${i} --datadir ${workspace}/clusterNetwork/node${i} init ${workspace}/genesis/genesis.json
     done
 }
 
