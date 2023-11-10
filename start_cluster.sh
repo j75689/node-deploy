@@ -25,5 +25,10 @@ for ((i = 0; i < ${#ips[@]}; i++)); do
     aws ssm send-command \
         --instance-ids "${dst_id}" \
         --document-name "AWS-RunShellScript" \
-        --parameters commands="sudo bash /server/clusterNetwork/stop_geth.sh && sudo rm -rf /server/clusterNetwork && sudo cp -r /mnt/efs/bsc-qa/bc-fusion/clusterNetwork /server && sudo chmod +x /server/clusterNetwork/geth && sudo bash +x /server/clusterNetwork/start_geth.sh ${i}"
+        --parameters commands="sudo bash /server/clusterNetwork/stop_geth.sh"
+    aws ssm send-command \
+        --instance-ids "${dst_id}" \
+        --document-name "AWS-RunShellScript" \
+        --parameters commands="sudo rm -rf /server/clusterNetwork && sudo cp -r /mnt/efs/bsc-qa/bc-fusion/clusterNetwork /server && sudo chmod +x /server/clusterNetwork/node${i}/geth${i} && sudo bash +x /server/clusterNetwork/start_geth.sh ${i}"
+
 done
