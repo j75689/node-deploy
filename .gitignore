@@ -1,4 +1,4 @@
-/.local
+/clusterNetwork
 /genesis
 /bsc.log*
 /oracle-relayer/
