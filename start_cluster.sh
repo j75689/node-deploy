@@ -16,9 +16,9 @@ ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
 validator_ips="172.22.42.13 172.22.42.94 172.22.43.86"
 
 rm -rf /mnt/efs/bsc-qa/bc-fusion/clusterNetwork
-cp -r /server/roshan/bc-fusion-test/clusterNetwork /mnt/efs/bsc-qa/bc-fusion
-cp /server/roshan/bc-fusion-test/start_geth.sh /mnt/efs/bsc-qa/bc-fusion/clusterNetwork/.
-cp /server/roshan/bc-fusion-test/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion/clusterNetwork/.
+cp -r /server/roshan/node-deploy/clusterNetwork /mnt/efs/bsc-qa/bc-fusion
+cp /server/roshan/node-deploy/start_geth.sh /mnt/efs/bsc-qa/bc-fusion/clusterNetwork/.
+cp /server/roshan/node-deploy/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion/clusterNetwork/.
 
 component=$1
 if [[ "${component}"x == "validator"x ]]; then
