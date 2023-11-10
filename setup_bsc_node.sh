@@ -8,6 +8,7 @@ source ${workspace}/.env
 source ${workspace}/utils.sh
 size=$((${BSC_CLUSTER_SIZE}))
 standalone=true
+initIp="172.22.42.13,172.22.42.94,172.22.43.86"
 
 function create_validator() {
     rm -rf ${workspace}/clusterNetwork
@@ -90,7 +91,7 @@ function prepare_config() {
 
 function initNetwork() {
     cd ${workspace}
-    ${workspace}/bin/geth init-network --init.dir ${workspace}/clusterNetwork --init.size=${size} --config ${workspace}/config.toml ${workspace}/genesis/genesis.json
+    ${workspace}/bin/geth init-network --init.dir ${workspace}/clusterNetwork --init.size=${size} --init.ips ${initIp} --config ${workspace}/config.toml ${workspace}/genesis/genesis.json
     rm -rf ${workspace}/*bsc.log*
     for ((i = 0; i < ${size}; i++)); do
         sed -i -e '/"<nil>"/d' ${workspace}/clusterNetwork/node${i}/config.toml
