@@ -5,6 +5,7 @@ source ${workspace}/.env
 source ${workspace}/utils.sh
 size=$((${BC_CLUSTER_SIZE}))
 bc_node_ips=(${BC_NODE_IP})
+p2p_port=8557
 
 function init() {
     rm -rf ${workspace}/.local/bc/*
@@ -17,7 +18,7 @@ function init() {
         # make node info
         ${workspace}/bin/bnbchaind init --home ${workspace}/.local/bc/node${i} --chain-id ${BC_CHAIN_ID} --moniker node${i} --kpass "${KEYPASS}" > ${workspace}/.local/bc/node${i}/node.info
         node_ip=${bc_node_ips[${i}]}
-        node_ids="$(${workspace}/bin/bnbchaind tendermint show-node-id --home ${workspace}/.local/bc/node${i})@${node_ip}:26656 ${node_ids}"
+        node_ids="$(${workspace}/bin/bnbchaind tendermint show-node-id --home ${workspace}/.local/bc/node${i})@${node_ip}:${p2p_port} ${node_ids}"
 
         # create delegator and operator account
         echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys add node${i}-delegator --home ${workspace}/.local/bc/node${i} > ${workspace}/.local/bc/node${i}/delegator.info
@@ -96,6 +97,7 @@ function init() {
         cp ${workspace}/.local/bc/genesis.json ${workspace}/.local/bc/node${i}/config/genesis.json
 
         sed -i -e "s/persistent_peers = \".*\"/persistent_peers = \"${persistent_peers}\"/g" ${workspace}/.local/bc/node${i}/config/config.toml
+        sed -i -e "s/0.0.0.0:26656/0.0.0.0:${p2p_port}/g" ${workspace}/.local/bc/node${i}/config/config.toml
     done
 }
 
