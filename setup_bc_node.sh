@@ -106,6 +106,7 @@ function start_cluster() {
     ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
 
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bc_cluster
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion/bc_cluster
     cp -r ${workspace}/.local/bc/* /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
     cp -r ${workspace}/stop_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
     cp -r ${workspace}/start_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
