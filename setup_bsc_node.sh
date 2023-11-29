@@ -187,6 +187,7 @@ cluster_up)
     register_validator
     prepare_config
     initNetwork
+    cluster_up
     echo "===== end ===="
     ;;
 *)
