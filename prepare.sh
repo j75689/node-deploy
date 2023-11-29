@@ -28,6 +28,7 @@ function prepare_bsc_binary() {
 }
 
 function prepare_tool_binary() {
+    cd ${workspace}
     go build -o ./bin/tool ./tool/main.go
 }
 
