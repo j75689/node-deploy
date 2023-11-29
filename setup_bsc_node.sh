@@ -116,7 +116,7 @@ function generate_static_peers() {
             $tool -genkey $file
         fi
         port=30311
-        node_ip=${bc_node_ips[${i}]}
+        node_ip=${bsc_node_ips[${i}]}
         if [ ! -z "$staticPeers" ]
         then
             staticPeers+=","

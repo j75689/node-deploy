@@ -10,7 +10,6 @@ rm -rf /server/bsc/validator
 mkdir -p /server/bsc/validator
 cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/password.txt /server/bsc/validator/
 cp -r /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${i}/* /server/bsc/validator/
-cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/validator${i}/keystore/* /server/bsc/validator/keystore/
 
 for j in /server/bsc/validator/keystore/*; do
     cons_addr="0x$(cat ${j} | jq -r .address)"
