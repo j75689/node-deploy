@@ -58,7 +58,7 @@ function register_validator() {
             --identity "${delegator}" \
             --from node${i}-delegator \
             --chain-id "${BBC_CHAIN_ID}" \
-            --node ${nodeurl} \
+            --node ${BC_NODE_URL} \
             --home ${workspace}/.local/bc/node${node_dir_index}
     done
 }
