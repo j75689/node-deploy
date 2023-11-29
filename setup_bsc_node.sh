@@ -89,6 +89,7 @@ function prepare_config() {
     done
 
     cd ${workspace}/genesis/
+    npm install
     node generate-validator.js
     node generate-initHolders.js --initHolders ${INIT_HOLDER}
     if [ ${standalone} = false ]; then
@@ -152,10 +153,15 @@ function initNetwork() {
     done
 }
 
+function clean() {
+    rm -rf ${workspace}/.local/bsc
+}
+
 CMD=$1
 case ${CMD} in
 cluster_up)
     echo "===== generate configs ===="
+    clean
     register_validator
     prepare_config
     initNetwork
