@@ -37,7 +37,7 @@ function register_validator() {
         fi
         sleep 6 #wait for including tx in block
         echo ${delegator} "balance"
-        ${workspace}/bin/tbnbcli account ${delegator}  --chain-id ${BC_CHAIN_ID} --trust-node --home ${workspace}/.local/bc/node${node_dir_index} | jq .value.base.coins
+        ${workspace}/bin/tbnbcli account ${delegator}  --chain-id ${BC_CHAIN_ID} --node ${BC_NODE_URL} --trust-node --home ${workspace}/.local/bc/node${node_dir_index} | jq .value.base.coins
         echo "${KEYPASS}" | ${workspace}/bin/tbnbcli staking bsc-create-validator \
             --side-cons-addr "${cons_addr}" \
             --side-vote-addr "${vote_addr}" \
