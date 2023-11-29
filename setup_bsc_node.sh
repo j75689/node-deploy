@@ -142,7 +142,7 @@ function initNetwork() {
 
         sed -i -e '/"<nil>"/d' ${workspace}/.local/bsc/clusterNetwork/node${i}/config.toml
 
-        cp -r ${workspace}/.local/bsc/clusterNetwork/validator${i}/keystore ${workspace}/.local/bsc/clusterNetwork/node${i}
+        cp -r ${workspace}/.local/bsc/validator${i}/keystore ${workspace}/.local/bsc/clusterNetwork/node${i}
         cp ${workspace}/bin/geth ${workspace}/.local/bsc/clusterNetwork/node${i}/geth${i}
         # init genesis
         ${workspace}/.local/bsc/clusterNetwork/node${i}/geth${i} --datadir ${workspace}/.local/bsc/clusterNetwork/node${i} init ${workspace}/genesis/genesis.json
