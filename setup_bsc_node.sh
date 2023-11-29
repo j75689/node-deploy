@@ -142,14 +142,36 @@ function initNetwork() {
 
         sed -i -e '/"<nil>"/d' ${workspace}/.local/bsc/clusterNetwork/node${i}/config.toml
 
-        cp -R ${workspace}/.local/bsc/clusterNetwork/validator${i}/keystore ${workspace}/.local/bsc/clusterNetwork/node${i}
-        for j in ${workspace}/.local/bsc/clusterNetwork/validator${i}/keystore/*; do
-            cons_addr="0x$(cat ${j} | jq -r .address)"
-        done
-
+        cp -r ${workspace}/.local/bsc/clusterNetwork/validator${i}/keystore ${workspace}/.local/bsc/clusterNetwork/node${i}
         cp ${workspace}/bin/geth ${workspace}/.local/bsc/clusterNetwork/node${i}/geth${i}
         # init genesis
         ${workspace}/.local/bsc/clusterNetwork/node${i}/geth${i} --datadir ${workspace}/.local/bsc/clusterNetwork/node${i} init ${workspace}/genesis/genesis.json
+    done
+}
+
+function cluster_up() {
+    declare -A ips2ids
+    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
+    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
+    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
+
+    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion/bsc_cluster
+    cp -r ${workspace}/.local/bsc/* /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
+    cp -r ${workspace}/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
+    cp -r ${workspace}/start_geth.sh /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
+    cp -f ${workspace}/bin/geth /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
+
+    for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bsc_node_ips[i]}]}
+        aws ssm send-command \
+            --instance-ids "${dst_id}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="mkdir -p /server/bsc/ && cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/stop_geth.sh /server/bc/stop_geth.sh && cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/start_geth.sh /server/bc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
+        aws ssm send-command \
+            --instance-ids "${dst_id}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="sudo bash +x /server/bsc/start_geth.sh ${i}"
     done
 }
 
