@@ -10,6 +10,59 @@ size=$((${BSC_CLUSTER_SIZE}))
 standalone=true
 initIp="172.22.42.13,172.22.42.94,172.22.43.86"
 
+# need a clean bc without stakings
+function register_validator() {
+    rm -rf ${workspace}/.local/bsc
+
+    for ((i=0;i<${size};i++));do
+        mkdir -p ${workspace}/.local/bsc/validator${i}
+        echo "${KEYPASS}" > ${workspace}/.local/bsc/password.txt
+        
+        cons_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/validator${i} --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
+        fee_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/validator${i}_fee --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
+        mkdir -p ${workspace}/.local/bsc/bls${i}
+        expect create_bls_key.exp ${workspace}/.local/bsc/bls${i} ${KEYPASS}
+        vote_addr=0x$(cat ${workspace}/.local/bsc/bls${i}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
+        if [ ${standalone} = true ]; then
+            continue
+        fi
+        
+        node_dir_index=${i}
+        if [ $i -ge ${BBC_CLUSTER_SIZE} ]; then
+            # echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys delete node${i}-delegator --home ${workspace}/.local/bc/node0 # for re-entry
+            echo "${KEYPASS}" | (echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys add node${i}-delegator --home ${workspace}/.local/bc/node0)
+            node_dir_index=0
+        fi
+        delegator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${node_dir_index} | grep node${i}-delegator | awk -F" " '{print $3}')
+        if [ "$i" != "0" ]; then
+            sleep 6 #wait for including tx in block
+            echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $delegator --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB --chain-id ${BBC_CHAIN_ID} --node ${nodeurl} --home ${workspace}/.local/bc/node0
+        fi
+        sleep 6 #wait for including tx in block
+        echo ${delegator} "balance"
+        ${workspace}/bin/tbnbcli account ${delegator}  --chain-id ${BBC_CHAIN_ID} --trust-node --home ${workspace}/.local/bc/node${node_dir_index} | jq .value.base.coins
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli staking bsc-create-validator \
+            --side-cons-addr "${cons_addr}" \
+            --side-vote-addr "${vote_addr}" \
+            --bls-wallet ${workspace}/.local/bsc/bls${i}/bls/wallet \
+            --bls-password "${KEYPASS}" \
+            --side-fee-addr "${fee_addr}" \
+            --address-delegator "${delegator}" \
+            --side-chain-id ${BSC_CHAIN_NAME} \
+            --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB \
+            --commission-rate 80000000 \
+            --commission-max-rate 95000000 \
+            --commission-max-change-rate 3000000 \
+            --moniker "${cons_addr}" \
+            --details "${cons_addr}" \
+            --identity "${delegator}" \
+            --from node${i}-delegator \
+            --chain-id "${BBC_CHAIN_ID}" \
+            --node ${nodeurl} \
+            --home ${workspace}/.local/bc/node${node_dir_index}
+    done
+}
+
 function create_validator() {
     rm -rf ${workspace}/clusterNetwork
 
@@ -109,6 +162,11 @@ function initNetwork() {
 
 CMD=$1
 case ${CMD} in
+register)
+    echo "===== register ===="
+    register_validator
+    echo "===== end ===="
+    ;;
 generate)
     echo "===== generate configs ===="
     create_validator
@@ -126,6 +184,6 @@ native_init)
     echo "===== end ===="
     ;;
 *)
-    echo "Usage: setup_bsc_node.sh | generate | native_init"
+    echo "Usage: setup_bsc_node.sh | register | generate | native_init"
     ;;
 esac
