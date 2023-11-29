@@ -23,10 +23,7 @@ function register_validator() {
         mkdir -p ${workspace}/.local/bsc/bls${i}
         expect create_bls_key.exp ${workspace}/.local/bsc/bls${i} ${KEYPASS}
         vote_addr=0x$(cat ${workspace}/.local/bsc/bls${i}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
-        if [ ${standalone} = true ]; then
-            continue
-        fi
-        
+
         node_dir_index=${i}
         if [ $i -ge ${BC_CLUSTER_SIZE} ]; then
             # echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys delete node${i}-delegator --home ${workspace}/.local/bc/node0 # for re-entry
@@ -175,7 +172,7 @@ generate)
     echo "===== end ===="
     ;;
 native_init)
-    echo "===== register ===="
+    echo "===== create_validator ===="
     create_validator
     echo "===== end ===="
     echo "===== generate configs ===="
