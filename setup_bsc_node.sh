@@ -28,7 +28,7 @@ function register_validator() {
         fi
         
         node_dir_index=${i}
-        if [ $i -ge ${BBC_CLUSTER_SIZE} ]; then
+        if [ $i -ge ${BC_CLUSTER_SIZE} ]; then
             # echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys delete node${i}-delegator --home ${workspace}/.local/bc/node0 # for re-entry
             echo "${KEYPASS}" | (echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys add node${i}-delegator --home ${workspace}/.local/bc/node0)
             node_dir_index=0
@@ -36,11 +36,11 @@ function register_validator() {
         delegator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${node_dir_index} | grep node${i}-delegator | awk -F" " '{print $3}')
         if [ "$i" != "0" ]; then
             sleep 6 #wait for including tx in block
-            echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $delegator --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB --chain-id ${BBC_CHAIN_ID} --node ${nodeurl} --home ${workspace}/.local/bc/node0
+            echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $delegator --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB --chain-id ${BC_CHAIN_ID} --node ${nodeurl} --home ${workspace}/.local/bc/node0
         fi
         sleep 6 #wait for including tx in block
         echo ${delegator} "balance"
-        ${workspace}/bin/tbnbcli account ${delegator}  --chain-id ${BBC_CHAIN_ID} --trust-node --home ${workspace}/.local/bc/node${node_dir_index} | jq .value.base.coins
+        ${workspace}/bin/tbnbcli account ${delegator}  --chain-id ${BC_CHAIN_ID} --trust-node --home ${workspace}/.local/bc/node${node_dir_index} | jq .value.base.coins
         echo "${KEYPASS}" | ${workspace}/bin/tbnbcli staking bsc-create-validator \
             --side-cons-addr "${cons_addr}" \
             --side-vote-addr "${vote_addr}" \
@@ -57,7 +57,7 @@ function register_validator() {
             --details "${cons_addr}" \
             --identity "${delegator}" \
             --from node${i}-delegator \
-            --chain-id "${BBC_CHAIN_ID}" \
+            --chain-id "${BC_CHAIN_ID}" \
             --node ${BC_NODE_URL} \
             --home ${workspace}/.local/bc/node${node_dir_index}
     done
