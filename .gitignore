@@ -6,5 +6,8 @@
 /bin/geth
 /bin/bnbchaind
 /bin/tbnbcli
+/bin/bnbcli
 /bin/tool
 /bin/bootnode
+/.local
+/tmp

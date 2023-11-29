@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+basedir=$(cd `dirname $0`; pwd)
+workspace=${basedir}
+source ${workspace}/.env
+source ${workspace}/utils.sh
+size=$((${BC_CLUSTER_SIZE}))
+bc_node_ips=(${BC_NODE_IP})
+
+function init() {
+    rm -rf ${workspace}/.local/bc/*
+    mkdir -p ${workspace}/.local/bc/genTx
+    node_ids=""
+    
+    for ((i=0;i<${size};i++));do
+        mkdir -p ${workspace}/.local/bc/node${i}
+
+        # make node info
+        ${workspace}/bin/bnbchaind init --home ${workspace}/.local/bc/node${i} --chain-id ${BC_CHAIN_ID} --moniker node${i} --kpass "${KEYPASS}" > ${workspace}/.local/bc/node${i}/node.info
+        node_ip=${bc_node_ips[${i}]}
+        node_ids="$(${workspace}/bin/bnbchaind tendermint show-node-id --home ${workspace}/.local/bc/node${i})@${node_ip}:26656 ${node_ids}"
+
+        # create delegator and operator account
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys add node${i}-delegator --home ${workspace}/.local/bc/node${i} > ${workspace}/.local/bc/node${i}/delegator.info
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys add node${i} --home ${workspace}/.local/bc/node${i} > ${workspace}/.local/bc/node${i}/operator.info
+
+        # create validator
+        nodeID=$(cat ${workspace}/.local/bc/node${i}/node.info | jq -r '.node_id')
+        pubKey=$(cat ${workspace}/.local/bc/node${i}/node.info | jq -r '.pub_key')
+        delegator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i}-delegator | awk -F" " '{print $3}')
+        ${workspace}/bin/tbnbcli staking create-validator --chain-id=${BC_CHAIN_ID} \
+            --from node${i} --pubkey ${pubKey} --amount=1000000000:BNB \
+            --moniker=node${i} --address-delegator=${delegator} --commission-rate=0 \
+            --commission-max-rate=0 --commission-max-change-rate=0 --proposal-id=0 \
+            --node-id=${nodeID} --genesis-format --home ${workspace}/.local/bc/node${i} \
+            --generate-only > ${workspace}/.local/bc/node${i}/node${i}-unsigned.json 
+        
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli sign \
+            ${workspace}/.local/bc/node${i}/node${i}-unsigned.json \
+            --name "node${i}-delegator" --home ${workspace}/.local/bc/node${i} \
+            --chain-id=${BC_CHAIN_ID} --offline > ${workspace}/.local/bc/node${i}/node${i}-signed-t.json
+        
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli sign \
+            ${workspace}/.local/bc/node${i}/node${i}-signed-t.json \
+            --name "node${i}" --home ${workspace}/.local/bc/node${i} \
+            --chain-id=${BC_CHAIN_ID} --offline > ${workspace}/.local/bc/genTx/node${i}.json
+
+        # modify configs
+        sed -i -e "s/bscChainId = \"bsc\"/bscChainId = \"${BSC_CHAIN_NAME}\"/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/bscIbcChainId = 2/bscIbcChainId = ${BSC_CHAIN_ID}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+
+        sed -i -e "s/timeout_commit = \"1s\"/timeout_commit = \"${BC_BLOCK_TIMEOUT}\"/g" ${workspace}/.local/bc/node${i}/config/config.toml
+    
+        sed -i -e "s/breatheBlockInterval = 0/breatheBlockInterval = ${BC_BREATHE_BLOCK_INTERVAL}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/bech32PrefixAccAddr = \"bnb\"/bech32PrefixAccAddr = \"tbnb\"/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        
+        sed -i -e "s/BEP6Height = 1/BEP6Height = 2/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP9Height = 1/BEP9Height = 2/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP10Height = 1/BEP10Height = 2/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP19Height = 1/BEP19Height = 2/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP12Height = 1/BEP12Height = 2/g" ${workspace}/.local/bc/node${i}/config/app.toml
+
+        sed -i -e "s/BEP3Height = 1/BEP3Height = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/FixSignBytesOverflowHeight = 1/FixSignBytesOverflowHeight = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/LotSizeUpgradeHeight = 1/LotSizeUpgradeHeight = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/ListingRuleUpgradeHeight = 1/ListingRuleUpgradeHeight = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/FixZeroBalanceHeight = 1/FixZeroBalanceHeight = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/LaunchBscUpgradeHeight = 1/LaunchBscUpgradeHeight = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP8Height = 1/BEP8Height = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP67Height = 1/BEP67Height = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP70Height = 1/BEP70Height = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP67Height = 1/BEP67Height = 3/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        
+        sed -i -e "s/BEP82Height = 9223372036854775807/BEP82Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP84Height = 9223372036854775807/BEP84Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP87Height = 9223372036854775807/BEP87Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/FixFailAckPackageHeight = 9223372036854775807/FixFailAckPackageHeight = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/EnableAccountScriptsForCrossChainTransferHeight = 9223372036854775807/EnableAccountScriptsForCrossChainTransferHeight = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP128Height = 9223372036854775807/BEP128Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP151Height = 9223372036854775807/BEP151Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP153Height = 9223372036854775807/BEP153Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP173Height = 9223372036854775807/BEP173Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+
+        sed -i -e "s/FixDoubleSignChainIdHeight = 9223372036854775807/FixDoubleSignChainIdHeight = 4\nBEP171Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP126Height = 9223372036854775807/BEP126Height = 5/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP255Height = 9223372036854775807/BEP255Height = 5/g" ${workspace}/.local/bc/node${i}/config/app.toml
+    done
+
+    # generate genesis.json
+    ${workspace}/bin/bnbchaind collect-gentxs --acc-prefix tbnb --chain-id ${BC_CHAIN_ID} -i ${workspace}/.local/bc/genTx -o ${workspace}/.local/bc/genesis.json
+    sed -i -e "s/\"min_self_delegation\": \"1000000000000\"/\"min_self_delegation\": \"100000000\"/g" ${workspace}/.local/bc/genesis.json
+    
+    # copy genesis file and set persistent peers
+    persistent_peers=$(joinByString ',' ${node_ids})
+    for ((i=0;i<${size};i++));do
+        rm -rf ${workspace}/.local/bc/node${i}/config/genesis.json
+        cp ${workspace}/.local/bc/genesis.json ${workspace}/.local/bc/node${i}/config/genesis.json
+
+        sed -i -e "s/persistent_peers = \".*\"/persistent_peers = \"${persistent_peers}\"/g" ${workspace}/.local/bc/node${i}/config/config.toml
+    done
+}
+
+function start_cluster() {
+    declare -A ips2ids
+    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
+    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
+    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
+
+    rm -rf /mnt/efs/bsc-qa/bc-fusion/bc_cluster
+    cp -r ${workspace}/.local/bc/* /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+    cp -r ${workspace}/stop_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+    cp -r ${workspace}/start_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+    cp -f ${workspace}/bin/bnbchaind /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bc_node_ips[i]}]}
+        aws ssm send-command \
+            --instance-ids "${dst_id}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="mkdir -p /server/bc/ && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+        aws ssm send-command \
+            --instance-ids "${dst_id}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="sudo bash +x /server/bc/start_node.sh ${i}"
+    done
+}
+
+CMD=$1
+case ${CMD} in
+init)
+    echo "===== init ===="
+    init
+    echo "===== end ===="
+    ;;
+cluster_up)
+    echo "===== cluster_up ===="
+    start_cluster
+    echo "===== end ===="
+    ;;
+*)
+    echo "Usage: setup_bc_node.sh init cluster_up"
+    ;;
+esac
