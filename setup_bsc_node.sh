@@ -168,7 +168,10 @@ function cluster_up() {
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
             --parameters commands="mkdir -p /server/bsc/ && cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
-        sleep 10
+    done
+    sleep 10
+    for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bsc_node_ips[i]}]}
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
