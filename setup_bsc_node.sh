@@ -33,7 +33,7 @@ function register_validator() {
         delegator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${node_dir_index} | grep node${i}-delegator | awk -F" " '{print $3}')
         if [ "$i" != "0" ]; then
             sleep 6 #wait for including tx in block
-            echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $delegator --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB --chain-id ${BC_CHAIN_ID} --node ${nodeurl} --home ${workspace}/.local/bc/node0
+            echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $delegator --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB --chain-id ${BC_CHAIN_ID} --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
         fi
         sleep 6 #wait for including tx in block
         echo ${delegator} "balance"
@@ -132,7 +132,7 @@ function prepare_config() {
     node scripts/generate-validator.js
     node scripts/generate-initHolders.js --initHolders ${INIT_HOLDER}
     if [ ${standalone} = false ]; then
-        initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${nodeurl} -network-type 0)
+        initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${BC_NODE_URL} -network-type 0)
         bash scripts/generate.sh local --chainId ${BSC_CHAIN_ID} --whitelist1Address ${INIT_HOLDER} --initConsensusStateBytes ${initConsensusStateBytes}
     else
         bash scripts/generate.sh local --chainId ${BSC_CHAIN_ID} --whitelist1Address ${INIT_HOLDER}
