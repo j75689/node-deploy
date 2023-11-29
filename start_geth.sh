@@ -15,7 +15,7 @@ for j in /server/bsc/validator/keystore/*; do
     cons_addr="0x$(cat ${j} | jq -r .address)"
 done
 
-nohup /server/bsc/validator/node${i}/geth${i} --config /server/bsc/validator/config.toml \
+nohup /server/bsc/validator/geth${i} --config /server/bsc/validator/config.toml \
     --datadir /server/bsc/validator/ \
     --password /server/bsc/validator/password.txt \
     --blspassword /server/bsc/validator/password.txt \
