@@ -120,6 +120,7 @@ function start_cluster() {
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
             --parameters commands="mkdir -p /server/bc/ && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+        sleep 10
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
