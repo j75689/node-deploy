@@ -179,6 +179,21 @@ function cluster_up() {
     done
 }
 
+function cluster_down() {
+    declare -A ips2ids
+    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
+    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
+    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
+
+    for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bsc_node_ips[i]}]}
+        aws ssm send-command \
+            --instance-ids "${dst_id}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="mkdir -p /server/bsc/ && cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
+    done
+}
+
 function clean() {
     rm -rf ${workspace}/.local/bsc
 }
@@ -194,7 +209,13 @@ cluster_up)
     cluster_up
     echo "===== end ===="
     ;;
+cluster_down)
+    echo "===== stop native bsc-relayer===="
+    cluster_down
+    sleep 5
+    echo "===== stop native bsc-relayer end ===="
+    ;;
 *)
-    echo "Usage: setup_bsc_node.sh cluster_up"
+    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down"
     ;;
 esac

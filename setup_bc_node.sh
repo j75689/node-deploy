@@ -131,6 +131,21 @@ function start_cluster() {
     done
 }
 
+function cluster_down() {
+    declare -A ips2ids
+    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
+    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
+    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
+
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bc_node_ips[i]}]}
+        aws ssm send-command \
+            --instance-ids "${dst_id}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="mkdir -p /server/bc/ && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+    done
+}
+
 CMD=$1
 case ${CMD} in
 init)
@@ -143,7 +158,12 @@ cluster_up)
     start_cluster
     echo "===== end ===="
     ;;
+cluster_down)
+    echo "===== cluster_down ===="
+    cluster_down
+    echo "===== end ===="
+    ;;
 *)
-    echo "Usage: setup_bc_node.sh init cluster_up"
+    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down"
     ;;
 esac
