@@ -146,6 +146,36 @@ function cluster_down() {
     done
 }
 
+function enable_mirror_channel() {
+    # enable mirror channel
+    proposal_id=$(${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 4 --enable=true --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk -F" " '{print $3}')
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $delegator --amount 100000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
+        sleep 6 #wait for including tx in block
+
+        # vote
+        ${workspace}/bin/tbnbcli gov vote --from node${i} --side-chain-id ${BSC_CHAIN_NAME} --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+    done
+    sleep 10
+    ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
+
+    # enable mirror sync channel
+    proposal_id=$(${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 5 --enable=true --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk -F" " '{print $3}')
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $delegator --amount 100000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
+        sleep 6 #wait for including tx in block
+
+        # vote
+        ${workspace}/bin/tbnbcli gov vote --from node${i} --side-chain-id ${BSC_CHAIN_NAME} --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+    done
+    sleep 10
+    ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
+}
+
 CMD=$1
 case ${CMD} in
 init)
