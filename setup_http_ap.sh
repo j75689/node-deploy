@@ -19,3 +19,28 @@ function stop_http_ap() {
       --document-name "AWS-RunShellScript" \
       --parameters commands="ps -ef | grep bnc-http-ap | awk '{print $2}' | xargs kill"
 }
+
+source ${workspace}/.env
+CMD=$1
+
+case ${CMD} in
+start)
+    echo "===== stop ===="
+    stop_http_ap
+    sleep 5
+    echo "===== stop end ===="
+
+    echo "===== start ===="
+    start_http_ap
+    echo "===== start end ===="
+    ;;
+stop)
+    echo "===== stop ===="
+    stop_http_ap
+    sleep 5
+    echo "===== stop end ===="
+    ;;
+*)
+    echo "Usage: setup_http_ap.sh start | stop"
+    ;;
+esac

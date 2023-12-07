@@ -9,7 +9,7 @@ function exit_previous() {
     aws ssm send-command \
       --instance-ids "${dst_id}" \
       --document-name "AWS-RunShellScript" \
-      --parameters commands="ps -ef | grep bsc-relayer  | grep config |awk '{print $2}' | xargs kill"    
+      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/stop_bsc_relayer.sh /server/relayer/ && bash /server/relayer/stop_bsc_relayer.sh"    
 }
 
 function build_relayer() {
@@ -41,6 +41,7 @@ function cluster_up() {
     rm -rf /mnt/efs/bsc-qa/bc-fusion/relayer
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/relayer
     yes | cp -rf ${workspace}/.local/relayer/* /mnt/efs/bsc-qa/bc-fusion/relayer/
+    yes | cp -rf ${workspace}/stop_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
 
     aws ssm send-command \
       --instance-ids "${dst_id}" \
@@ -76,6 +77,6 @@ stop)
     echo "===== stop node0 end ===="
     ;;
 *)
-    echo "Usage: setup_bc_node.sh init | start | stop"
+    echo "Usage: setup_bsc_relayer.sh init | start | stop"
     ;;
 esac
