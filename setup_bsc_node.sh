@@ -91,9 +91,10 @@ function prepare_config() {
     cd ${workspace}/genesis/
     npm install
     node generate-validator.js
+    sed -i -e "s/address public constant WHITELIST_1 = 0xb005741528b86F5952469d80A8614591E3c5B632;;/address public constant WHITELIST_1 = ${INIT_HOLDER};/g" ${workspace}/genesis/contracts/RelayerHub.template
+    npm run flatten
     if [ ${standalone} = false ]; then
         initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${nodeurl} -network-type 0)
-        sed -i -e "s/address public constant WHITELIST_1 = 0xb005741528b86F5952469d80A8614591E3c5B632;;/address public constant WHITELIST_1 = ${INIT_HOLDER};/g" ${workspace}/genesis/contracts/RelayerHub.template
         node generate-genesis.js --chainid 714 --bscChainId 02ca --network 'local' --initConsensusStateBytes  ${initConsensusStateBytes}
     else
         node generate-genesis.js --chainid 714 --bscChainId 02ca --network 'local'
