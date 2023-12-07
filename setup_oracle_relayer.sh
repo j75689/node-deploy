@@ -45,7 +45,7 @@ function cluster_up() {
     aws ssm send-command \
       --instance-ids "${dst_id}" \
       --document-name "AWS-RunShellScript" \
-      --parameters commands="rm -rf /server/relayer/oracle_relayer.db && mkdir -p /server/relayer/ && yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/relayer/* /server/relayer/ && nohup ${workspace}/.local/relayer/oracle-relayer --bbc-network 0 --config-type local --config-path /server/relayer/oracle_relayer.json > /server/relayer/oracle_relayer.log 2>&1 &"
+      --parameters commands="rm -rf /server/relayer/oracle_relayer.db && mkdir -p /server/relayer/ && yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/relayer/* /server/relayer/ && nohup /server/relayer/oracle-relayer --bbc-network 0 --config-type local --config-path /server/relayer/oracle_relayer.json > /server/relayer/oracle_relayer.log 2>&1 &"
 }
 
 source ${workspace}/.env
