@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 basedir=$(cd `dirname $0`; pwd)
 workspace=${basedir}
+dst_id="i-0d2b8632af953d0f6"
 
 function exit_previous() {
 	# stop client
-    ps -ef  | grep oracle-relayer | grep config |awk '{print $2}' | xargs kill
+    aws ssm send-command \
+      --instance-ids "${dst_id}" \
+      --document-name "AWS-RunShellScript" \
+      --parameters commands="ps -ef  | grep oracle-relayer | grep config |awk '{print $2}' | xargs kill"
 }
 
 function build_relayer() {
@@ -28,37 +32,48 @@ function init_config(){
 
 function prepare_native_config() {
     init_config
-    sed -i -e "s:/data/relayer.db:${workspace}/.local/relayer/oracle_relayer.db:g" ${workspace}/.local/relayer/oracle_relayer.json 
+    sed -i -e "s:/data/relayer.db:/server/relayer/oracle_relayer.db:g" ${workspace}/.local/relayer/oracle_relayer.json 
+}
+
+function cluster_up() {
+    cp ${workspace}/tmp/oracle-relayer/build/oracle-relayer ${workspace}/.local/relayer/
+    rm -rf /mnt/efs/bsc-qa/bc-fusion/relayer
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion/relayer
+    yes | cp -rf ${workspace}/.local/relayer/* /mnt/efs/bsc-qa/bc-fusion/relayer/
+
+    aws ssm send-command \
+      --instance-ids "${dst_id}" \
+      --document-name "AWS-RunShellScript" \
+      --parameters commands="rm -rf /server/relayer/oracle_relayer.db && mkdir -p /server/relayer/ && yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/relayer/* /server/relayer/ && nohup ${workspace}/.local/relayer/oracle-relayer --bbc-network 0 --config-type local --config-path /server/relayer/oracle_relayer.json > /server/relayer/oracle_relayer.log 2>&1 &"
 }
 
 source ${workspace}/.env
 CMD=$1
 
 case ${CMD} in
-native_init)
+init)
     echo "===== init ===="
     build_relayer
     prepare_native_config
     echo "===== end ===="
     ;;
-native_start)
+start)
     echo "===== stop native oracle-relayer===="
     exit_previous
     sleep 5
     echo "===== stop native oracle-relayer end ===="
 
-    echo "===== start native node0 ===="
-    cp ${workspace}/tmp/oracle-relayer/build/oracle-relayer ${workspace}/.local/relayer/
-    nohup ${workspace}/.local/relayer/oracle-relayer --bbc-network 0 --config-type local --config-path ${workspace}/.local/relayer/oracle_relayer.json > ${workspace}/.local/relayer/oracle_relayer.log 2>&1 &
-    echo "===== start native node0 end ===="
+    echo "===== start node0 ===="
+    cluster_up
+    echo "===== start node0 end ===="
     ;;
-native_stop)
-    echo "===== stop native node0===="
+stop)
+    echo "===== stop node0===="
     exit_previous
     sleep 5
-    echo "===== stop native node0 end ===="
+    echo "===== stop node0 end ===="
     ;;
 *)
-    echo "Usage: setup_bc_node.sh native_init | native_start | native_stop"
+    echo "Usage: setup_bc_node.sh init | start | stop"
     ;;
 esac
