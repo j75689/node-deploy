@@ -94,9 +94,9 @@ function prepare_config() {
     node generate-initHolders.js --initHolders ${INIT_HOLDER}
     if [ ${standalone} = false ]; then
         initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${nodeurl} -network-type 0)
-        node generate-genesis.js --chainid ${BSC_CHAIN_ID} --network 'local' --whitelist1Address ${INIT_HOLDER} --initConsensusStateBytes  ${initConsensusStateBytes}
+        node generate-genesis.js --chainid 714 --bscChainId 02ca --network 'local' --whitelist1Address ${INIT_HOLDER} --initConsensusStateBytes  ${initConsensusStateBytes}
     else
-        node generate-genesis.js --chainid ${BSC_CHAIN_ID} --network 'local' --whitelist1Address ${INIT_HOLDER}
+        node generate-genesis.js --chainid 714 --bscChainId 02ca --network 'local' --whitelist1Address ${INIT_HOLDER}
     fi
 
 }
