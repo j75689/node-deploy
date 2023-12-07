@@ -41,11 +41,12 @@ function cluster_up() {
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/relayer
     yes | cp -rf ${workspace}/.local/relayer/* /mnt/efs/bsc-qa/bc-fusion/relayer/
     yes | cp -rf ${workspace}/stop_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
+    yes | cp -rf ${workspace}/start_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
 
     aws ssm send-command \
       --instance-ids "${dst_id}" \
       --document-name "AWS-RunShellScript" \
-      --parameters commands="rm -rf /server/relayer/oracle_relayer.db && mkdir -p /server/relayer/ && yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/relayer/* /server/relayer/ && nohup /server/relayer/oracle-relayer --bbc-network 0 --config-type local --config-path /server/relayer/oracle_relayer.json > /server/relayer/oracle_relayer.log 2>&1 &"
+      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/start_orcacle_relayer.sh /server/relayer/ && bash /server/relayer/start_orcacle_relayer.sh reset"
 }
 
 source ${workspace}/.env
