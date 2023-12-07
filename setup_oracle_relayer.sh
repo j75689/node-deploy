@@ -46,7 +46,7 @@ function cluster_up() {
     aws ssm send-command \
       --instance-ids "${dst_id}" \
       --document-name "AWS-RunShellScript" \
-      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/start_orcacle_relayer.sh /server/relayer/ && bash /server/relayer/start_orcacle_relayer.sh reset"
+      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/start_oracle_relayer.sh /server/relayer/ && bash /server/relayer/start_oracle_relayer.sh reset"
 }
 
 source ${workspace}/.env
