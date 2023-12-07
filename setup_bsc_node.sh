@@ -90,6 +90,7 @@ function prepare_config() {
 
     cd ${workspace}/genesis/
     npm install
+    npm run flatten
     node generate-validator.js
     node generate-initHolders.js --initHolders ${INIT_HOLDER}
     if [ ${standalone} = false ]; then
