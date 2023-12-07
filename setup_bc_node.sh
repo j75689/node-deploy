@@ -119,7 +119,7 @@ function start_cluster() {
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="mkdir -p /server/bc/ && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
     done
     sleep 10
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -127,7 +127,7 @@ function start_cluster() {
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="sudo bash +x /server/bc/start_node.sh ${i}"
+            --parameters commands="sudo bash +x /server/bc/start_node.sh ${i} reset"
     done
 }
 
@@ -142,7 +142,34 @@ function cluster_down() {
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="mkdir -p /server/bc/ && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+    done
+}
+
+function cluster_restart() {
+    declare -A ips2ids
+    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
+    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
+    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
+
+    yes | cp -r ${workspace}/stop_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+    yes | cp -r ${workspace}/start_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+    yes | cp -f ${workspace}/bin/bnbchaind /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bc_node_ips[i]}]}
+        aws ssm send-command \
+            --instance-ids "${dst_id}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+    done
+    sleep 10
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bc_node_ips[i]}]}
+        aws ssm send-command \
+            --instance-ids "${dst_id}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters commands="sudo bash +x /server/bc/start_node.sh ${i}"
     done
 }
 
@@ -193,7 +220,12 @@ cluster_down)
     cluster_down
     echo "===== end ===="
     ;;
+cluster_restart)
+    echo "===== cluster_restart ===="
+    cluster_restart
+    echo "===== end ===="
+    ;;
 *)
-    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down"
+    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down | cluster_restart"
     ;;
 esac

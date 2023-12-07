@@ -1,15 +1,21 @@
 #!/bin/bash
 
 i=$1
+cmd=$2
 stateScheme="hash"
 HTTPPort=8545
 WSPort=${HTTPPort}
 MetricsPort=6060
 
-rm -rf /server/bsc/validator
-mkdir -p /server/bsc/validator
-cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/password.txt /server/bsc/validator/
-cp -r /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${i}/* /server/bsc/validator/
+if [ "${cmd}" == "reset" ]; then
+    rm -rf /server/bsc/validator
+    mkdir -p /server/bsc/validator
+    cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/password.txt /server/bsc/validator/
+    cp -r /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${i}/* /server/bsc/validator/
+fi
+
+yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/geth /server/bsc/validator/geth${i}
+yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${i}/config.toml /server/bsc/validator/
 
 for j in /server/bsc/validator/keystore/*; do
     cons_addr="0x$(cat ${j} | jq -r .address)"
