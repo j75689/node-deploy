@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 basedir=$(cd `dirname $0`; pwd)
 workspace=${basedir}
+source ${workspace}/.env
+source ${workspace}/utils.sh
 bc_node_ips=(${BC_NODE_IP})
 dst_id="i-0d2b8632af953d0f6"
 
@@ -41,9 +43,6 @@ function cluster_up() {
         operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk '$1 == "node'${i}'" {print $3}')
         echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $operator --amount 20000000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
         sleep 6 #wait for including tx in block
-
-        # vote
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i} --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
     done
 
     cp ${workspace}/tmp/oracle-relayer/build/oracle-relayer ${workspace}/.local/relayer/
