@@ -225,7 +225,12 @@ cluster_restart)
     cluster_restart
     echo "===== end ===="
     ;;
+enable_mirror_channel)
+    echo "===== enable_mirror_channel ===="
+    enable_mirror_channel
+    echo "===== end ===="
+    ;;
 *)
-    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down | cluster_restart"
+    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down | cluster_restart | enable_mirror_channel"
     ;;
 esac
