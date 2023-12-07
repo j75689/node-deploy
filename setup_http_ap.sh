@@ -10,7 +10,7 @@ function start_http_ap() {
     rm -rf /mnt/efs/bsc-qa/bc-fusion/http_ap
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/http_ap
     yes | cp -rf ${workspace}/stop_http_ap.sh /mnt/efs/bsc-qa/bc-fusion/http_ap/
-    yes | cp -rf ${workspace}/start_http_ap.sh.sh /mnt/efs/bsc-qa/bc-fusion/http_ap/
+    yes | cp -rf ${workspace}/start_http_ap.sh /mnt/efs/bsc-qa/bc-fusion/http_ap/
 
     aws ssm send-command \
       --instance-ids "${dst_id}" \
