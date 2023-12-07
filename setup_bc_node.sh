@@ -205,7 +205,7 @@ function enable_mirror_channel() {
     ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
 
     # enable mirror channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x400000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x04000000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable mirror channel on bsc proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -219,7 +219,7 @@ function enable_mirror_channel() {
     done
 
     # enable mirror sync channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x500000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror sync channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x05000000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror sync channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable mirror channel on bsc proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
