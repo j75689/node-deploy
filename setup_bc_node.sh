@@ -176,8 +176,8 @@ function cluster_restart() {
 function enable_mirror_channel() {
     # enable mirror channel
     proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 4 --enable=true --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
-    sleep 6
     echo "enable mirror channel proposal_id: ${proposal_id}"
+    sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk '$1 == "node'${i}'" {print $3}')
         echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $operator --amount 200000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
@@ -190,9 +190,9 @@ function enable_mirror_channel() {
     ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
 
     # enable mirror sync channel
-    sleep 6
     proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 5 --enable=true --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable mirror sync channel proposal_id: ${proposal_id}"
+    sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk '$1 == "node'${i}'" {print $3}')
         echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $operator --amount 200000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
