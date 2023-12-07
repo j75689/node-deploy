@@ -26,7 +26,7 @@ function init_config(){
     cp ${workspace}/oracle_relayer.template ${workspace}/.local/relayer/oracle_relayer.json
 
     sed -i -e "s/{{bsc_chain_id}}/${BSC_CHAIN_ID}/g" ${workspace}/.local/relayer/oracle_relayer.json
-    mnemonic="\"$(cat ${workspace}/.local/bc/node0/operator.info |tail  -1)\""
+    mnemonic="\"$(cat ${workspace}/.local/bc/node0/delegator.info |tail  -1)\""
     sed -i -e "s/{{bbc_mnemonic}}/${mnemonic}/g" ${workspace}/.local/relayer/oracle_relayer.json
 }
 
