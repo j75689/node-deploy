@@ -184,7 +184,7 @@ function enable_mirror_channel() {
         sleep 6 #wait for including tx in block
 
         # vote
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i}-delegator --side-chain-id ${BSC_CHAIN_NAME} --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i}-delegator --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
     done
     sleep 120
     ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
@@ -199,7 +199,7 @@ function enable_mirror_channel() {
         sleep 6 #wait for including tx in block
 
         # vote
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i}-delegator --side-chain-id ${BSC_CHAIN_NAME} --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i}-delegator --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
     done
     sleep 120
     ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
