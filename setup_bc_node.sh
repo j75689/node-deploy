@@ -214,10 +214,8 @@ function enable_mirror_channel() {
         sleep 6 #wait for including tx in block
 
         # vote
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i} --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i} --proposal-id ${proposal_id} --option Yes --side-chain-id ${BSC_CHAIN_NAME} --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
     done
-    sleep 120
-    ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
 
     # enable mirror sync channel on bsc
     proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x500000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror sync channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
@@ -229,10 +227,8 @@ function enable_mirror_channel() {
         sleep 6 #wait for including tx in block
 
         # vote
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i} --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i} --proposal-id ${proposal_id} --option Yes --side-chain-id ${BSC_CHAIN_NAME} --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
     done
-    sleep 120
-    ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
 }
 
 CMD=$1
