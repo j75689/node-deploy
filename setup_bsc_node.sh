@@ -326,18 +326,6 @@ function migrate_validator() {
       exit 1
     fi
 
-    validator_addr=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${validator_index} | grep node${validator_index} | awk '$1 == "node'${validator_index}'-delegator" {print $3}')
-    validator_addr=$(echo ${validator_addr} | xargs ${workspace}/bin/tool -network-type 0 -bsc-val-addr)
-    echo "${KEYPASS}" | ${workspace}/bin/tbnbcli staking bsc-unbond \
-     --chain-id ${BC_CHAIN_ID} \
-     --side-chain-id ${BSC_CHAIN_NAME} \
-     --from node${validator_index}-delegator \
-     --validator ${validator_addr} \
-     --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB \
-     --node ${BC_NODE_URL} --trust-node \
-     --home ${workspace}/.local/bc/node${validator_index}
-
-
     # create new validator
     rm -rf ${workspace}/.local/bsc/new_validator${validator_index}
     rm -rf ${workspace}/.local/bsc/new_validator${validator_index}_operator
@@ -385,6 +373,18 @@ function migrate_validator() {
         --instance-ids "${dst_id}" \
         --document-name "AWS-RunShellScript" \
         --parameters commands="sudo bash +x /server/bsc/start_geth.sh ${validator_index}"
+
+    # unbound old validator on bc
+    validator_addr=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${validator_index} | grep node${validator_index} | awk '$1 == "node'${validator_index}'-delegator" {print $3}')
+    validator_addr=$(echo ${validator_addr} | xargs ${workspace}/bin/tool -network-type 0 -bsc-val-addr)
+    echo "${KEYPASS}" | ${workspace}/bin/tbnbcli staking bsc-unbond \
+     --chain-id ${BC_CHAIN_ID} \
+     --side-chain-id ${BSC_CHAIN_NAME} \
+     --from node${validator_index}-delegator \
+     --validator ${validator_addr} \
+     --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB \
+     --node ${BC_NODE_URL} --trust-node \
+     --home ${workspace}/.local/bc/node${validator_index}
 }
 
 CMD=$1
