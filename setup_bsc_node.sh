@@ -204,7 +204,6 @@ function cluster_restart() {
 
     yes | cp -r ${workspace}/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
     yes | cp -r ${workspace}/start_geth.sh /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
-    yes | cp -f ${workspace}/bin/geth /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
 
     for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
         dst_id=${ips2ids[${bsc_node_ips[i]}]}
@@ -266,7 +265,8 @@ function fyenman_hardfork(){
     sed -i -e "s/TokenRecoverPortalContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/TokenRecoverPortalContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
 
     cd ${workspace}/tmp/bsc-feynman/bsc && make geth
-    cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth ${workspace}/bin/geth_feynman
+    yes | cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth ${workspace}/bin/geth_feynman
+    yes | cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
 }
 
 function clean() {
@@ -298,6 +298,7 @@ cluster_restart)
 fyenman_hardfork)
     echo "===== fyenman_hardfork ===="
     fyenman_hardfork
+    cluster_restart
     echo "===== end ===="
     ;;
 *)
