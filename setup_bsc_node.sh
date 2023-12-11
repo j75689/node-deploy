@@ -366,8 +366,8 @@ function migrate_validator() {
      -commission_rate 800 -commission_max_rate 950 -commission_max_change_rate 300 \
      -moniker "Nval${validator_index}" -details ${cons_addr} -identity ${operator_addr}
 
-    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/node${validator_index}/keystore
-    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/node${validator_index}/bls
+    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
+    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls
     yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/keystore/* /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore/
     yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/bls/* /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls/
 
