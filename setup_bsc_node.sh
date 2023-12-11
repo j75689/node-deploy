@@ -376,7 +376,12 @@ fyenman_hardfork)
     wait_for_hardfork ${hardfork_time}
     echo "===== end ===="
     ;;
+migrate_validator)
+    echo "===== migrate_validator ===="
+    migrate_validator $2
+    echo "===== end ===="
+    ;;
 *)
-    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | fyenman_hardfork"
+    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | fyenman_hardfork | migrate_validator"
     ;;
 esac
