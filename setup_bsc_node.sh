@@ -341,6 +341,7 @@ function migrate_validator() {
      --from node${validator_index}-delegator \
      --validator ${validator_addr} \
      --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB \
+     --node ${BC_NODE_URL} --trust-node \
      --home ${workspace}/.local/bc/node${validator_index}
 
 }
