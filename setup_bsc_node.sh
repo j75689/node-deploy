@@ -356,6 +356,9 @@ function migrate_validator() {
      -commission_rate 800 -commission_max_rate 950 -commission_max_change_rate 300 \
      -moniker "Nval${validator_index}" -details ${cons_addr} -identity ${operator_addr}
 
+    echo "Wait 90s for new validator to be ready"
+    sleep 90
+
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
