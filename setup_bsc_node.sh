@@ -371,7 +371,7 @@ function migrate_validator() {
     ${workspace}/bin/migrate_tool -priv_key ${operator_priv} -bsc_endpoint ${BSC_NODE_URL} \
      -delegation ${BSC_CREATE_DELEGATE_AMOUNT} \
      -consensus_addr ${cons_addr} -vote_addr ${vote_addr} -vote_bls_proof ${vote_addr_proof} \
-     -commission_rate 8000 -commission_max_rate 9500 -commission_max_change_rate 300 \
+     -commission_rate 800 -commission_max_rate 950 -commission_max_change_rate 300 \
      -moniker ${cons_addr} -details ${cons_addr} -identity ${operator_addr}
 }
 
