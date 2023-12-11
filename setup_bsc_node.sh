@@ -357,7 +357,8 @@ function migrate_validator() {
     transfer_amt=$((${BSC_CREATE_DELEGATE_AMOUNT} + 10000000000000000000))
     ${workspace}/bin/migrate_tool -priv_key ${INIT_HOLDER_PRV} -bsc_endpoint ${BSC_NODE_URL} \
      -amount ${transfer_amt} -to ${operator_addr}
-
+    sleep 3
+    
     operator_priv_file=""
     for f in ${workspace}/.local/bsc/new_validator${validator_index}/keystore/*;do
         operator_priv_file=${f}
