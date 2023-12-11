@@ -49,8 +49,8 @@ function cluster_up() {
     rm -rf /mnt/efs/bsc-qa/bc-fusion/relayer
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/relayer
     yes | cp -rf ${workspace}/.local/relayer/* /mnt/efs/bsc-qa/bc-fusion/relayer/
-    yes | cp -rf ${workspace}/stop_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
-    yes | cp -rf ${workspace}/start_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
+    yes | cp -rf ${workspace}/stop_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
+    yes | cp -rf ${workspace}/start_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
     yes | cp -rf ${workspace}/stop_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
     yes | cp -rf ${workspace}/start_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
 
