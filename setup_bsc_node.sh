@@ -223,6 +223,45 @@ function cluster_restart() {
     done
 }
 
+function fyenman_hardfork(){
+    rm -rf ${workspace}/tmp/bsc-feynman
+    mkdir -p ${workspace}/tmp/bsc-feynman
+    cd ${workspace}/tmp/bsc-feynman
+    git clone --branch ${BSC_BRANCH} ${BSC_REPO}
+
+    rm -rf ${workspace}/tmp/bsc_fyenman_bytecode
+    mkdir -p ${workspace}/tmp/bsc_fyenman_bytecode
+    cp -r ${workspace}/bsc_fyenman_bytecode/* ${workspace}/tmp/bsc_fyenman_bytecode/
+
+    init_validator_addr=""
+    init_vote_addr=""
+    for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
+        acc=$(${workspace}/bin/geth account list --datadir ${workspace}/.local/bsc/clusterNetwork/node${i} | grep 'Account #0' | awk -F'--' '{print $3}' | awk -F'/' '{print $NF}')
+        sed -i -e "s/_validator${i}_/${acc}/g" ${workspace}/tmp/bsc_fyenman_bytecode/StakeHubContractByteCode
+        bls=$(${workspace}/bin/geth bls account list --datadir ${workspace}/.local/bsc/clusterNetwork/node${i} --blspassword ${workspace}/.local/bsc/password.txt | grep -E -o '0x[0-9a-fA-F]+' | sed 's/0x//')
+        sed -i -e "s/_vote${i}_/${bls}/g" ${workspace}/tmp/bsc_fyenman_bytecode/StakeHubContractByteCode
+    done
+    
+    
+    genesis_hash=$(curl -s ${BSC_NODE_URL} \
+        -X POST \
+        -H "Content-Type: application/json" \
+        --data '{"method":"eth_getBlockByNumber","params":["0x0",false],"id":1,"jsonrpc":"2.0"}' | jq -r '.result.hash')
+    echo "genesis_hash:" ${genesis_hash}
+    sed -i -e "s/0xee835a629f9cf5510b48b6ba41d69e0ff7d6ef10f977166ef939db41f59f5501/${genesis_hash}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
+    sed -i -e "s/ValidatorContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/ValidatorContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/SlashContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/SlashContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/StakeHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/StakingContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/StakeCreditContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/StakeCreditContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/GovernorContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/GovernorContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/GovTokenContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/GovTokenContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/TimelockContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/TimelockContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/TokenRecoverPortalContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/TokenRecoverPortalContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+
+    cd ${workspace}/tmp/bsc-feynman/bsc && make geth
+    cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth ${workspace}/bin/geth_feynman
+}
+
 function clean() {
     rm -rf ${workspace}/.local/bsc
 }

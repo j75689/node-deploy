@@ -233,6 +233,33 @@ function enable_mirror_channel() {
     done
 }
 
+function first_sunset_hardfork() {
+    current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
+
+    expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        sed -i -e "s/FirstSunsetHeight = 9223372036854775807/FirstSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+    done
+}
+
+function second_sunset_hardfork() {
+    current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
+
+    expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        sed -i -e "s/SecondSunsetHeight = 9223372036854775807/SecondSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+    done
+}
+
+function final_sunset_hardfork() {
+    current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
+
+    expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        sed -i -e "s/FinalSunsetHeight = 9223372036854775807/FinalSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+    done
+}
+
 CMD=$1
 case ${CMD} in
 init)
@@ -260,7 +287,25 @@ enable_mirror_channel)
     enable_mirror_channel
     echo "===== end ===="
     ;;
+first_sunset_hardfork)
+    echo "===== first_sunset_hardfork ===="
+    first_sunset_hardfork
+    cluster_restart
+    echo "===== end ===="
+    ;;
+second_sunset_hardfork)
+    echo "===== second_sunset_hardfork ===="
+    second_sunset_hardfork
+    # cluster_restart
+    echo "===== end ===="
+    ;;
+final_sunset_hardfork)
+    echo "===== final_sunset_hardfork ===="
+    final_sunset_hardfork
+    # cluster_restart
+    echo "===== end ===="
+    ;;
 *)
-    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down | cluster_restart | enable_mirror_channel"
+    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down | cluster_restart | enable_mirror_channel | first_sunset_hardfork"
     ;;
 esac
