@@ -247,11 +247,19 @@ function fyenman_hardfork(){
         -H "Content-Type: application/json" \
         --data '{"method":"eth_getBlockByNumber","params":["0x0",false],"id":1,"jsonrpc":"2.0"}' | jq -r '.result.hash')
     echo "genesis_hash:" ${genesis_hash}
+    current_block=$(curl -s ${BSC_NODE_URL} \
+        -X POST \
+        -H "Content-Type: application/json" \
+        --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' | jq -r '.result')
+    hertz_upgrade_block=$((${current_block} + ${BSC_WAIT_BLOCK_FOR_HERTZ}))
+
     current_time=$(date +%s)
-    upgrade_time=$((${current_time} + ${WAIT_BLOCK_FOR_HARDFORK}))
+    upgrade_time=$((${current_time} + ${BSC_WAIT_SEC_FOR_FYENMAN}))
     echo "upgrade_time:" ${upgrade_time}
 
     sed -i -e "s/0xee835a629f9cf5510b48b6ba41d69e0ff7d6ef10f977166ef939db41f59f5501/${genesis_hash}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
+    
+    sed -i -e "s/_hertz_upgrade_block_/big.NewInt(${hertz_upgrade_block})/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
     sed -i -e "s/_rialto_upgrade_height_/newUint64(${upgrade_time})/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
     
     sed -i -e "s/ValidatorContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/ValidatorContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
