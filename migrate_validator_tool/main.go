@@ -84,6 +84,15 @@ func main() {
 		panic(err)
 	}
 	delegation, _ := new(big.Int).SetString(*delegation, 10)
+	balance, err := ethClient.BalanceAt(context.Background(), acc.Addr, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	if balance.Cmp(delegation) < 0 {
+		panic(fmt.Sprintln("insufficient balance:", balance, delegation))
+	}
+
 	gasLimit := uint64(3000000)
 	txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, delegation, nil, gasLimit)
 	if err != nil {
