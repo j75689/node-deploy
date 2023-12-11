@@ -14,8 +14,13 @@ if [ "${cmd}" == "reset" ]; then
     cp -r /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${i}/* /server/bsc/validator/
 fi
 
+rm -rf /server/bsc/validator/bls
+rm -rf /server/bsc/validator/keystore
 yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/geth /server/bsc/validator/geth${i}
 yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${i}/config.toml /server/bsc/validator/
+yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${i}/keystore /server/bsc/validator/
+yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${i}/bls /server/bsc/validator/
+
 
 for j in /server/bsc/validator/keystore/*; do
     cons_addr="0x$(cat ${j} | jq -r .address)"

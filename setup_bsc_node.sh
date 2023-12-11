@@ -11,6 +11,11 @@ standalone=false
 bsc_node_ips=(${BSC_NODE_IP})
 nodeurl=${BC_NODE_URL}
 
+declare -A ips2ids
+ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
+ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
+ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
+
 # need a clean bc without stakings
 function register_validator() {
     rm -rf ${workspace}/.local/bsc
@@ -155,11 +160,6 @@ function initNetwork() {
 }
 
 function cluster_up() {
-    declare -A ips2ids
-    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
-    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
-    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
-
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/bsc_cluster
     cp -r ${workspace}/.local/bsc/* /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
@@ -185,11 +185,6 @@ function cluster_up() {
 }
 
 function cluster_down() {
-    declare -A ips2ids
-    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
-    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
-    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
-
     for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
         dst_id=${ips2ids[${bsc_node_ips[i]}]}
         aws ssm send-command \
@@ -200,11 +195,6 @@ function cluster_down() {
 }
 
 function cluster_restart() {
-    declare -A ips2ids
-    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
-    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
-    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
-
     yes | cp -r ${workspace}/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
     yes | cp -r ${workspace}/start_geth.sh /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
 
@@ -348,9 +338,11 @@ function migrate_validator() {
 
     # create new validator
     rm -rf ${workspace}/.local/bsc/new_validator${validator_index}
+    rm -rf ${workspace}/.local/bsc/new_validator${validator_index}_operator
     mkdir -p ${workspace}/.local/bsc/new_validator${validator_index}
+    mkdir -p ${workspace}/.local/bsc/new_validator${validator_index}_operator
     cons_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index} --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
-    operator_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index} --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
+    operator_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index}_operator --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
     expect create_bls_key.exp ${workspace}/.local/bsc/new_validator${validator_index} ${KEYPASS}
     vote_addr=0x$(cat ${workspace}/.local/bsc/new_validator${validator_index}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
     vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
@@ -363,7 +355,7 @@ function migrate_validator() {
      -amount ${transfer_amt} -to ${operator_addr}
 
     operator_priv_file=""
-    for f in ${workspace}/.local/bsc/new_validator${validator_index}/keystore/*;do
+    for f in ${workspace}/.local/bsc/new_validator${validator_index}_operator/keystore/*;do
         operator_priv_file=${f}
     done
     operator_priv=$(${workspace}/bin/migrate_tool -secret ${operator_priv_file} -password ${KEYPASS})
@@ -373,6 +365,22 @@ function migrate_validator() {
      -consensus_addr ${cons_addr} -vote_addr ${vote_addr} -vote_bls_proof ${vote_addr_proof} \
      -commission_rate 800 -commission_max_rate 950 -commission_max_change_rate 300 \
      -moniker "Nval${validator_index}" -details ${cons_addr} -identity ${operator_addr}
+
+    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/node${validator_index}/keystore
+    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/node${validator_index}/bls
+    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/keystore/* /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore/
+    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/bls/* /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls/
+
+    dst_id=${ips2ids[${bsc_node_ips[validator_index]}]}
+    aws ssm send-command \
+        --instance-ids "${dst_id}" \
+        --document-name "AWS-RunShellScript" \
+        --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
+    sleep 10
+    aws ssm send-command \
+        --instance-ids "${dst_id}" \
+        --document-name "AWS-RunShellScript" \
+        --parameters commands="sudo bash +x /server/bsc/start_geth.sh ${validator_index}"
 }
 
 CMD=$1
