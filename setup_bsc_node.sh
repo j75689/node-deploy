@@ -253,8 +253,12 @@ function fyenman_hardfork(){
         --data '{"method":"eth_blockNumber","params":[],"id":1,"jsonrpc":"2.0"}' | jq -r '.result')
     hertz_upgrade_block=$((${current_block} + ${BSC_WAIT_BLOCK_FOR_HERTZ}))
 
-    current_time=$(date +%s)
-    upgrade_time=$((${current_time} + ${BSC_WAIT_SEC_FOR_FYENMAN}))
+    upgrade_time=$1
+    # Check if the input is empty
+    if [ -z "$upgrade_time" ]; then
+      echo "Please provide a timestamp as upgrade_time."
+      exit 1
+    fi
     echo "upgrade_time:" ${upgrade_time}
 
     sed -i -e "s/0xee835a629f9cf5510b48b6ba41d69e0ff7d6ef10f977166ef939db41f59f5501/${genesis_hash}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
@@ -343,7 +347,9 @@ cluster_restart)
     ;;
 fyenman_hardfork)
     echo "===== fyenman_hardfork ===="
-    hardfork_time=$(fyenman_hardfork)
+    current_time=$(date +%s)
+    hardfork_time=$((${current_time} + ${BSC_WAIT_SEC_FOR_FYENMAN}))
+    fyenman_hardfork ${hardfork_time}
     cluster_restart
     wait_for_hardfork ${hardfork_time}
     echo "===== end ===="
