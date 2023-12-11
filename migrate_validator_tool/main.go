@@ -67,6 +67,7 @@ func main() {
 		}
 		toAddr := common.HexToAddress(*to)
 		amount, _ := new(big.Int).SetString(*transferAmount, 10)
+		fmt.Println("transfer amount:", amount, "from:", from.Addr, "to:", toAddr.String())
 		err = nativeTransfer(ethClient, &from, toAddr, amount)
 		if err != nil {
 			panic(err)
