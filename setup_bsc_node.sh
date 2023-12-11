@@ -108,6 +108,8 @@ function prepare_config() {
     else
         node generate-genesis.js --chainid 714 --bscChainId 02ca --network 'local'
     fi
+    sed -i -e "s/\"period\": 3/\"period\": ${BSC_BLCOK_INTERVAL}/g" ${workspace}/genesis/genesis.json
+    
 
 }
 function generate_static_peers() {
