@@ -354,7 +354,7 @@ function migrate_validator() {
     vote_addr=0x$(cat ${workspace}/.local/bsc/new_validator${validator_index}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
     vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
 
-    transfer_amt=$((${BSC_INIT_DELEGATE_AMOUNT} + 10000000000000000000}))
+    transfer_amt=$((${BSC_CREATE_DELEGATE_AMOUNT} + 10000000000000000000))
     ${workspace}/bin/migrate_tool -priv_key ${INIT_HOLDER_PRV} -bsc_endpoint ${BSC_NODE_URL} \
      -amount ${transfer_amt} -to ${operator_addr}
 
