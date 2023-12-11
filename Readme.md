@@ -5,3 +5,9 @@ echo "12345678" | ./bin/tbnbcli bridge transfer-out --amount 500000000:BNB --exp
 
 curl -X POST "http://172.22.42.13:8545" -H "Content-Type: application/json"  --data '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0xF34273E326FF62bB1F7aD9b7bAf62DA9BE40ffe4", "latest"],"id":1}' 
 ```
+
+
+## ABI GENERATION
+```bash
+abigen --abi=./migrate_validator_tool/abi/stakehub.abi --pkg=stakehub --out=./migrate_validator_tool/abi/stakehub.go
+```

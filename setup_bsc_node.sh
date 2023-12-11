@@ -24,7 +24,7 @@ function register_validator() {
         mkdir -p ${workspace}/.local/bsc/bls${i}
         expect create_bls_key.exp ${workspace}/.local/bsc/bls${i} ${KEYPASS}
         vote_addr=0x$(cat ${workspace}/.local/bsc/bls${i}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
-
+        
         node_dir_index=${i}
         if [ $i -ge ${BC_CLUSTER_SIZE} ]; then
             # echo "${KEYPASS}" | ${workspace}/bin/tbnbcli keys delete node${i}-delegator --home ${workspace}/.local/bc/node0 # for re-entry
@@ -335,7 +335,7 @@ function migrate_validator() {
 
     validator_addr=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${validator_index} | grep node${validator_index} | awk '$1 == "node'${validator_index}'-delegator" {print $3}')
     validator_addr=$(echo ${validator_addr} | xargs ${workspace}/bin/tool -network-type 0 -bsc-val-addr)
-    ${workspace}/bin/tbnbcli staking bsc-unbond \
+    echo "${KEYPASS}" | ${workspace}/bin/tbnbcli staking bsc-unbond \
      --chain-id ${BC_CHAIN_ID} \
      --side-chain-id ${BSC_CHAIN_NAME} \
      --from node${validator_index}-delegator \
@@ -344,6 +344,30 @@ function migrate_validator() {
      --node ${BC_NODE_URL} --trust-node \
      --home ${workspace}/.local/bc/node${validator_index}
 
+
+    # create new validator
+    rm -rf ${workspace}/.local/bsc/new_validator${validator_index}
+    mkdir -p ${workspace}/.local/bsc/new_validator${validator_index}
+    cons_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index} --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
+    operator_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index} --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
+    expect create_bls_key.exp ${workspace}/.local/bsc/new_validator${validator_index} ${KEYPASS}
+    vote_addr=0x$(cat ${workspace}/.local/bsc/new_validator${validator_index}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
+    vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
+
+    ${workspace}/bin/migrate_tool -priv_key ${INIT_HOLDER_PRV} -bsc_endpoint ${BSC_NODE_URL} \
+     -amount ${BSC_CREATE_DELEGATE_AMOUNT} -to ${operator_addr}
+
+    operator_priv_file=""
+    for f in ${workspace}/.local/bsc/new_validator${validator_index}/keystore/*;do
+        operator_priv_file=${f}
+    done
+    operator_priv=$(${workspace}/bin/migrate_tool -secret ${operator_priv_file} -password ${KEYPASS})
+
+    ${workspace}/bin/migrate_tool -priv_key ${operator_priv} -bsc_endpoint ${BSC_NODE_URL} \
+     -delegation ${BSC_CREATE_DELEGATE_AMOUNT} \
+     -consensus_addr ${cons_addr} -vote_addr ${vote_addr} -vote_bls_proof ${vote_addr_proof} \
+     -commission_rate 8000 -commission_max_rate 9500 -commission_max_change_rate 300 \
+     -moniker ${cons_addr} -details ${cons_addr} -identity ${operator_addr}
 }
 
 CMD=$1
