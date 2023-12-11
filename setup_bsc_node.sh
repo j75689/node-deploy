@@ -288,7 +288,12 @@ cluster_restart)
     cluster_restart
     echo "===== end ===="
     ;;
+fyenman_hardfork)
+    echo "===== fyenman_hardfork ===="
+    fyenman_hardfork
+    echo "===== end ===="
+    ;;
 *)
-    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart"
+    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | fyenman_hardfork"
     ;;
 esac
