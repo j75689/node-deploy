@@ -90,7 +90,7 @@ func main() {
 	}
 
 	if balance.Cmp(delegation) < 0 {
-		panic(fmt.Sprintln("insufficient balance:", balance, delegation))
+		panic(fmt.Sprintln(acc.Addr, "insufficient balance:", balance, delegation))
 	}
 
 	gasLimit := uint64(3000000)
