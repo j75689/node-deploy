@@ -62,8 +62,10 @@ function register_validator() {
 }
 
 function prepare_config() {
-    rm -f ${workspace}/genesis/validators.conf
+    cd ${workspace}/genesis/
+    git add . && git stash
 
+    cd ${workspace}
     for ((i=0;i<${size};i++));do
         for f in ${workspace}/.local/bsc/validator${i}/keystore/*;do
             cons_addr="0x$(cat ${f} | jq -r .address)"
@@ -89,7 +91,6 @@ function prepare_config() {
     done
 
     cd ${workspace}/genesis/
-    git add . && git stash
     npm install
     sed -i -e "s/address public constant WHITELIST_1 = 0xA904540818AC9c47f2321F97F1069B9d8746c6DB;/address public constant WHITELIST_1 = ${INIT_HOLDER};/g" ${workspace}/genesis/contracts/RelayerHub.template
     sed -i -e "s/dues = INIT_DUES;/dues = INIT_DUES;\n        whitelistInit();/g" ${workspace}/genesis/contracts/RelayerHub.template
