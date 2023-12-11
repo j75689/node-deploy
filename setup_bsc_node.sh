@@ -227,7 +227,7 @@ function fyenman_hardfork(){
     rm -rf ${workspace}/tmp/bsc-feynman
     mkdir -p ${workspace}/tmp/bsc-feynman
     cd ${workspace}/tmp/bsc-feynman
-    git clone --branch ${BSC_BRANCH} ${BSC_REPO}
+    git clone --branch ${BSC_FYENMAN_REPO} ${BSC_FYENMAN_BRANCH}
 
     rm -rf ${workspace}/tmp/bsc_fyenman_bytecode
     mkdir -p ${workspace}/tmp/bsc_fyenman_bytecode
