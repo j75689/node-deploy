@@ -251,7 +251,8 @@ function fyenman_hardfork(){
     sed -i -e "s/0xee835a629f9cf5510b48b6ba41d69e0ff7d6ef10f977166ef939db41f59f5501/${genesis_hash}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
     sed -i -e "s/ValidatorContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/ValidatorContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/SlashContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/SlashContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
-    sed -i -e "s/StakeHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/StakingContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/StakingContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/StakingContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/StakeHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/StakeHubContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/StakeCreditContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/StakeCreditContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/GovernorContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/GovernorContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/GovTokenContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/GovTokenContractByteCode)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
