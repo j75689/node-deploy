@@ -10,11 +10,13 @@ import (
 	"github.com/binance-chain/go-sdk/client/rpc"
 	btypes "github.com/binance-chain/go-sdk/common/types"
 	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/types"
 )
 
 var (
+	bscValAddr  = flag.String("bsc-val-addr", "", "BSC validator operator address")
 	bech32Addr  = flag.String("addr", "", "Bech32 format address")
 	power       = flag.Int("power", 0, "voting power")
 	provider    = flag.String("rpc", "", "node URL of beacon chain")
@@ -91,17 +93,29 @@ func (cs ConsensusState) EncodeConsensusState() ([]byte, error) {
 func main() {
 	flag.Parse()
 
+	Bech32PrefixAccAddr := "tbnb"
+	if *networkType == 1 {
+		Bech32PrefixAccAddr = "bnb"
+	}
+
 	if *bech32Addr != "" {
-		Bech32PrefixAccAddr := "tbnb"
-		if *networkType == 1 {
-			Bech32PrefixAccAddr = "bnb"
-		}
 		bz, err := btypes.GetFromBech32(*bech32Addr, Bech32PrefixAccAddr)
 		if err != nil {
 			fmt.Println(err)
+			return
 		}
 		addr := btypes.AccAddress(bz)
 		fmt.Println(common.BytesToAddress(addr.Bytes()))
+	}
+
+	if *bscValAddr != "" {
+		bz, err := btypes.GetFromBech32(*bscValAddr, Bech32PrefixAccAddr)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		addr := btypes.AccAddress(bz)
+		fmt.Println(btypes.ValAddress(addr))
 	}
 
 	if *power > 0 {

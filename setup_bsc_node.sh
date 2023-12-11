@@ -323,6 +323,26 @@ function wait_for_hardfork(){
     echo "Time has elapsed!"
 }
 
+function migrate_validator() {
+    validator_index=$1
+    # Check if the input is empty
+    if [ -z "$validator_index" ]; then
+      echo "Please provide a validator index as input."
+      exit 1
+    fi
+
+    validator_addr=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${validator_index} | grep node${validator_index} | awk '$1 == "node'${validator_index}'-delegator" {print $3}')
+    validator_addr=$(echo ${validator_addr} | xargs ${workspace}/bin/tool -network-type 0 -bsc-val-addr)
+    ${workspace}/bin/tbnbcli staking bsc-unbond \
+     --chain-id ${BC_CHAIN_ID} \
+     --side-chain-id ${BSC_CHAIN_NAME} \
+     --from node${validator_index}-delegator \
+     --validator ${validator_addr} \
+     --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB \
+     --home ${workspace}/.local/bc/node${validator_index}
+
+}
+
 CMD=$1
 case ${CMD} in
 cluster_up)
