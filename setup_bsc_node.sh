@@ -277,10 +277,46 @@ function fyenman_hardfork(){
     cd ${workspace}/tmp/bsc-feynman/bsc && make geth
     yes | cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth ${workspace}/bin/geth_feynman
     yes | cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/
+
+    echo $upgrade_time
 }
 
 function clean() {
     rm -rf ${workspace}/.local/bsc
+}
+
+function wait_for_hardfork(){
+    # Input the target timestamp
+    target_timestamp="$1"
+
+    # Check if the input is empty
+    if [ -z "$target_timestamp" ]; then
+      echo "Please provide a timestamp as input."
+      exit 1
+    fi
+
+    # Get the current timestamp
+    current_timestamp=$(date +%s)
+
+    # Calculate the waiting time in seconds
+    wait_seconds=$((target_timestamp - current_timestamp))
+
+    # Check if waiting is necessary
+    if [ $wait_seconds -le 0 ]; then
+      echo "The input timestamp has already passed."
+      exit 1
+    fi
+
+    # Calculate the number of iterations
+    iterations=$((wait_seconds / 5))
+
+    # Run the for loop
+    for ((i = 0; i < iterations; i++)); do
+      echo "Waiting... (remaining seconds: $((target_timestamp - (current_timestamp + i * 5))))"
+      sleep 5
+    done
+
+    echo "Time has elapsed!"
 }
 
 CMD=$1
@@ -307,8 +343,9 @@ cluster_restart)
     ;;
 fyenman_hardfork)
     echo "===== fyenman_hardfork ===="
-    fyenman_hardfork
+    hardfork_time=$(fyenman_hardfork)
     cluster_restart
+    wait_for_hardfork ${hardfork_time}
     echo "===== end ===="
     ;;
 *)
