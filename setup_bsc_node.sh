@@ -372,7 +372,7 @@ function migrate_validator() {
      -delegation ${BSC_CREATE_DELEGATE_AMOUNT} \
      -consensus_addr ${cons_addr} -vote_addr ${vote_addr} -vote_bls_proof ${vote_addr_proof} \
      -commission_rate 800 -commission_max_rate 950 -commission_max_change_rate 300 \
-     -moniker ${cons_addr} -details ${cons_addr} -identity ${operator_addr}
+     -moniker "Nval${validator_index}" -details ${cons_addr} -identity ${operator_addr}
 }
 
 CMD=$1
