@@ -281,7 +281,7 @@ function final_sunset_hardfork() {
     echo $expect_hardfork_height
 }
 
-function waitForHardfork() {
+function wait_for_hardfork() {
     expect_hardfork_height=$1
     current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
     echo "current_height: ${current_height}, expect_hardfork_height: ${expect_hardfork_height}"
