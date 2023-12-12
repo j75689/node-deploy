@@ -418,6 +418,7 @@ fyenman_hardfork)
     hardfork_time=$((${current_time} + ${BSC_WAIT_SEC_FOR_FYENMAN}))
     fyenman_hardfork ${hardfork_time}
     cluster_restart
+    cluster_restart
     wait_for_hardfork ${hardfork_time}
     echo "===== end ===="
     ;;

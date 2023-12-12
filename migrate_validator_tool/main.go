@@ -273,10 +273,15 @@ func convertGethPrivateKey() {
 }
 
 func getElectionInfo(contract *stakehub.Stakehub) error {
+	maxElection, err := contract.MaxElectedValidators(nil)
+	if err != nil {
+		panic(err)
+	}
 	validators, err := contract.GetValidatorElectionInfo(nil, big.NewInt(0), big.NewInt(0))
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("MaxElectedValidators: %+v\n", maxElection.Uint64())
 	fmt.Printf("%+v\n", validators)
 	return nil
 }
