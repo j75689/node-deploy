@@ -27,7 +27,7 @@ function register_validator() {
         cons_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/validator${i} --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
         fee_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/validator${i}_fee --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
         mkdir -p ${workspace}/.local/bsc/bls${i}
-        expect create_bls_key.exp ${workspace}/.local/bsc/bls${i} ${KEYPASS}
+        ${workspace}/bin/geth bls account new --datadir ${workspace}/.local/bsc/bls${i} --blspassword ${workspace}/.local/bsc/password.txt
         vote_addr=0x$(cat ${workspace}/.local/bsc/bls${i}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
         
         node_dir_index=${i}
@@ -333,7 +333,7 @@ function migrate_validator() {
     mkdir -p ${workspace}/.local/bsc/new_validator${validator_index}_operator
     cons_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index} --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
     operator_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index}_operator --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
-    expect create_bls_key.exp ${workspace}/.local/bsc/new_validator${validator_index} ${KEYPASS}
+    ${workspace}/bin/geth bls account new --datadir ${workspace}/.local/bsc/new_validator${validator_index} --blspassword ${workspace}/.local/bsc/password.txt
     vote_addr=0x$(cat ${workspace}/.local/bsc/new_validator${validator_index}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
     vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
 
