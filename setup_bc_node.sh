@@ -257,6 +257,7 @@ function first_sunset_hardfork() {
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/FirstSunsetHeight = 9223372036854775807/FirstSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
     done
+    echo $expect_hardfork_height
 }
 
 function second_sunset_hardfork() {
@@ -266,6 +267,7 @@ function second_sunset_hardfork() {
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/SecondSunsetHeight = 9223372036854775807/SecondSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
     done
+    echo $expect_hardfork_height
 }
 
 function final_sunset_hardfork() {
@@ -274,6 +276,21 @@ function final_sunset_hardfork() {
     expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/FinalSunsetHeight = 9223372036854775807/FinalSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+    done
+
+    echo $expect_hardfork_height
+}
+
+function waitForHardfork() {
+    expect_hardfork_height=$1
+    current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
+    echo "current_height: ${current_height}, expect_hardfork_height: ${expect_hardfork_height}"
+    while true; do
+        current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
+        if [ ${current_height} -ge ${expect_hardfork_height} ]; then
+            break
+        fi
+        sleep 10
     done
 }
 
@@ -311,20 +328,23 @@ disable_staking_channel)
     ;;
 first_sunset_hardfork)
     echo "===== first_sunset_hardfork ===="
-    first_sunset_hardfork
+    target=$(first_sunset_hardfork)
     cluster_restart
+    wait_for_hardfork ${target}
     echo "===== end ===="
     ;;
 second_sunset_hardfork)
     echo "===== second_sunset_hardfork ===="
-    second_sunset_hardfork
-    # cluster_restart
+    target=$(second_sunset_hardfork)
+    cluster_restart
+    wait_for_hardfork ${target}
     echo "===== end ===="
     ;;
 final_sunset_hardfork)
     echo "===== final_sunset_hardfork ===="
-    final_sunset_hardfork
-    # cluster_restart
+    target=$(final_sunset_hardfork)
+    cluster_restart
+    wait_for_hardfork ${target}
     echo "===== end ===="
     ;;
 *)
