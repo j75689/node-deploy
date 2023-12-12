@@ -18,14 +18,20 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 
-	abi "github.com/bnb-chain/node-deploy/migrate_validator_tool/abi"
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/stakehub"
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/validatorset"
 )
 
 const (
-	StakeHubContractAddr = "0x0000000000000000000000000000000000002002"
+	ValidatorSetContractAddr = "0x0000000000000000000000000000000000001000"
+	StakeHubContractAddr     = "0x0000000000000000000000000000000000002002"
 )
 
 var (
+	getValidatorElection = flag.Bool("get_validator_election", false, "")
+	getValidatorSet      = flag.Bool("get_validator_set", false, "")
+	getWorkingValidators = flag.Bool("get_working_validators", false, "")
+
 	secretFile = flag.String("secret", "", "secret file path")
 	password   = flag.String("password", "", "password")
 
@@ -75,9 +81,26 @@ func main() {
 		return
 	}
 
-	stakeHubContract, err := abi.NewStakehub(common.HexToAddress(StakeHubContractAddr), ethClient)
+	stakeHubContract, err := stakehub.NewStakehub(common.HexToAddress(StakeHubContractAddr), ethClient)
 	if err != nil {
 		panic(err)
+	}
+
+	validatorContract, err := validatorset.NewValidatorset(common.HexToAddress(ValidatorSetContractAddr), ethClient)
+	if err != nil {
+		panic(err)
+	}
+	if *getValidatorElection {
+		getElectionInfo(stakeHubContract)
+		return
+	}
+	if *getValidatorSet {
+		getCurValidatorSet(validatorContract)
+		return
+	}
+	if *getWorkingValidators {
+		getWorkingValidatorSet(validatorContract)
+		return
 	}
 
 	acc, err := FromHexKey(*bscPrivKey)
@@ -110,12 +133,12 @@ func main() {
 	consAddr := common.HexToAddress(*consensusAddr)
 
 	tx, err := stakeHubContract.CreateValidator(txOpt, consAddr,
-		voteAddrBytes, voteBLSProofBytes, abi.StakeHubCommission{
+		voteAddrBytes, voteBLSProofBytes, stakehub.StakeHubCommission{
 			Rate:          uint64(*commissionRate),
 			MaxRate:       uint64(*commissionMaxRate),
 			MaxChangeRate: uint64(*commissionMaxChangeRate),
 		},
-		abi.StakeHubDescription{
+		stakehub.StakeHubDescription{
 			Moniker:  *moniker,
 			Identity: *identity,
 			Website:  *website,
@@ -247,4 +270,38 @@ func convertGethPrivateKey() {
 	}
 
 	fmt.Println(hex.EncodeToString(crypto.FromECDSA(key.PrivateKey)))
+}
+
+func getElectionInfo(contract *stakehub.Stakehub) error {
+	validators, err := contract.GetValidatorElectionInfo(nil, big.NewInt(0), big.NewInt(0))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", validators)
+	return nil
+}
+
+func getCurValidatorSet(contract *validatorset.Validatorset) error {
+	address, err := contract.GetValidators(nil)
+	if err != nil {
+		panic(err)
+	}
+	for i := 0; i < len(address); i++ {
+		validators, err := contract.CurrentValidatorSet(nil, big.NewInt(int64(i)))
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("%+v\n", validators)
+	}
+
+	return nil
+}
+
+func getWorkingValidatorSet(contract *validatorset.Validatorset) error {
+	address, _, err := contract.GetMiningValidators(nil)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(address)
+	return nil
 }
