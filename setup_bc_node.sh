@@ -333,6 +333,7 @@ first_sunset_hardfork)
     echo "===== first_sunset_hardfork ===="
     target=$(first_sunset_hardfork)
     cluster_restart
+    sleep 10
     wait_for_hardfork ${target}
     echo "===== end ===="
     ;;
@@ -340,6 +341,7 @@ second_sunset_hardfork)
     echo "===== second_sunset_hardfork ===="
     target=$(second_sunset_hardfork)
     cluster_restart
+    sleep 10
     wait_for_hardfork ${target}
     echo "===== end ===="
     ;;
@@ -347,6 +349,7 @@ final_sunset_hardfork)
     echo "===== final_sunset_hardfork ===="
     target=$(final_sunset_hardfork)
     cluster_restart
+    sleep 10
     wait_for_hardfork ${target}
     echo "===== end ===="
     ;;
