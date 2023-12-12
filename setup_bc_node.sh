@@ -256,6 +256,7 @@ function first_sunset_hardfork() {
     expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/FirstSunsetHeight = 9223372036854775807/FirstSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion/bc_cluster/node${i}/config/app.toml
     done
     echo $expect_hardfork_height
 }
@@ -266,6 +267,7 @@ function second_sunset_hardfork() {
     expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/SecondSunsetHeight = 9223372036854775807/SecondSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion/bc_cluster/node${i}/config/app.toml
     done
     echo $expect_hardfork_height
 }
@@ -276,6 +278,7 @@ function final_sunset_hardfork() {
     expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/FinalSunsetHeight = 9223372036854775807/FinalSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion/bc_cluster/node${i}/config/app.toml
     done
 
     echo $expect_hardfork_height
