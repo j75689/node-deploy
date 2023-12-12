@@ -286,10 +286,9 @@ function final_sunset_hardfork() {
 
 function wait_for_hardfork() {
     expect_hardfork_height=$1
-    current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
-    echo "current_height: ${current_height}, expect_hardfork_height: ${expect_hardfork_height}"
     while true; do
         current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
+        echo "current_height: ${current_height}, expect_hardfork_height: ${expect_hardfork_height}"
         if [ ${current_height} -ge ${expect_hardfork_height} ]; then
             break
         fi
