@@ -83,7 +83,7 @@ func main() {
 		fmt.Println("transfer amount:", amount, "from:", from.Addr, "to:", toAddr.String(), "gasPrice:", gasPrice)
 		err = nativeTransfer(ethClient, &from, toAddr, amount, gasPrice)
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 		return
 	}
