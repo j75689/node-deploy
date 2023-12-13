@@ -11,4 +11,5 @@ curl -X POST "http://172.22.42.13:8545" -H "Content-Type: application/json"  --d
 ```bash
 abigen --abi=./migrate_validator_tool/abi/stakehub/stakehub.abi --pkg=stakehub --out=./migrate_validator_tool/abi/stakehub/stakehub.go
 abigen --abi=./migrate_validator_tool/abi/validatorset/validatorset.abi --pkg=validatorset --out=./migrate_validator_tool/abi/validatorset/validatorset.go
+abigen --abi=./migrate_validator_tool/abi/crosschain/crosschain.abi --pkg=crosschain --out=./migrate_validator_tool/abi/crosschain/crosschain.go
 ```

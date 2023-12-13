@@ -18,6 +18,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/crosschain"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/stakehub"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/validatorset"
 )
@@ -25,9 +26,13 @@ import (
 const (
 	ValidatorSetContractAddr = "0x0000000000000000000000000000000000001000"
 	StakeHubContractAddr     = "0x0000000000000000000000000000000000002002"
+	CrossChainContractAddr   = "0x0000000000000000000000000000000000002000"
 )
 
 var (
+	getChannelPermissionChannelID = flag.Int("get_channel_permission_channel", 0, "get channel permission")
+	getChannelPermissionAddr      = flag.String("get_channel_permission_addr", "", "get channel permission")
+
 	getValidatorElection = flag.Bool("get_validator_election", false, "")
 	getValidatorSet      = flag.Bool("get_validator_set", false, "")
 	getWorkingValidators = flag.Bool("get_working_validators", false, "")
@@ -100,6 +105,16 @@ func main() {
 	}
 	if *getWorkingValidators {
 		getWorkingValidatorSet(validatorContract)
+		return
+	}
+	if *getChannelPermissionAddr != "" {
+		c, err := crosschain.NewCrosschain(common.HexToAddress(CrossChainContractAddr), ethClient)
+		if err != nil {
+			panic(err)
+		}
+		getChannelPermissionFromContract(
+			c, common.HexToAddress(*getChannelPermissionAddr), *getChannelPermissionChannelID,
+		)
 		return
 	}
 
@@ -309,4 +324,12 @@ func getWorkingValidatorSet(contract *validatorset.Validatorset) error {
 	}
 	fmt.Println(address)
 	return nil
+}
+
+func getChannelPermissionFromContract(contract *crosschain.Crosschain, addr common.Address, channelID int) {
+	permission, err := contract.RegisteredContractChannelMap(nil, addr, uint8(channelID))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("channel permission for [%s]: %v\n", addr, permission)
 }
