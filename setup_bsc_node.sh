@@ -338,10 +338,10 @@ function migrate_validator() {
     vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
 
     transfer_amt=${BSC_CREATE_DELEGATE_AMOUNT}
-    ${workspace}/bin/migrate_tool -priv_key ${INIT_HOLDER_PRV} -bsc_endpoint ${BSC_NODE_URL} \
+    ${workspace}/bin/migrate_tool -priv_key ${BSC_TX_BOT_ADDR_PRV} -bsc_endpoint ${BSC_NODE_URL} \
      -amount ${transfer_amt} -to ${operator_addr}
     transfer_amt=10000000000000000000
-    ${workspace}/bin/migrate_tool -priv_key ${INIT_HOLDER_PRV} -bsc_endpoint ${BSC_NODE_URL} \
+    ${workspace}/bin/migrate_tool -priv_key ${BSC_TX_BOT_ADDR_PRV} -bsc_endpoint ${BSC_NODE_URL} \
      -amount ${transfer_amt} -to ${operator_addr}
 
     operator_priv_file=""
