@@ -250,6 +250,23 @@ function disable_staking_channel() {
     ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
 }
 
+function enable_staking_channel() {
+    # disable staking channel
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 8 --enable=true --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "disable staking channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    echo "enable staking channel proposal_id: ${proposal_id}"
+    sleep 6
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk '$1 == "node'${i}'" {print $3}')
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $operator --amount 200000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
+        sleep 6 #wait for including tx in block
+
+        # vote
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i} --proposal-id ${proposal_id} --option Yes --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+    done
+    sleep 120
+    ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
+}
+
 function first_sunset_hardfork() {
     current_height=$(curl -sL ${BC_NODE_URL}/abci_info | jq -r '.result.response.last_block_height')
 
@@ -296,6 +313,10 @@ function wait_for_hardfork() {
     done
 }
 
+function get_channel_permission(){
+    ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
+}
+
 CMD=$1
 case ${CMD} in
 init)
@@ -316,6 +337,11 @@ cluster_down)
 cluster_restart)
     echo "===== cluster_restart ===="
     cluster_restart
+    echo "===== end ===="
+    ;;
+get_channel_permission)
+    echo "===== get_channel_permission ===="
+    get_channel_permission
     echo "===== end ===="
     ;;
 enable_mirror_channel)
@@ -353,6 +379,6 @@ final_sunset_hardfork)
     echo "===== end ===="
     ;;
 *)
-    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down | cluster_restart | enable_mirror_channel | disable_staking_channel | first_sunset_hardfork | second_sunset_hardfork | final_sunset_hardfork"
+    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down | cluster_restart | get_channel_permission | enable_mirror_channel | enable_staking_channel | disable_staking_channel | first_sunset_hardfork | second_sunset_hardfork | final_sunset_hardfork"
     ;;
 esac
