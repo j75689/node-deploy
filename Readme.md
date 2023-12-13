@@ -13,3 +13,8 @@ abigen --abi=./migrate_validator_tool/abi/stakehub/stakehub.abi --pkg=stakehub -
 abigen --abi=./migrate_validator_tool/abi/validatorset/validatorset.abi --pkg=validatorset --out=./migrate_validator_tool/abi/validatorset/validatorset.go
 abigen --abi=./migrate_validator_tool/abi/crosschain/crosschain.abi --pkg=crosschain --out=./migrate_validator_tool/abi/crosschain/crosschain.go
 ```
+
+## Extract Bytecode
+```bash
+bash ./extract_bytecode.sh <genesis.json> ./bsc_fyenman_bytecode
+```
