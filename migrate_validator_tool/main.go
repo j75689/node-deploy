@@ -42,6 +42,7 @@ var (
 
 	transferAmount = flag.String("amount", "0", "transfer amount")
 	to             = flag.String("to", "", "transfer to address")
+	gasPrice       = flag.String("gas_price", "10000000000", "transfer gasPrice")
 
 	bscPrivKey              = flag.String("priv_key", "", "BSC validator operator private key")
 	bscEndpoint             = flag.String("bsc_endpoint", "", "BSC RPC endpoint")
@@ -78,8 +79,9 @@ func main() {
 		}
 		toAddr := common.HexToAddress(*to)
 		amount, _ := new(big.Int).SetString(*transferAmount, 10)
-		fmt.Println("transfer amount:", amount, "from:", from.Addr, "to:", toAddr.String())
-		err = nativeTransfer(ethClient, &from, toAddr, amount)
+		gasPrice, _ := new(big.Int).SetString(*gasPrice, 10)
+		fmt.Println("transfer amount:", amount, "from:", from.Addr, "to:", toAddr.String(), "gasPrice:", gasPrice)
+		err = nativeTransfer(ethClient, &from, toAddr, amount, gasPrice)
 		if err != nil {
 			panic(err)
 		}
@@ -225,16 +227,19 @@ func (acc *ExtAcc) BuildTransactOpts(
 	return transactOpts, nil
 }
 
-func nativeTransfer(rpcClient *ethclient.Client, from *ExtAcc, to common.Address, amount *big.Int) error {
+func nativeTransfer(rpcClient *ethclient.Client, from *ExtAcc, to common.Address, amount *big.Int, gasPrice *big.Int) error {
 	fromAddress := from.Addr
 	nonce, err := rpcClient.PendingNonceAt(context.Background(), fromAddress)
 	if err != nil {
 		return err
 	}
 
-	gasPrice, err := rpcClient.SuggestGasPrice(context.Background())
+	suggestGasPrice, err := rpcClient.SuggestGasPrice(context.Background())
 	if err != nil {
 		return err
+	}
+	if suggestGasPrice.Cmp(gasPrice) > 0 {
+		gasPrice = suggestGasPrice
 	}
 
 	chainID, err := rpcClient.NetworkID(context.Background())

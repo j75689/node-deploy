@@ -100,7 +100,8 @@ function prepare_config() {
     sed -i -e "s/address public constant WHITELIST_1 = 0xA904540818AC9c47f2321F97F1069B9d8746c6DB;/address public constant WHITELIST_1 = ${INIT_HOLDER};/g" ${workspace}/genesis/contracts/RelayerHub.template
     sed -i -e "s/dues = INIT_DUES;/dues = INIT_DUES;\n        whitelistInit();/g" ${workspace}/genesis/contracts/RelayerHub.template
     sed -i -e "s/function whitelistInit() external/function whitelistInit() public/g" ${workspace}/genesis/contracts/RelayerHub.template
-    sed -i -e "s/10000000000000000000000000/${INIT_HOLDER_BALANCE}/g" ${workspace}/genesis/init_holders.js
+    rm -rf ${workspace}/genesis/init_holders.js
+    yes | cp -f ${workspace}/init_holder.js ${workspace}/genesis/init_holders.js
     node generate-validator.js
     if [ ${standalone} = false ]; then
         initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${nodeurl} -network-type 0)
