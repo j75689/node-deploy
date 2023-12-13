@@ -366,8 +366,8 @@ function migrate_validator() {
     done
 
     # wait epoch sync
-    echo "wait for epoch sync validator set"
-    sleep $((BSC_BLCOK_INTERVAL * 200))
+    echo "wait for epoch sync validator set $((BSC_BLCOK_INTERVAL * BSC_EPOCH))"
+    sleep $((BSC_BLCOK_INTERVAL * BSC_EPOCH))
 
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls
@@ -407,6 +407,11 @@ function unbond_validator_on_bc() {
      --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB \
      --node ${BC_NODE_URL} --trust-node \
      --home ${workspace}/.local/bc/node${validator_index}
+
+    bc_block_interval=$(echo "${BC_BLOCK_TIMEOUT}" | sed 's/s$//')
+    t=$((BC_BREATHE_BLOCK_INTERVAL * bc_block_interval))
+    echo "wait for breath block $t s"
+    sleep $t
 }
 
 CMD=$1
