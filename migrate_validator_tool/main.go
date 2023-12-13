@@ -297,7 +297,7 @@ func getElectionInfo(contract *stakehub.Stakehub) error {
 	if err != nil {
 		panic(err)
 	}
-	validators, err := contract.GetValidatorElectionInfo(nil, big.NewInt(0), big.NewInt(0))
+	validators, err := contract.GetValidatorElectionInfo(nil, big.NewInt(0), maxElection)
 	if err != nil {
 		panic(err)
 	}
