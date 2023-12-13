@@ -356,8 +356,14 @@ function migrate_validator() {
      -commission_rate 800 -commission_max_rate 950 -commission_max_change_rate 300 \
      -moniker "Nval${validator_index}" -details ${cons_addr} -identity ${operator_addr}
 
-    echo "Wait 90s for new validator to be ready"
-    sleep 90
+    while true; do
+        if ${workspace}/bin/migrate_tool -get_validator_set -bsc_endpoint "${BSC_NODE_URL}" | grep -q "${cons_addr}"; then
+            echo "New validator is ready"
+            break
+        fi
+        echo "Wait for new validator to be ready"
+        sleep 3
+    done
 
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls

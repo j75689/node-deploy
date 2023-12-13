@@ -319,13 +319,9 @@ function get_channel_permission(){
 
 CMD=$1
 case ${CMD} in
-init)
-    echo "===== init ===="
-    init
-    echo "===== end ===="
-    ;;
 cluster_up)
     echo "===== cluster_up ===="
+    init
     start_cluster
     echo "===== end ===="
     ;;
@@ -384,6 +380,6 @@ final_sunset_hardfork)
     echo "===== end ===="
     ;;
 *)
-    echo "Usage: setup_bc_node.sh init | cluster_up | cluster_down | cluster_restart | get_channel_permission | enable_mirror_channel | enable_staking_channel | disable_staking_channel | first_sunset_hardfork | second_sunset_hardfork | final_sunset_hardfork"
+    echo "Usage: setup_bc_node.sh cluster_up | cluster_down | cluster_restart | get_channel_permission | enable_mirror_channel | enable_staking_channel | disable_staking_channel | first_sunset_hardfork | second_sunset_hardfork | final_sunset_hardfork"
     ;;
 esac
