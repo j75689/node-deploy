@@ -376,6 +376,15 @@ function migrate_validator() {
         --instance-ids "${dst_id}" \
         --document-name "AWS-RunShellScript" \
         --parameters commands="sudo bash +x /server/bsc/start_geth.sh ${validator_index}"
+}
+
+function unbond_validator_on_bc() {
+    validator_index=$1
+    # Check if the input is empty
+    if [ -z "$validator_index" ]; then
+      echo "Please provide a validator index as input."
+      exit 1
+    fi
 
     # unbound old validator on bc
     validator_addr=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${validator_index} | grep node${validator_index} | awk '$1 == "node'${validator_index}'-delegator" {print $3}')
@@ -427,7 +436,12 @@ migrate_validator)
     migrate_validator $2
     echo "===== end ===="
     ;;
+unbond_validator_on_bc)
+    echo "===== unbond_validator_on_bc ===="
+    unbond_validator_on_bc $2
+    echo "===== end ===="
+    ;;
 *)
-    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | fyenman_hardfork | migrate_validator"
+    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | fyenman_hardfork | migrate_validator | unbond_validator_on_bc"
     ;;
 esac
