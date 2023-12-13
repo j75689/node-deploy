@@ -349,6 +349,11 @@ enable_mirror_channel)
     enable_mirror_channel
     echo "===== end ===="
     ;;
+enable_staking_channel)
+    echo "===== enable_staking_channel ===="
+    enable_staking_channel
+    echo "===== end ===="
+    ;;
 disable_staking_channel)
     echo "===== disable_staking_channel ===="
     disable_staking_channel
