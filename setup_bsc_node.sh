@@ -365,6 +365,10 @@ function migrate_validator() {
         sleep 3
     done
 
+    # wait epoch sync
+    echo "wait for epoch sync validator set"
+    sleep $((BSC_BLCOK_INTERVAL * 200))
+
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
