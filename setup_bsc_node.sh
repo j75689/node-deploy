@@ -97,13 +97,13 @@ function prepare_config() {
 
     cd ${workspace}/genesis/
     npm install
-    sed -i -e "s/0xA904540818AC9c47f2321F97F1069B9d8746c6DB/${INIT_HOLDER}/g" ${workspace}/scripts/generate-relayerHub.sh
+    sed -i -e "s/0xA904540818AC9c47f2321F97F1069B9d8746c6DB/${INIT_HOLDER}/g" ${workspace}/genesis/scripts/generate-relayerHub.sh
     rm -rf ${workspace}/genesis/init_holders.js
     yes | cp -f ${workspace}/init_holder.js ${workspace}/genesis/init_holders.js
     node generate-validator.js
     
     initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${nodeurl} -network-type 0)
-    sed -i -e "s/42696e616e63652d436861696e2d4e696c650000000000000000000000000000000000000000000229eca254b3859bffefaf85f4c95da9fbd26527766b784272789c30ec56b380b6eb96442aaab207bc59978ba3dd477690f5c5872334fc39e627723daa97e441e88ba4515150ec3182bc82593df36f8abb25a619187fcfab7e552b94e64ed2deed000000e8d4a51000/${initConsensusStateBytes}/g" ${workspace}/scripts/generate.sh
+    sed -i -e "s/42696e616e63652d436861696e2d4e696c650000000000000000000000000000000000000000000229eca254b3859bffefaf85f4c95da9fbd26527766b784272789c30ec56b380b6eb96442aaab207bc59978ba3dd477690f5c5872334fc39e627723daa97e441e88ba4515150ec3182bc82593df36f8abb25a619187fcfab7e552b94e64ed2deed000000e8d4a51000/${initConsensusStateBytes}/g" ${workspace}/genesis/scripts/generate.sh
     bash scripts/generate.sh local
     sed -i -e "s/\"period\": 3/\"period\": ${BSC_BLCOK_INTERVAL}/g" ${workspace}/genesis/genesis.json
 }
