@@ -100,6 +100,7 @@ function prepare_config() {
     sed -i -e "s/0xA904540818AC9c47f2321F97F1069B9d8746c6DB/${INIT_HOLDER}/g" ${workspace}/genesis/scripts/generate-relayerHub.sh
     rm -rf ${workspace}/genesis/init_holders.js
     yes | cp -f ${workspace}/init_holder.js ${workspace}/genesis/init_holders.js
+    node ${workspace}/genesis/scripts/generate-validator.js
     
     # tmp fix for bsc-genesis
     mv ${workspace}/genesis/scripts/generate-crossChain.sh ${workspace}/genesis/scripts/generate-crosschain.sh
