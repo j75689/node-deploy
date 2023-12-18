@@ -97,21 +97,15 @@ function prepare_config() {
 
     cd ${workspace}/genesis/
     npm install
-    sed -i -e "s/address public constant WHITELIST_1 = 0xA904540818AC9c47f2321F97F1069B9d8746c6DB;/address public constant WHITELIST_1 = ${INIT_HOLDER};/g" ${workspace}/genesis/contracts/RelayerHub.template
-    sed -i -e "s/dues = INIT_DUES;/dues = INIT_DUES;\n        whitelistInit();/g" ${workspace}/genesis/contracts/RelayerHub.template
-    sed -i -e "s/function whitelistInit() external/function whitelistInit() public/g" ${workspace}/genesis/contracts/RelayerHub.template
+    sed -i -e "s/0xA904540818AC9c47f2321F97F1069B9d8746c6DB/${INIT_HOLDER}/g" ${workspace}/scripts/generate-relayerHub.sh
     rm -rf ${workspace}/genesis/init_holders.js
     yes | cp -f ${workspace}/init_holder.js ${workspace}/genesis/init_holders.js
     node generate-validator.js
-    if [ ${standalone} = false ]; then
-        initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${nodeurl} -network-type 0)
-        node generate-genesis.js --chainid 714 --bscChainId 02ca --network 'local' --initConsensusStateBytes  ${initConsensusStateBytes}
-    else
-        node generate-genesis.js --chainid 714 --bscChainId 02ca --network 'local'
-    fi
-    sed -i -e "s/\"period\": 3/\"period\": ${BSC_BLCOK_INTERVAL}/g" ${workspace}/genesis/genesis.json
     
-
+    initConsensusStateBytes=$(${workspace}/bin/tool -height 1 -rpc ${nodeurl} -network-type 0)
+    sed -i -e "s/42696e616e63652d436861696e2d4e696c650000000000000000000000000000000000000000000229eca254b3859bffefaf85f4c95da9fbd26527766b784272789c30ec56b380b6eb96442aaab207bc59978ba3dd477690f5c5872334fc39e627723daa97e441e88ba4515150ec3182bc82593df36f8abb25a619187fcfab7e552b94e64ed2deed000000e8d4a51000/${initConsensusStateBytes}/g" ${workspace}/scripts/generate.sh
+    bash scripts/generate.sh local
+    sed -i -e "s/\"period\": 3/\"period\": ${BSC_BLCOK_INTERVAL}/g" ${workspace}/genesis/genesis.json
 }
 function generate_static_peers() {
     tool=${workspace}/bin/bootnode
