@@ -362,10 +362,6 @@ function migrate_validator() {
         sleep 3
     done
 
-    # wait epoch sync
-    echo "wait for epoch sync validator set $((BSC_BLCOK_INTERVAL * BSC_EPOCH))"
-    sleep $((BSC_BLCOK_INTERVAL * BSC_EPOCH))
-
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
@@ -383,6 +379,10 @@ function migrate_validator() {
         --instance-ids "${dst_id}" \
         --document-name "AWS-RunShellScript" \
         --parameters commands="sudo bash +x /server/bsc/start_geth.sh ${validator_index}"
+
+    # wait epoch sync
+    echo "wait for epoch sync validator set $((BSC_BLCOK_INTERVAL * BSC_EPOCH))"
+    sleep $((BSC_BLCOK_INTERVAL * BSC_EPOCH))
 }
 
 function unbond_validator_on_bc() {
@@ -405,10 +405,10 @@ function unbond_validator_on_bc() {
      --node ${BC_NODE_URL} --trust-node \
      --home ${workspace}/.local/bc/node${validator_index}
 
-    bc_block_interval=$(echo "${BC_BLOCK_TIMEOUT}" | sed 's/s$//')
-    t=$((BC_BREATHE_BLOCK_INTERVAL * bc_block_interval))
-    echo "wait for breath block $t s"
-    sleep $t
+    # bc_block_interval=$(echo "${BC_BLOCK_TIMEOUT}" | sed 's/s$//')
+    # t=$((BC_BREATHE_BLOCK_INTERVAL * bc_block_interval))
+    # echo "wait for breath block $t s"
+    # sleep $t
 }
 
 CMD=$1
