@@ -72,7 +72,7 @@ case ${CMD} in
 init)
     echo "===== init ===="
     build_relayer
-    init
+    init_config
     echo "===== end ===="
     ;;
 start)
