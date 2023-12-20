@@ -3,15 +3,18 @@ basedir=$(cd `dirname $0`; pwd)
 workspace=${basedir}
 source ${workspace}/.env
 source ${workspace}/utils.sh
+source ${workspace}/ip2nodeids.sh
 bc_node_ips=(${BC_NODE_IP})
-dst_id="i-0d2b8632af953d0f6"
 
 function exit_previous() {
-	# stop client
-    aws ssm send-command \
-      --instance-ids "${dst_id}" \
-      --document-name "AWS-RunShellScript" \
-      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/stop_oracle_relayer.sh /server/relayer/ && bash /server/relayer/stop_oracle_relayer.sh"
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bc_node_ips[i]}]}
+        # stop client
+        aws ssm send-command \
+          --instance-ids "${dst_id}" \
+          --document-name "AWS-RunShellScript" \
+          --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/stop_oracle_relayer.sh /server/relayer/ && bash /server/relayer/stop_oracle_relayer.sh"
+    done
 }
 
 function build_relayer() {
@@ -26,16 +29,14 @@ function build_relayer() {
 function init_config(){
     mkdir -p ${workspace}/.local/relayer/
     rm -rf ${workspace}/.local/relayer/oracle_relayer.*
-    cp ${workspace}/oracle_relayer.template ${workspace}/.local/relayer/oracle_relayer.json
+    for (i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        cp ${workspace}/oracle_relayer.template ${workspace}/.local/relayer/oracle_relayer-${i}.json
 
-    sed -i -e "s/{{bsc_chain_id}}/${BSC_CHAIN_ID}/g" ${workspace}/.local/relayer/oracle_relayer.json
-    mnemonic="\"$(cat ${workspace}/.local/bc/node0/operator.info |tail  -1)\""
-    sed -i -e "s/{{bbc_mnemonic}}/${mnemonic}/g" ${workspace}/.local/relayer/oracle_relayer.json
-}
-
-function prepare_native_config() {
-    init_config
-    sed -i -e "s:/data/relayer.db:/server/relayer/oracle_relayer.db:g" ${workspace}/.local/relayer/oracle_relayer.json 
+        sed -i -e "s/{{bsc_chain_id}}/${BSC_CHAIN_ID}/g" ${workspace}/.local/relayer/oracle_relayer-${i}.json
+        mnemonic="\"$(cat ${workspace}/.local/bc/node${i}/operator.info |tail  -1)\""
+        sed -i -e "s/{{bbc_mnemonic}}/${mnemonic}/g" ${workspace}/.local/relayer/oracle_relayer-${i}.json
+        sed -i -e "s:/data/relayer.db:/server/relayer/oracle_relayer.db:g" ${workspace}/.local/relayer/oracle_relayer-${i}.json
+    done
 }
 
 function cluster_up() {
@@ -54,10 +55,14 @@ function cluster_up() {
     yes | cp -rf ${workspace}/stop_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
     yes | cp -rf ${workspace}/start_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
 
-    aws ssm send-command \
-      --instance-ids "${dst_id}" \
-      --document-name "AWS-RunShellScript" \
-      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/start_oracle_relayer.sh /server/relayer/ && bash /server/relayer/start_oracle_relayer.sh reset"
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        dst_id=${ips2ids[${bc_node_ips[i]}]}
+        
+        aws ssm send-command \
+          --instance-ids "${dst_id}" \
+          --document-name "AWS-RunShellScript" \
+          --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/start_oracle_relayer.sh /server/relayer/ && bash /server/relayer/start_oracle_relayer.sh ${i} reset"
+    done
 }
 
 source ${workspace}/.env
@@ -67,7 +72,7 @@ case ${CMD} in
 init)
     echo "===== init ===="
     build_relayer
-    prepare_native_config
+    init
     echo "===== end ===="
     ;;
 start)

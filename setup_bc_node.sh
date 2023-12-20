@@ -3,6 +3,7 @@ basedir=$(cd `dirname $0`; pwd)
 workspace=${basedir}
 source ${workspace}/.env
 source ${workspace}/utils.sh
+source ${workspace}/ip2nodeids.sh
 size=$((${BC_CLUSTER_SIZE}))
 bc_node_ips=(${BC_NODE_IP})
 p2p_port=8557
@@ -105,11 +106,6 @@ function init() {
 }
 
 function start_cluster() {
-    declare -A ips2ids
-    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
-    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
-    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
-
     rm -rf /mnt/efs/bsc-qa/bc-fusion/bc_cluster
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/bc_cluster
     cp -r ${workspace}/.local/bc/* /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
@@ -135,11 +131,6 @@ function start_cluster() {
 }
 
 function cluster_down() {
-    declare -A ips2ids
-    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
-    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
-    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
-
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         dst_id=${ips2ids[${bc_node_ips[i]}]}
         aws ssm send-command \
@@ -150,11 +141,6 @@ function cluster_down() {
 }
 
 function cluster_restart() {
-    declare -A ips2ids
-    ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
-    ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
-    ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
-
     yes | cp -r ${workspace}/stop_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
     yes | cp -r ${workspace}/start_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
     yes | cp -f ${workspace}/bin/bnbchaind /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
