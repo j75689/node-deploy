@@ -25,12 +25,14 @@ import (
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/crosschain"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/govtoken"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/stakehub"
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenhub"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenrecoverportal"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/validatorset"
 )
 
 const (
 	ValidatorSetContractAddr  = "0x0000000000000000000000000000000000001000"
+	TokenHubContractAddr      = "0x0000000000000000000000000000000000001004"
 	GovHubContractAddr        = "0x0000000000000000000000000000000000001007"
 	StakeHubContractAddr      = "0x0000000000000000000000000000000000002002"
 	CrossChainContractAddr    = "0x0000000000000000000000000000000000002000"
@@ -53,6 +55,8 @@ var (
 	transferAmount = flag.String("amount", "0", "transfer amount")
 	to             = flag.String("to", "", "transfer to address")
 	gasPrice       = flag.String("gas_price", "10000000000", "transfer gasPrice")
+
+	ccTo = flag.String("cc_to", "", "cross chain transfer to address")
 
 	bscPrivKey              = flag.String("priv_key", "", "BSC validator operator private key")
 	bscEndpoint             = flag.String("bsc_endpoint", "", "BSC RPC endpoint")
@@ -90,7 +94,7 @@ func main() {
 		panic(err)
 	}
 
-	if *transferAmount != "0" {
+	if *transferAmount != "0" && len(*to) > 0 {
 		from, err := FromHexKey(*bscPrivKey)
 		if err != nil {
 			panic(err)
@@ -171,6 +175,37 @@ func main() {
 	acc, err := FromHexKey(*bscPrivKey)
 	if err != nil {
 		panic(err)
+	}
+
+	if *transferAmount != "0" && len(*ccTo) > 0 {
+		c, err := tokenhub.NewTokenhub(common.HexToAddress(TokenHubContractAddr), ethClient)
+		if err != nil {
+			panic(err)
+		}
+
+		recipient := common.HexToAddress(*ccTo)
+		fmt.Println("transfer amount:", *transferAmount, "from:", acc.Addr, "to:", recipient.String())
+		gasLimit := uint64(3000000)
+		amt, _ := new(big.Int).SetString(*transferAmount, 10)
+		relayerFee := big.NewInt(1e18) // relayer fee
+		txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, new(big.Int).Add(amt, relayerFee), nil, gasLimit)
+		if err != nil {
+			panic(err)
+		}
+		tx, err := c.TransferOut(txOpt, common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			recipient, amt, uint64(time.Now().Add(3*time.Minute).Unix()))
+		if err != nil {
+			panic(err)
+		}
+		println("transfer out tx:", tx.Hash().String())
+		r, err := bind.WaitMined(context.Background(), ethClient, tx)
+		if err != nil {
+			panic(err)
+		}
+		if r.Status != 1 {
+			panic("tx failed")
+		}
+		return
 	}
 
 	if *tokenRecoverMerkleRoot != "" && *tokenRecoverProcter != "" && *tokenRecoverApprover != "" {

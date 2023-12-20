@@ -21,6 +21,7 @@ abigen --abi=./migrate_validator_tool/abi/bscgovernor/bscgovernor.abi --pkg=bscg
 abigen --abi=./migrate_validator_tool/abi/govtoken/govtoken.abi --pkg=govtoken --out=./migrate_validator_tool/abi/govtoken/govtoken.go
 abigen --abi=./migrate_validator_tool/abi/tokenrecoverportal/tokenrecoverportal.abi --pkg=tokenrecoverportal --out=./migrate_validator_tool/abi/tokenrecoverportal/tokenrecoverportal.go
 abigen --abi=./migrate_validator_tool/abi/govhub/govhub.abi --pkg=govhub --out=./migrate_validator_tool/abi/govhub/govhub.go
+abigen --abi=./migrate_validator_tool/abi/tokenhub/tokenhub.abi --pkg=tokenhub --out=./migrate_validator_tool/abi/tokenhub/tokenhub.go
 
 
 ```

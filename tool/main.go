@@ -104,8 +104,7 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		addr := btypes.AccAddress(bz)
-		fmt.Println(common.BytesToAddress(addr.Bytes()))
+		fmt.Println(common.BytesToAddress(bz))
 	}
 
 	if *bscValAddr != "" {
