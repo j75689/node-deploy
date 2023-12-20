@@ -8,8 +8,11 @@ import (
 	"flag"
 	"fmt"
 	"math/big"
+	"math/rand"
 	"os"
+	"time"
 
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
@@ -18,15 +21,22 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/bscgovernor"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/crosschain"
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/govtoken"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/stakehub"
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenrecoverportal"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/validatorset"
 )
 
 const (
-	ValidatorSetContractAddr = "0x0000000000000000000000000000000000001000"
-	StakeHubContractAddr     = "0x0000000000000000000000000000000000002002"
-	CrossChainContractAddr   = "0x0000000000000000000000000000000000002000"
+	ValidatorSetContractAddr  = "0x0000000000000000000000000000000000001000"
+	GovHubContractAddr        = "0x0000000000000000000000000000000000001007"
+	StakeHubContractAddr      = "0x0000000000000000000000000000000000002002"
+	CrossChainContractAddr    = "0x0000000000000000000000000000000000002000"
+	BSCGovernorContractAddr   = "0x0000000000000000000000000000000000002004"
+	GovTokenAddress           = "0x0000000000000000000000000000000000002005"
+	TokenRecoveryContractAddr = "0x0000000000000000000000000000000000003000"
 )
 
 var (
@@ -57,6 +67,14 @@ var (
 	website                 = flag.String("website", "", "BSC validator operator website")
 	details                 = flag.String("details", "", "BSC validator operator details")
 	delegation              = flag.String("delegation", "0", "BSC validator operator delegation")
+
+	tokenRecoverMerkleRoot    = flag.String("token_recover_merkle_root", "", "token recover merkle root")
+	tokenRecoverProcter       = flag.String("token_recover_procter", "", "token recover procter")
+	tokenRecoverApprover      = flag.String("token_recover_approver", "", "token recover approver")
+	delegatorVoteOperatorAddr = flag.String("delegator_vote_operator_addr", "", "delegator vote operator address")
+
+	checkProposalID                 = flag.String("check_proposal_id", "", "check proposal id")
+	checkTokenRecoverContractStatus = flag.Bool("check_token_recover_contract_status", false, "check token recover contract status")
 )
 
 func main() {
@@ -97,6 +115,20 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	governorContract, err := bscgovernor.NewBscgovernor(common.HexToAddress(BSCGovernorContractAddr), ethClient)
+	if err != nil {
+		panic(err)
+	}
+	govTokenContract, err := govtoken.NewGovtoken(common.HexToAddress(GovTokenAddress), ethClient)
+	if err != nil {
+		panic(err)
+	}
+	tokenRecoverContract, err := tokenrecoverportal.NewTokenrecoverportal(common.HexToAddress(TokenRecoveryContractAddr), ethClient)
+	if err != nil {
+		panic(err)
+	}
+
 	if *getValidatorElection {
 		getElectionInfo(stakeHubContract)
 		return
@@ -119,11 +151,38 @@ func main() {
 		)
 		return
 	}
+	if *checkTokenRecoverContractStatus {
+		err = checkTokenRecoverStatus(tokenRecoverContract)
+		if err != nil {
+			panic(err)
+		}
+		return
+	}
+
+	if len(*checkProposalID) > 0 {
+		proposalId, _ := new(big.Int).SetString(*checkProposalID, 10)
+		err = checkProposal(governorContract, proposalId)
+		if err != nil {
+			panic(err)
+		}
+		return
+	}
 
 	acc, err := FromHexKey(*bscPrivKey)
 	if err != nil {
 		panic(err)
 	}
+
+	if *tokenRecoverMerkleRoot != "" && *tokenRecoverProcter != "" && *tokenRecoverApprover != "" {
+		setupTokenRecoveryContract(&acc, ethClient,
+			tokenRecoverContract, governorContract,
+			govTokenContract,
+			stakeHubContract, validatorContract,
+			*delegatorVoteOperatorAddr,
+			*tokenRecoverMerkleRoot, common.HexToAddress(*tokenRecoverProcter), common.HexToAddress(*tokenRecoverApprover))
+		return
+	}
+
 	delegation, _ := new(big.Int).SetString(*delegation, 10)
 	balance, err := ethClient.BalanceAt(context.Background(), acc.Addr, nil)
 	if err != nil {
@@ -337,4 +396,245 @@ func getChannelPermissionFromContract(contract *crosschain.Crosschain, addr comm
 		panic(err)
 	}
 	fmt.Printf("channel permission for [%s]: %v\n", addr, permission)
+}
+
+func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
+	tokenRecoverContract *tokenrecoverportal.Tokenrecoverportal,
+	govContract *bscgovernor.Bscgovernor, govTokenContract *govtoken.Govtoken,
+	stakeHubContract *stakehub.Stakehub,
+	validatorSetContract *validatorset.Validatorset,
+	delegatorVoteOperatorAddr string,
+	merkleRoot string, procter common.Address, approver common.Address) {
+
+	validatorOperatorAddr := common.HexToAddress(delegatorVoteOperatorAddr)
+
+	gasLimit := uint64(3000000)
+	gasPrice := big.NewInt(100 * 1e9)
+	amt := new(big.Int).Mul(big.NewInt(100000000), big.NewInt(1e18)) // 100000000 BNB
+	txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, amt, gasPrice, gasLimit)
+	if err != nil {
+		panic(err)
+	}
+	tx, err := stakeHubContract.Delegate(txOpt, validatorOperatorAddr, false)
+	if err != nil {
+		panic(err)
+	}
+	println("delegate tx:", tx.Hash().String())
+	r, err := bind.WaitMined(context.Background(), ethClient, tx)
+	if err != nil {
+		panic(err)
+	}
+	if r.Status != 1 {
+		panic("delegate tx failed")
+	}
+	votingPower, err := govTokenContract.GetVotes(nil, acc.Addr)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("votingPower:", votingPower, "acc", acc.Addr)
+
+	govTokenBalance, err := govTokenContract.BalanceOf(nil, acc.Addr)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("govTokenBalance:", govTokenBalance, "acc", acc.Addr)
+	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
+	if err != nil {
+		panic(err)
+	}
+	tx, err = govTokenContract.Delegate(txOpt, acc.Addr)
+	if err != nil {
+		panic(err)
+	}
+	println("delegateVote tx:", tx.Hash().String())
+	r, err = bind.WaitMined(context.Background(), ethClient, tx)
+	if err != nil {
+		panic(err)
+	}
+	if r.Status != 1 {
+		panic("delegateVote tx failed")
+	}
+
+	targets := []common.Address{
+		common.HexToAddress(GovHubContractAddr),
+		common.HexToAddress(GovHubContractAddr),
+		common.HexToAddress(GovHubContractAddr)}
+	values := []*big.Int{big.NewInt(0), big.NewInt(0), big.NewInt(0)}
+	callData := [][]byte{}
+
+	merkleRootBytes, err := hexutil.Decode(merkleRoot)
+	if err != nil {
+		panic(err)
+	}
+
+	callData1, err := packGovCallData("merkleRoot", merkleRootBytes, common.HexToAddress(TokenRecoveryContractAddr))
+	if err != nil {
+		panic(err)
+	}
+	callData = append(callData, callData1)
+	fmt.Println("update merkleRoot callData:", hexutil.Encode(callData1))
+
+	callData2, err := packGovCallData("approvalAddress", approver[:], common.HexToAddress(TokenRecoveryContractAddr))
+	if err != nil {
+		panic(err)
+	}
+	callData = append(callData, callData2)
+	fmt.Println("update approvalAddress callData:", hexutil.Encode(callData2))
+
+	callData3, err := packGovCallData("assetProtector", procter[:], common.HexToAddress(StakeHubContractAddr))
+	if err != nil {
+		panic(err)
+	}
+	callData = append(callData, callData3)
+	fmt.Println("update assetProtector callData:", hexutil.Encode(callData3))
+
+	detail := fmt.Sprintf("initializeTokenRecoveryContract-%d", rand.Int63())
+	detailHash := crypto.Keccak256Hash([]byte(detail))
+
+	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
+	if err != nil {
+		panic(err)
+	}
+	tx, err = govContract.Propose(txOpt, targets, values, callData, detail)
+	if err != nil {
+		panic(err)
+	}
+	println("propose tx:", tx.Hash().String())
+	r, err = bind.WaitMined(context.Background(), ethClient, tx)
+	if err != nil {
+		panic(err)
+	}
+	if r.Status != 1 {
+		panic("propose tx failed")
+	}
+	event, err := govContract.ParseProposalCreated(*r.Logs[0])
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("proposal id:", event.ProposalId)
+
+	// vote
+	fmt.Println("wait 1 min to start voting")
+	time.Sleep(65 * time.Second)
+	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
+	if err != nil {
+		panic(err)
+	}
+	voteTx, err := govContract.CastVote(txOpt, event.ProposalId, 1)
+	if err != nil {
+		panic(err)
+	}
+	println("vote tx:", voteTx.Hash().String())
+	r, err = bind.WaitMined(context.Background(), ethClient, voteTx)
+	if err != nil {
+		panic(err)
+	}
+	if r.Status != 1 {
+		panic("vote tx failed")
+	}
+
+	// queue
+	fmt.Println("wait 2 min for voting end")
+	time.Sleep(123 * time.Second)
+	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
+	if err != nil {
+		panic(err)
+	}
+	tx, err = govContract.Queue(txOpt, targets, values, callData, detailHash)
+	if err != nil {
+		panic(err)
+	}
+	println("queue tx:", tx.Hash().String())
+	r, err = bind.WaitMined(context.Background(), ethClient, tx)
+	if err != nil {
+		panic(err)
+	}
+	if r.Status != 1 {
+		panic("queue tx failed")
+	}
+
+	// execute
+	fmt.Println("wait 1 min for execute tx")
+	time.Sleep(65 * time.Second)
+	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
+	if err != nil {
+		panic(err)
+	}
+	tx, err = govContract.Execute(txOpt, targets, values, callData, detailHash)
+	if err != nil {
+		panic(err)
+	}
+	println("execute tx:", tx.Hash().String())
+	r, err = bind.WaitMined(context.Background(), ethClient, tx)
+	if err != nil {
+		panic(err)
+	}
+	if r.Status != 1 {
+		panic("execute tx failed")
+	}
+}
+
+func packGovCallData(key string, value []byte, target common.Address) ([]byte, error) {
+	stringTy, _ := abi.NewType("string", "string", nil)
+	bytesTy, _ := abi.NewType("bytes", "bytes", nil)
+	addressTy, _ := abi.NewType("address", "address", nil)
+	method := abi.NewMethod("updateParam", "updateParam", abi.Function, "external", false, false,
+		[]abi.Argument{
+			{Name: "key", Type: stringTy, Indexed: false},
+			{Name: "value", Type: bytesTy, Indexed: false},
+			{Name: "target", Type: addressTy, Indexed: false},
+		}, nil)
+
+	methodID := method.ID
+	arguments := abi.Arguments{
+		{
+			Type: stringTy,
+		},
+		{
+			Type: bytesTy,
+		},
+		{
+			Type: addressTy,
+		},
+	}
+	encodedArguments, err := arguments.Pack(key, value, target)
+	if err != nil {
+		return nil, err
+	}
+
+	return append(methodID, encodedArguments...), nil
+}
+
+func checkProposal(contract *bscgovernor.Bscgovernor, proposalID *big.Int) error {
+	proposal, err := contract.Proposals(nil, proposalID)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("proposal: %+v\n", proposal)
+	return nil
+}
+
+func checkTokenRecoverStatus(contract *tokenrecoverportal.Tokenrecoverportal) error {
+	merkleRoot, err := contract.MerkleRoot(nil)
+	if err != nil {
+		return err
+	}
+	fmt.Println("merkleRoot:", merkleRoot)
+	merkleRootAlreadyInit, err := contract.MerkleRootAlreadyInit(nil)
+	if err != nil {
+		return err
+	}
+	fmt.Println("merkleRootAlreadyInit:", merkleRootAlreadyInit)
+	approvalAddress, err := contract.ApprovalAddress(nil)
+	if err != nil {
+		return err
+	}
+	fmt.Println("approvalAddress:", approvalAddress)
+	assetProtectorAddress, err := contract.AssetProtector(nil)
+	if err != nil {
+		return err
+	}
+	fmt.Println("assetProtectorAddress:", assetProtectorAddress)
+
+	return nil
 }

@@ -17,6 +17,12 @@ curl -X POST "http://172.22.42.13:8545" -H "Content-Type: application/json"  --d
 abigen --abi=./migrate_validator_tool/abi/stakehub/stakehub.abi --pkg=stakehub --out=./migrate_validator_tool/abi/stakehub/stakehub.go
 abigen --abi=./migrate_validator_tool/abi/validatorset/validatorset.abi --pkg=validatorset --out=./migrate_validator_tool/abi/validatorset/validatorset.go
 abigen --abi=./migrate_validator_tool/abi/crosschain/crosschain.abi --pkg=crosschain --out=./migrate_validator_tool/abi/crosschain/crosschain.go
+abigen --abi=./migrate_validator_tool/abi/bscgovernor/bscgovernor.abi --pkg=bscgovernor --out=./migrate_validator_tool/abi/bscgovernor/bscgovernor.go
+abigen --abi=./migrate_validator_tool/abi/govtoken/govtoken.abi --pkg=govtoken --out=./migrate_validator_tool/abi/govtoken/govtoken.go
+abigen --abi=./migrate_validator_tool/abi/tokenrecoverportal/tokenrecoverportal.abi --pkg=tokenrecoverportal --out=./migrate_validator_tool/abi/tokenrecoverportal/tokenrecoverportal.go
+abigen --abi=./migrate_validator_tool/abi/govhub/govhub.abi --pkg=govhub --out=./migrate_validator_tool/abi/govhub/govhub.go
+
+
 ```
 
 ## Extract Bytecode
