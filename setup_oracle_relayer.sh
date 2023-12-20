@@ -29,7 +29,7 @@ function build_relayer() {
 function init_config(){
     mkdir -p ${workspace}/.local/relayer/
     rm -rf ${workspace}/.local/relayer/oracle_relayer.*
-    for (i = 0; i < ${#bc_node_ips[@]}; i++)); do
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         cp ${workspace}/oracle_relayer.template ${workspace}/.local/relayer/oracle_relayer-${i}.json
 
         sed -i -e "s/{{bsc_chain_id}}/${BSC_CHAIN_ID}/g" ${workspace}/.local/relayer/oracle_relayer-${i}.json
