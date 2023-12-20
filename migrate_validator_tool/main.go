@@ -481,7 +481,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 	callData = append(callData, callData2)
 	fmt.Println("update approvalAddress callData:", hexutil.Encode(callData2))
 
-	callData3, err := packGovCallData("assetProtector", procter[:], common.HexToAddress(StakeHubContractAddr))
+	callData3, err := packGovCallData("assetProtector", procter[:], common.HexToAddress(TokenRecoveryContractAddr))
 	if err != nil {
 		panic(err)
 	}
