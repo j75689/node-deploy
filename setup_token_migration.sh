@@ -24,7 +24,7 @@ function setup_token_recover_contract() {
     approver=${TOKEN_RECOVERY_APPROVER}
     operator="0x$(cat ${workspace}/.local/bsc/new_validator0_operator/keystore/* | jq -r '.address')"
 
-    ${workspace}/bin/migrate_tool -bsc_endpoint ${BSC_NODE_URL} -priv_key ${INIT_HOLDER_PRV} \ 
+    ${workspace}/bin/migrate_tool -bsc_endpoint ${BSC_NODE_URL} -priv_key ${INIT_HOLDER_PRV} \
       -token_recover_merkle_root ${merkleRoot} -token_recover_procter ${procter} -token_recover_approver ${approver} \
       -delegator_vote_operator_addr $operator
 }
