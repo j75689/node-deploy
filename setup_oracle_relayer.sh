@@ -13,7 +13,7 @@ function exit_previous() {
         aws ssm send-command \
           --instance-ids "${dst_id}" \
           --document-name "AWS-RunShellScript" \
-          --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/stop_oracle_relayer.sh /server/relayer/ && bash /server/relayer/stop_oracle_relayer.sh"
+          --parameters commands="mkdir -p /server/relayer/ && cp /mnt/efs/bsc-qa/bc-fusion/relayer/stop_oracle_relayer.sh /server/relayer/ && bash /server/relayer/stop_oracle_relayer.sh"
     done
 }
 
@@ -61,7 +61,7 @@ function cluster_up() {
         aws ssm send-command \
           --instance-ids "${dst_id}" \
           --document-name "AWS-RunShellScript" \
-          --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion/relayer/start_oracle_relayer.sh /server/relayer/ && bash /server/relayer/start_oracle_relayer.sh ${i} reset"
+          --parameters commands="mkdir -p /server/relayer/ && cp /mnt/efs/bsc-qa/bc-fusion/relayer/start_oracle_relayer.sh /server/relayer/ && bash /server/relayer/start_oracle_relayer.sh ${i} reset"
     done
 }
 
