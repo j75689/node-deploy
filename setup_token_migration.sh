@@ -29,10 +29,30 @@ function setup_token_recover_contract() {
       -delegator_vote_operator_addr $operator
 }
 
-function setup_approval_service() {
+function start_approval_service() {
     mkdir -p /mnt/efs/bsc-qa/bc-fusion/approval_service
 
     yes | cp -rf ${TOKEN_APPROVER_BIN} /mnt/efs/bsc-qa/bc-fusion/approval_service/approver
+    yes | cp -rf ${workspace}/start_token_approver.sh /mnt/efs/bsc-qa/bc-fusion/approval_service/start_token_approver.sh
+    yes | cp -rf ${workspace}/stop_token_approver.sh /mnt/efs/bsc-qa/bc-fusion/approval_service/stop_token_approver.sh
+
+    aws ssm send-command \
+      --instance-ids "${dst_id}" \
+      --document-name "AWS-RunShellScript" \
+      --parameters commands="mkdir -p /server/token_approver/ && yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/approval_service/start_token_approver.sh /server/token_approver/start_token_approver.sh && bash /server/token_approver/start_token_approver.sh"
+}
+
+function stop_approval_service() {
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion/approval_service
+
+    yes | cp -rf ${TOKEN_APPROVER_BIN} /mnt/efs/bsc-qa/bc-fusion/approval_service/approver
+    yes | cp -rf ${workspace}/start_token_approver.sh /mnt/efs/bsc-qa/bc-fusion/approval_service/start_token_approver.sh
+    yes | cp -rf ${workspace}/stop_token_approver.sh /mnt/efs/bsc-qa/bc-fusion/approval_service/stop_token_approver.sh
+
+    aws ssm send-command \
+      --instance-ids "${dst_id}" \
+      --document-name "AWS-RunShellScript" \
+      --parameters commands="mkdir -p /server/token_approver/ && yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/approval_service/stop_token_approver.sh /server/token_approver/stop_token_approver.sh && bash /server/token_approver/stop_token_approver.sh"
 }
 
 CMD=$1
@@ -43,7 +63,17 @@ setup_token_recover_contract)
     setup_token_recover_contract
     echo "===== end ===="
     ;;
+start)
+    echo "===== start_approval_service ===="
+    start_approval_service
+    echo "===== end ===="
+    ;;
+stop)
+    echo "===== stop_approval_service ===="
+    stop_approval_service
+    echo "===== end ===="
+    ;;
 *)
-    echo "Usage: setup_token_migration.sh setup_token_recover_contract"
+    echo "Usage: setup_token_migration.sh setup_token_recover_contract | start | stop"
     ;;
 esac
