@@ -80,7 +80,7 @@ function init() {
         sed -i -e "s/BEP151Height = 9223372036854775807/BEP151Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
         sed -i -e "s/BEP153Height = 9223372036854775807/BEP153Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
         sed -i -e "s/BEP159Height = 9223372036854775807/BEP159Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
-        sed -i -e "s/BEP159Phase2Height = 9223372036854775807/BEP159Phase2Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        sed -i -e "s/BEP159Phase2Height = 9223372036854775807/BEP159Phase2Height = $((5+BC_BREATHE_BLOCK_INTERVAL))/g" ${workspace}/.local/bc/node${i}/config/app.toml
         sed -i -e "s/LimitConsAddrUpdateIntervalHeight = 9223372036854775807/LimitConsAddrUpdateIntervalHeight = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
         sed -i -e "s/BEP173Height = 9223372036854775807/BEP173Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
 
