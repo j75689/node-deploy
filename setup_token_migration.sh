@@ -65,6 +65,8 @@ setup_token_recover_contract)
     ;;
 start)
     echo "===== start_approval_service ===="
+    stop_approval_service
+    sleep 5
     start_approval_service
     echo "===== end ===="
     ;;
