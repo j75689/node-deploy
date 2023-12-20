@@ -18,7 +18,14 @@ ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
 
 
 function setup_token_recover_contract() {
-    
+    merkleRoot=$(cat /mnt/efs/bsc-qa/bc-fusion/dump_bc_account/output/base.json | jq -r '.state_root')
+    procter=${TOKEN_RECOVERY_PROTECTOR}
+    approver=${TOKEN_RECOVERY_APPROVER}
+    operator="0x$(cat ${workspace}/.local/bsc/new_validator0_operator/keystore/* | jq -r '.address')"
+
+    ${workspace}/bin/migrate_tool -bsc_endpoint ${BSC_NODE_URL} -priv_key ${INIT_HOLDER_PRV} \ 
+      -token_recover_merkle_root ${merkleRoot} -token_recover_procter ${procter} -token_recover_approver ${approver} \
+      -delegator_vote_operator_addr $operator
 }
 
 CMD=$1
