@@ -7,7 +7,7 @@
     },
     "bbc_config": {
       "rpc_addrs": [
-        "tcp://172.22.42.13:26657"
+        "tcp://172.22.42.13:26657","tcp://172.22.42.94:26657","tcp://172.22.43.86:26657"
       ],
       "mnemonic_type": "local_mnemonic",
       "aws_region": "",
@@ -24,7 +24,7 @@
     "aws_secret_name": "",
     "private_key": "{{private_key}}",
     "providers": [
-      "http://172.22.42.13:8545"
+      "http://172.22.42.13:8545","http://172.22.42.94:8545","http://172.22.43.86:8545"
     ],
     "gas_limit": 4700000,
     "gas_price": 50000000000,
