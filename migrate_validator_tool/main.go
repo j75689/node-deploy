@@ -10,6 +10,7 @@ import (
 	"math/big"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -79,6 +80,13 @@ var (
 
 	checkProposalID                 = flag.String("check_proposal_id", "", "check proposal id")
 	checkTokenRecoverContractStatus = flag.Bool("check_token_recover_contract_status", false, "check token recover contract status")
+
+	recoverSymbol            = flag.String("recover_symbol", "", "recover symbol")
+	recoverAmount            = flag.String("recover_amount", "", "recover amount")
+	recoverPubKey            = flag.String("recover_pub_key", "", "recover pub key")
+	recoverOwnerSignature    = flag.String("recover_owner_signature", "", "recover owner signature")
+	recoverApprovalSignature = flag.String("recover_approval_signature", "", "recover approval signature")
+	recoverProofs            = flag.String("recover_proofs", "", "recover proofs")
 )
 
 func main() {
@@ -132,7 +140,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
+	tokenHubContract, err := tokenhub.NewTokenhub(common.HexToAddress(TokenHubContractAddr), ethClient)
+	if err != nil {
+		panic(err)
+	}
 	if *getValidatorElection {
 		getElectionInfo(stakeHubContract)
 		return
@@ -175,6 +186,28 @@ func main() {
 	acc, err := FromHexKey(*bscPrivKey)
 	if err != nil {
 		panic(err)
+	}
+
+	if *recoverSymbol != "" && *recoverAmount != "" && *recoverPubKey != "" && *recoverApprovalSignature != "" &&
+		*recoverOwnerSignature != "" && *recoverProofs != "" {
+		amt, _ := new(big.Int).SetString(*recoverAmount, 10)
+		pubkey := hexutil.MustDecode(*recoverPubKey)
+		ownerSig := hexutil.MustDecode(*recoverOwnerSignature)
+		approvalSig := hexutil.MustDecode(*recoverApprovalSignature)
+		proofStr := strings.Split(*recoverProofs, ",")
+		proofs := make([][32]byte, 0, len(proofStr))
+		for _, p := range proofStr {
+			var buf [32]byte
+			copy(buf[:], hexutil.MustDecode(p))
+			proofs = append(proofs, buf)
+		}
+		fmt.Println("recover symbol:", *recoverSymbol, "amount:", amt, "pubkey:", pubkey, "ownerSig:", ownerSig, "approvalSig:", approvalSig, "proofs:", proofs)
+		err = tokenRecover(tokenHubContract, tokenRecoverContract, ethClient, &acc,
+			*recoverSymbol, amt, pubkey, ownerSig, approvalSig, proofs)
+		if err != nil {
+			panic(err)
+		}
+		return
 	}
 
 	if *transferAmount != "0" && len(*ccTo) > 0 {
@@ -671,5 +704,54 @@ func checkTokenRecoverStatus(contract *tokenrecoverportal.Tokenrecoverportal) er
 	}
 	fmt.Println("assetProtectorAddress:", assetProtectorAddress)
 
+	return nil
+}
+
+func tokenRecover(
+	tokenHubContract *tokenhub.Tokenhub,
+	contract *tokenrecoverportal.Tokenrecoverportal, ethClient *ethclient.Client, acc *ExtAcc,
+	symbol string, amt *big.Int, ownerPubKey []byte, ownerSignature []byte, approvalSignature []byte, merkleProof [][32]byte) error {
+
+	gasLimit := uint64(3000000)
+	txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, nil, gasLimit)
+	if err != nil {
+		return err
+	}
+	var symbolBytes [32]byte
+	copy(symbolBytes[:], symbol)
+	tx, err := contract.Recover(txOpt, symbolBytes, amt, ownerPubKey, ownerSignature, approvalSignature, merkleProof)
+	if err != nil {
+		return err
+	}
+	println("token recover tx:", tx.Hash().String())
+	r, err := bind.WaitMined(context.Background(), ethClient, tx)
+	if err != nil {
+		return err
+	}
+	if r.Status != 1 {
+		return errors.New("tx failed")
+	}
+
+	fmt.Println("wait 1 min for token recover tx")
+	time.Sleep(time.Minute)
+
+	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, nil, gasLimit)
+	if err != nil {
+		return err
+	}
+
+	tokenContract := common.HexToAddress("0x0000000000000000000000000000000000000000") // TODO: support token contract
+	tx, err = tokenHubContract.WithdrawUnlockedToken(txOpt, tokenContract, acc.Addr)
+	if err != nil {
+		return err
+	}
+	println("WithdrawUnlockedToken tx:", tx.Hash().String())
+	r, err = bind.WaitMined(context.Background(), ethClient, tx)
+	if err != nil {
+		return err
+	}
+	if r.Status != 1 {
+		return errors.New("WithdrawUnlockedToken tx failed")
+	}
 	return nil
 }
