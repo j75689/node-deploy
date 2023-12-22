@@ -87,6 +87,7 @@ var (
 	recoverOwnerSignature    = flag.String("recover_owner_signature", "", "recover owner signature")
 	recoverApprovalSignature = flag.String("recover_approval_signature", "", "recover approval signature")
 	recoverProofs            = flag.String("recover_proofs", "", "recover proofs")
+	recoverContract          = flag.String("recover_contract", "", "recover contract")
 )
 
 func main() {
@@ -740,7 +741,10 @@ func tokenRecover(
 		return err
 	}
 
-	tokenContract := common.HexToAddress("0x0000000000000000000000000000000000000000") // TODO: support token contract
+	tokenContract := common.HexToAddress("0x0000000000000000000000000000000000000000")
+	if symbol != "BNB" {
+		tokenContract = common.HexToAddress(*recoverContract)
+	}
 	tx, err = tokenHubContract.WithdrawUnlockedToken(txOpt, tokenContract, acc.Addr)
 	if err != nil {
 		return err
