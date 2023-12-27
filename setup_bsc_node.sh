@@ -451,12 +451,21 @@ migrate_validator)
     migrate_validator $2
     echo "===== end ===="
     ;;
+migrate_all_validator)
+    echo "===== migrate_all_validator ===="
+    unbond_validator_on_bc 0
+    migrate_validator 0
+    unbond_validator_on_bc 1
+    migrate_validator 1
+    migrate_validator 2
+    echo "===== end ===="
+    ;;
 unbond_validator_on_bc)
     echo "===== unbond_validator_on_bc ===="
     unbond_validator_on_bc $2
     echo "===== end ===="
     ;;
 *)
-    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | fyenman_hardfork | migrate_validator | unbond_validator_on_bc"
+    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | fyenman_hardfork | migrate_validator | migrate_all_validator | unbond_validator_on_bc"
     ;;
 esac
