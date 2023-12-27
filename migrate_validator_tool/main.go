@@ -22,6 +22,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/bep20"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/bscgovernor"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/crosschain"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/govtoken"
@@ -770,6 +771,27 @@ func tokenRecover(
 	if r.Status != 1 {
 		return errors.New("WithdrawUnlockedToken tx failed")
 	}
+
+	if symbol == "BNB" {
+		amt, err := ethClient.BalanceAt(context.Background(), acc.Addr, nil)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("bnb balance of [%s]: %s\n", acc.Addr.Hex(), amt)
+	} else {
+		bep20Contract, err := bep20.NewBep20(tokenContract, ethClient)
+		if err != nil {
+			return err
+		}
+
+		amt, err := bep20Contract.BalanceOf(nil, acc.Addr)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("bep20 [%s] balance of [%s]: %s\n", symbol, acc.Addr.Hex(), amt)
+	}
+
 	return nil
 }
 
