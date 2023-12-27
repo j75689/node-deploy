@@ -22,7 +22,7 @@ abigen --abi=./migrate_validator_tool/abi/govtoken/govtoken.abi --pkg=govtoken -
 abigen --abi=./migrate_validator_tool/abi/tokenrecoverportal/tokenrecoverportal.abi --pkg=tokenrecoverportal --out=./migrate_validator_tool/abi/tokenrecoverportal/tokenrecoverportal.go
 abigen --abi=./migrate_validator_tool/abi/govhub/govhub.abi --pkg=govhub --out=./migrate_validator_tool/abi/govhub/govhub.go
 abigen --abi=./migrate_validator_tool/abi/tokenhub/tokenhub.abi --pkg=tokenhub --out=./migrate_validator_tool/abi/tokenhub/tokenhub.go
-
+abigen --abi=./migrate_validator_tool/abi/tokenmanager/tokenmanager.abi --pkg=tokenmanager --out=./migrate_validator_tool/abi/tokenmanager/tokenmanager.go
 
 ```
 

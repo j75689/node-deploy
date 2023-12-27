@@ -27,6 +27,7 @@ import (
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/govtoken"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/stakehub"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenhub"
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenmanager"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenrecoverportal"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/validatorset"
 )
@@ -35,6 +36,7 @@ const (
 	ValidatorSetContractAddr  = "0x0000000000000000000000000000000000001000"
 	TokenHubContractAddr      = "0x0000000000000000000000000000000000001004"
 	GovHubContractAddr        = "0x0000000000000000000000000000000000001007"
+	TokenManagerContractAddr  = "0x0000000000000000000000000000000000001008"
 	StakeHubContractAddr      = "0x0000000000000000000000000000000000002002"
 	CrossChainContractAddr    = "0x0000000000000000000000000000000000002000"
 	BSCGovernorContractAddr   = "0x0000000000000000000000000000000000002004"
@@ -45,6 +47,8 @@ const (
 var (
 	getChannelPermissionChannelID = flag.Int("get_channel_permission_channel", 0, "get channel permission")
 	getChannelPermissionAddr      = flag.String("get_channel_permission_addr", "", "get channel permission")
+
+	getSyncFee = flag.Bool("get_sync_fee", false, "")
 
 	getValidatorElection = flag.Bool("get_validator_election", false, "")
 	getValidatorSet      = flag.Bool("get_validator_set", false, "")
@@ -145,6 +149,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	tokenManagerContract, err := tokenmanager.NewTokenmanager(common.HexToAddress(TokenManagerContractAddr), ethClient)
+	if err != nil {
+		panic(err)
+	}
+
 	if *getValidatorElection {
 		getElectionInfo(stakeHubContract)
 		return
@@ -172,6 +181,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		return
+	}
+	if *getSyncFee {
+		getSyncFeeFromContract(tokenManagerContract)
 		return
 	}
 
@@ -758,4 +771,17 @@ func tokenRecover(
 		return errors.New("WithdrawUnlockedToken tx failed")
 	}
 	return nil
+}
+
+func getSyncFeeFromContract(contract *tokenmanager.Tokenmanager) {
+	fee, err := contract.SyncFee(nil)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("sync fee : %v\n", fee)
+	mirrorFee, err := contract.MirrorFee(nil)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("mirror fee : %v\n", mirrorFee)
 }
