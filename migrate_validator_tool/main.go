@@ -597,7 +597,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 
 	// vote
 	fmt.Println("wait 1 min to start voting")
-	time.Sleep(65 * time.Second)
+	time.Sleep(70 * time.Second)
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
 	if err != nil {
 		panic(err)
@@ -617,7 +617,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 
 	// queue
 	fmt.Println("wait 2 min for voting end")
-	time.Sleep(123 * time.Second)
+	time.Sleep(130 * time.Second)
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
 	if err != nil {
 		panic(err)
@@ -637,7 +637,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 
 	// execute
 	fmt.Println("wait 1 min for execute tx")
-	time.Sleep(65 * time.Second)
+	time.Sleep(70 * time.Second)
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
 	if err != nil {
 		panic(err)
