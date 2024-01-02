@@ -4,7 +4,7 @@ workspace=${basedir}
 source ${workspace}/.env
 source ${workspace}/utils.sh
 
-dst_id="i-0d2b8632af953d0f6"
+dst_id="i-0f501565decf3b921"
 
 function start_http_ap() {
     rm -rf /mnt/efs/bsc-qa/bc-fusion/http_ap

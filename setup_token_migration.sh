@@ -11,12 +11,7 @@ standalone=false
 bsc_node_ips=(${BSC_NODE_IP})
 nodeurl=${BC_NODE_URL}
 
-declare -A ips2ids
-ips2ids["172.22.42.13"]="i-0d2b8632af953d0f6"
-ips2ids["172.22.42.94"]="i-001b988ca374e66f1"
-ips2ids["172.22.43.86"]="i-0d36ebf557138f8e5"
-
-dst_id="i-001b988ca374e66f1"
+dst_id="i-0f501565decf3b921"
 
 function setup_token_recover_contract() {
     merkleRoot=$(cat /mnt/efs/bsc-qa/bc-fusion/dump_bc_account/output/base.json | jq -r '.state_root')
