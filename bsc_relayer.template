@@ -24,7 +24,7 @@
     "aws_secret_name": "",
     "private_key": "{{private_key}}",
     "providers": [
-      "http://localhost:8545""
+      "http://localhost:8545"
     ],
     "gas_limit": 4700000,
     "gas_price": 50000000000,
