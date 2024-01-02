@@ -93,6 +93,7 @@ function prepare_config() {
 
     cd ${workspace}/genesis/
     npm install
+    forge install --no-git --no-commit foundry-rs/forge-std@v1.1.1
     sed -i -e "s/0xA904540818AC9c47f2321F97F1069B9d8746c6DB/${INIT_HOLDER}/g" ${workspace}/genesis/scripts/generate-relayerHub.sh
     rm -rf ${workspace}/genesis/scripts/init_holders.js
     yes | cp -f ${workspace}/init_holder.js ${workspace}/genesis/scripts/init_holders.js
