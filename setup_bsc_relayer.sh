@@ -2,7 +2,7 @@
 basedir=$(cd `dirname $0`; pwd)
 workspace=${basedir}
 
-dst_id="i-0d2b8632af953d0f6"
+dst_id="i-007723e75eb8f1dab"
 
 function exit_previous() {
     # stop client
