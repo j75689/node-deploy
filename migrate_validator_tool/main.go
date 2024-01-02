@@ -7,6 +7,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"math/big"
 	"math/rand"
 	"os"
@@ -23,6 +24,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/bep20"
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/bep20Test"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/bscgovernor"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/crosschain"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/govtoken"
@@ -62,7 +64,8 @@ var (
 	to             = flag.String("to", "", "transfer to address")
 	gasPrice       = flag.String("gas_price", "10000000000", "transfer gasPrice")
 
-	ccTo = flag.String("cc_to", "", "cross chain transfer to address")
+	ccTo           = flag.String("cc_to", "", "cross chain transfer to address")
+	ccContractFlag = flag.String("cc_contract", "", "cross chain transfer contract token")
 
 	bscPrivKey              = flag.String("priv_key", "", "BSC validator operator private key")
 	bscEndpoint             = flag.String("bsc_endpoint", "", "BSC RPC endpoint")
@@ -93,6 +96,21 @@ var (
 	recoverApprovalSignature = flag.String("recover_approval_signature", "", "recover approval signature")
 	recoverProofs            = flag.String("recover_proofs", "", "recover proofs")
 	recoverContract          = flag.String("recover_contract", "", "recover contract")
+
+	deployContractFlag        = flag.String("deploy_contract", "", "deploy contract bytecode")
+	tokenBindSymbolFlag       = flag.String("token_bind_symbol", "", "token bind symbol")
+	tokenBindContractAddrFlag = flag.String("token_bind_contract_addr", "", "token bind contract address")
+	tokenBindAmountFlag       = flag.String("token_bind_amount", "", "token bind amount")
+
+	checkBEP20BalanceAddrFlag = flag.String("check_bep20_balance_addr", "", "check bep20 balance address")
+	checkBEP20BalanceAccFlag  = flag.String("check_bep20_balance_acc", "", "check bep20 balance acc")
+
+	mirrorTokenContractFlag          = flag.String("mirror_token_contract", "", "mirror token contract addr")
+	getBEP2SymbolByContractFlag      = flag.String("get_bep2_symbol_by_contract", "", "get bep2 symbol by contract")
+	syncContractAddrFlag             = flag.String("sync_contract_addr", "", "sync contract address")
+	mintMoreMirrorTokenFlag          = flag.String("mint_more_mirror_token", "", "mint more mirror token")
+	mirrorTokenTransferOutFlag       = flag.String("mirror_token_transfer_out", "", "mirror token transfer out")
+	mirrorTokenTransferOutAmountFlag = flag.String("mirror_token_transfer_out_amount", "", "mirror token transfer out amount")
 )
 
 func main() {
@@ -198,9 +216,118 @@ func main() {
 		return
 	}
 
+	if len(*checkBEP20BalanceAccFlag) > 0 && len(*checkBEP20BalanceAddrFlag) > 0 {
+		user := common.HexToAddress(*checkBEP20BalanceAccFlag)
+		bep20Addr := common.HexToAddress(*checkBEP20BalanceAddrFlag)
+		bep20Contract, err := bep20.NewBep20(bep20Addr, ethClient)
+		if err != nil {
+			panic(err)
+		}
+		balance, err := bep20Contract.BalanceOf(nil, user)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("balance of [%s]: %s", user, balance)
+		return
+	}
+
+	if len(*getBEP2SymbolByContractFlag) > 0 {
+		c := common.HexToAddress(*getBEP2SymbolByContractFlag)
+		pending, err := tokenManagerContract.MirrorPendingRecord(nil, c)
+		if err != nil {
+			panic(err)
+		}
+		if pending {
+			fmt.Println("token mirror is pending")
+			return
+		}
+		bep2Symbol, err := tokenHubContract.GetBep2SymbolByContractAddr(nil, c)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println("BEP2 symbol:", string(bep2Symbol[:]))
+		return
+	}
+
 	acc, err := FromHexKey(*bscPrivKey)
 	if err != nil {
 		panic(err)
+	}
+
+	if len(*mirrorTokenContractFlag) > 0 {
+		c := common.HexToAddress(*mirrorTokenContractFlag)
+		err = mirrorToken(ethClient, acc, c, tokenManagerContract, tokenHubContract)
+		if err != nil {
+			panic(err)
+		}
+		return
+	}
+
+	if len(*mintMoreMirrorTokenFlag) > 0 {
+		contract, err := bep20Test.NewBep20Test(common.HexToAddress(*mintMoreMirrorTokenFlag), ethClient)
+		if err != nil {
+			panic(err)
+		}
+		txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, big.NewInt(0),
+			nil, 3000000)
+		if err != nil {
+			panic(err)
+		}
+		amt, _ := new(big.Int).SetString("100000000000000000000000000", 10)
+		tx, err := contract.MintMore(txOpt, amt)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("mint more tx:", tx.Hash().String())
+		r, err := bind.WaitMined(context.Background(), ethClient, tx)
+		if err != nil {
+			panic(err)
+		}
+		if r.Status != 1 {
+			panic("mint more bep20 token tx execution failed")
+		}
+		return
+	}
+
+	if len(*syncContractAddrFlag) > 0 {
+		err = syncToken(ethClient, acc, common.HexToAddress(*syncContractAddrFlag), tokenManagerContract)
+		if err != nil {
+			panic(err)
+		}
+		return
+	}
+
+	if len(*deployContractFlag) > 0 {
+		f, err := os.Open(*deployContractFlag)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		bytecodeStr, err := io.ReadAll(f)
+		if err != nil {
+			panic(err)
+		}
+		bytecode, err := hex.DecodeString(string(bytecodeStr))
+		if err != nil {
+			panic(err)
+		}
+		_, contractAddr, err := deployContract(ethClient, acc, bytecode)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("contract address:", contractAddr)
+		return
+	}
+
+	if len(*tokenBindContractAddrFlag) > 0 && len(*tokenBindAmountFlag) > 0 && len(*tokenBindSymbolFlag) > 0 {
+		bep20Addr := common.HexToAddress(*tokenBindContractAddrFlag)
+		amt, _ := new(big.Int).SetString(*tokenBindAmountFlag, 10)
+		err = approveBind(ethClient, acc, bep20Addr, tokenManagerContract, *tokenBindSymbolFlag, amt)
+		if err != nil {
+			panic(err)
+		}
+		return
 	}
 
 	if *recoverSymbol != "" && *recoverAmount != "" && *recoverPubKey != "" && *recoverApprovalSignature != "" &&
@@ -236,11 +363,41 @@ func main() {
 		gasLimit := uint64(3000000)
 		amt, _ := new(big.Int).SetString(*transferAmount, 10)
 		relayerFee := big.NewInt(1e18) // relayer fee
-		txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, new(big.Int).Add(amt, relayerFee), nil, gasLimit)
+		bnbAmt := new(big.Int).Add(amt, relayerFee)
+		ccContract := common.HexToAddress("0x0000000000000000000000000000000000000000")
+		if len(*ccContractFlag) > 0 {
+			ccContract = common.HexToAddress(*ccContractFlag)
+			fmt.Println("ccContract:", ccContract.String(), "amt:", amt)
+			bep20Contract, err := bep20.NewBep20(ccContract, ethClient)
+			if err != nil {
+				panic(err)
+			}
+			txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, nil, gasLimit)
+			if err != nil {
+				panic(err)
+			}
+			tx, err := bep20Contract.Approve(txOpt, common.HexToAddress(TokenHubContractAddr), amt)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println("approve tx:", tx.Hash().String())
+			r, err := bind.WaitMined(context.Background(), ethClient, tx)
+			if err != nil {
+				panic(err)
+			}
+			if r.Status != 1 {
+				panic("approve tx failed")
+			}
+
+			bnbAmt = relayerFee
+		}
+
+		txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, bnbAmt, nil, gasLimit)
 		if err != nil {
 			panic(err)
 		}
-		tx, err := c.TransferOut(txOpt, common.HexToAddress("0x0000000000000000000000000000000000000000"),
+
+		tx, err := c.TransferOut(txOpt, ccContract,
 			recipient, amt, uint64(time.Now().Add(3*time.Minute).Unix()))
 		if err != nil {
 			panic(err)
@@ -806,4 +963,174 @@ func getSyncFeeFromContract(contract *tokenmanager.Tokenmanager) {
 		panic(err)
 	}
 	fmt.Printf("mirror fee : %v\n", mirrorFee)
+}
+
+func signTransaction(fromEO ExtAcc, value *big.Int, data []byte, nonce uint64, gasLimit uint64, gasPrice, chainId *big.Int) (*ethtypes.Transaction, common.Hash, error) {
+	tx := ethtypes.NewContractCreation(nonce, value, gasLimit, gasPrice, data)
+	signedTx, err := ethtypes.SignTx(tx, ethtypes.NewEIP155Signer(chainId), fromEO.Key)
+	if err != nil {
+		return nil, common.Hash{}, err
+	}
+
+	return signedTx, signedTx.Hash(), nil
+}
+
+func deployContract(rpcClient *ethclient.Client, account ExtAcc, contractCode []byte) (common.Hash, common.Address, error) {
+	fromAddress := account.Addr
+	nonce, err := rpcClient.PendingNonceAt(context.Background(), fromAddress)
+	if err != nil {
+		return common.Hash{}, common.Address{}, err
+	}
+
+	gasPrice, err := rpcClient.SuggestGasPrice(context.Background())
+	if err != nil {
+		return common.Hash{}, common.Address{}, err
+	}
+
+	chainID, err := rpcClient.NetworkID(context.Background())
+	if err != nil {
+		return common.Hash{}, common.Address{}, err
+	}
+
+	gasLimit := uint64(3000000)
+	signedTx, hash, err := signTransaction(account, big.NewInt(0),
+		contractCode, nonce, gasLimit, gasPrice, chainID)
+	if err != nil {
+		return common.Hash{}, common.Address{}, err
+	}
+
+	err = rpcClient.SendTransaction(context.Background(), signedTx)
+	if err != nil {
+		return common.Hash{}, common.Address{}, err
+	}
+
+	found := false
+	var (
+		r1 *ethtypes.Receipt
+	)
+	for i := 0; i < 60; i++ {
+		r1, err = rpcClient.TransactionReceipt(context.Background(), hash)
+		if r1 != nil && err == nil {
+			found = true
+			break
+		}
+		time.Sleep(3 * time.Second)
+	}
+	if !found {
+		return common.Hash{}, common.Address{}, errors.New("tx failed to be verified on chain or timeout")
+	}
+	if r1.Status != ethtypes.ReceiptStatusSuccessful {
+		return common.Hash{}, common.Address{}, errors.New("tx failed to be executed on chain")
+	}
+	contractAddr := r1.ContractAddress
+
+	codes, err := rpcClient.CodeAt(context.Background(), contractAddr, nil)
+	if err != nil {
+		return common.Hash{}, common.Address{}, err
+	}
+
+	if len(codes) == 0 {
+		return common.Hash{}, common.Address{}, errors.New("contract code is not empty")
+	}
+
+	return signedTx.Hash(), contractAddr, nil
+}
+
+func approveBind(rpcClient *ethclient.Client, account ExtAcc, contract common.Address,
+	tmContract *tokenmanager.Tokenmanager, symbol string, amt *big.Int) error {
+	bep20Contract, err := bep20.NewBep20(contract, rpcClient)
+	if err != nil {
+		return err
+	}
+	txOpt, err := account.BuildTransactOpts(context.Background(), rpcClient, big.NewInt(0),
+		nil, 3000000)
+	if err != nil {
+		return err
+	}
+	approveTx, err := bep20Contract.Approve(txOpt, common.HexToAddress(TokenManagerContractAddr), amt)
+	if err != nil {
+		return err
+	}
+	fmt.Println("approve bep20 tx hash:", approveTx.Hash())
+	approveReceipt, err := bind.WaitMined(context.Background(), rpcClient, approveTx)
+	if err != nil {
+		return err
+	}
+	if approveReceipt.Status != 1 {
+		return fmt.Errorf("bep20 approve tx execution failed")
+	}
+
+	txOpt, err = account.BuildTransactOpts(context.Background(), rpcClient, big.NewInt(2100000000000000),
+		nil, 3000000)
+	if err != nil {
+		return err
+	}
+	approvalBindTx, err := tmContract.ApproveBind(txOpt, contract, symbol)
+	fmt.Println("approve bind tx hash:", approvalBindTx.Hash())
+	if err != nil {
+		return err
+	}
+	approvalBindReceipt, err := bind.WaitMined(context.Background(), rpcClient, approvalBindTx)
+	if err != nil {
+		return err
+	}
+	if approvalBindReceipt.Status != 1 {
+		return fmt.Errorf("approve bind tx execution failed")
+	}
+
+	return nil
+}
+
+func syncToken(rpcClient *ethclient.Client, account ExtAcc, contract common.Address,
+	tmContract *tokenmanager.Tokenmanager) error {
+	relayFee := big.NewInt(2100000000000000)
+	syncFee := new(big.Int).Mul(big.NewInt(1e18), big.NewInt(10))
+
+	txOpt, err := account.BuildTransactOpts(context.Background(), rpcClient, new(big.Int).Add(relayFee, syncFee),
+		nil, 3000000)
+	if err != nil {
+		return err
+	}
+	tx, err := tmContract.Sync(txOpt, contract, uint64(time.Now().Add(60*time.Minute).Unix()))
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("sync bep20 token tx hash:", tx.Hash())
+	approveReceipt, err := bind.WaitMined(context.Background(), rpcClient, tx)
+	if err != nil {
+		return err
+	}
+	if approveReceipt.Status != 1 {
+		return fmt.Errorf("sync bep20 token tx execution failed")
+	}
+
+	return nil
+}
+
+func mirrorToken(rpcClient *ethclient.Client, account ExtAcc, contract common.Address,
+	tmContract *tokenmanager.Tokenmanager, tokenHubContract *tokenhub.Tokenhub) error {
+
+	relayFee := big.NewInt(2100000000000000)
+	mirrorFee := new(big.Int).Mul(big.NewInt(1e18), big.NewInt(10))
+	txOpt, err := account.BuildTransactOpts(context.Background(), rpcClient, new(big.Int).Add(relayFee, mirrorFee),
+		nil, 3000000)
+	if err != nil {
+		return err
+	}
+
+	mirrorTx, err := tmContract.Mirror(txOpt, contract, uint64(time.Now().Add(1000*time.Second).Unix()))
+	fmt.Println("mirror tx hash:", mirrorTx.Hash())
+	if err != nil {
+		return err
+	}
+	mirrorReceipt, err := bind.WaitMined(context.Background(), rpcClient, mirrorTx)
+	if err != nil {
+		return err
+	}
+	if mirrorReceipt.Status != 1 {
+		return fmt.Errorf("mirror tx execution failed")
+	}
+
+	return nil
 }
