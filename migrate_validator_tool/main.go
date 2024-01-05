@@ -29,6 +29,7 @@ import (
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/crosschain"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/govtoken"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/stakehub"
+	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/staking"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenhub"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenmanager"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/tokenrecoverportal"
@@ -42,6 +43,7 @@ const (
 	TokenManagerContractAddr  = "0x0000000000000000000000000000000000001008"
 	StakeHubContractAddr      = "0x0000000000000000000000000000000000002002"
 	CrossChainContractAddr    = "0x0000000000000000000000000000000000002000"
+	StakingContractAddr       = "0x0000000000000000000000000000000000002001"
 	BSCGovernorContractAddr   = "0x0000000000000000000000000000000000002004"
 	GovTokenAddress           = "0x0000000000000000000000000000000000002005"
 	TokenRecoveryContractAddr = "0x0000000000000000000000000000000000003000"
@@ -111,6 +113,8 @@ var (
 	mintMoreMirrorTokenFlag          = flag.String("mint_more_mirror_token", "", "mint more mirror token")
 	mirrorTokenTransferOutFlag       = flag.String("mirror_token_transfer_out", "", "mirror token transfer out")
 	mirrorTokenTransferOutAmountFlag = flag.String("mirror_token_transfer_out_amount", "", "mirror token transfer out amount")
+
+	getUndelegatedAmountFlag = flag.String("get_undelegated_amount", "", "get undelegated amount")
 )
 
 func main() {
@@ -169,6 +173,10 @@ func main() {
 		panic(err)
 	}
 	tokenManagerContract, err := tokenmanager.NewTokenmanager(common.HexToAddress(TokenManagerContractAddr), ethClient)
+	if err != nil {
+		panic(err)
+	}
+	stakingContract, err := staking.NewStaking(common.HexToAddress(StakingContractAddr), ethClient)
 	if err != nil {
 		panic(err)
 	}
@@ -247,6 +255,15 @@ func main() {
 		}
 
 		fmt.Println("BEP2 symbol:", string(bep2Symbol[:]))
+		return
+	}
+
+	if len(*getUndelegatedAmountFlag) > 0 {
+		amt, err := stakingContract.GetUndelegated(nil, common.HexToAddress(*getUndelegatedAmountFlag))
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("undelegated amount:", amt)
 		return
 	}
 
