@@ -455,7 +455,23 @@ migrate_all_validator)
     migrate_validator 0
     unbond_validator_on_bc 1
     migrate_validator 1
+    unbond_validator_on_bc 2
     migrate_validator 2
+    unbond_validator_on_bc 3
+    migrate_validator 3
+    unbond_validator_on_bc 4
+    migrate_validator 4
+    unbond_validator_on_bc 5
+    migrate_validator 5
+    unbond_validator_on_bc 6
+    migrate_validator 6
+    unbond_validator_on_bc 7
+    migrate_validator 7
+    unbond_validator_on_bc 8
+    migrate_validator 8
+    unbond_validator_on_bc 9
+    migrate_validator 9
+    migrate_validator 10
     echo "===== end ===="
     ;;
 unbond_validator_on_bc)
