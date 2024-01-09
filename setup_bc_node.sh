@@ -107,19 +107,19 @@ function init() {
 }
 
 function start_cluster() {
-    rm -rf /mnt/efs/bsc-qa/bc-fusion/bc_cluster
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion/bc_cluster
-    cp -r ${workspace}/.local/bc/* /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
-    cp -r ${workspace}/stop_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
-    cp -r ${workspace}/start_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
-    cp -f ${workspace}/bin/bnbchaind /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster
+    cp -r ${workspace}/.local/bc/* /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/
+    cp -r ${workspace}/stop_node.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/
+    cp -r ${workspace}/start_node.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/
+    cp -f ${workspace}/bin/bnbchaind /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/
 
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         dst_id=${ips2ids[${bc_node_ips[i]}]}
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
     done
     sleep 10
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -137,21 +137,21 @@ function cluster_down() {
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
     done
 }
 
 function cluster_restart() {
-    yes | cp -r ${workspace}/stop_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
-    yes | cp -r ${workspace}/start_node.sh /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
-    yes | cp -f ${workspace}/bin/bnbchaind /mnt/efs/bsc-qa/bc-fusion/bc_cluster/
+    yes | cp -r ${workspace}/stop_node.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/
+    yes | cp -r ${workspace}/start_node.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/
+    yes | cp -f ${workspace}/bin/bnbchaind /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/
 
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         dst_id=${ips2ids[${bc_node_ips[i]}]}
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
+            --parameters commands="mkdir -p /server/bc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/stop_node.sh /server/bc/stop_node.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/start_node.sh /server/bc/start_node.sh && sudo bash /server/bc/stop_node.sh"
     done
     sleep 10
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -279,7 +279,7 @@ function first_sunset_hardfork() {
     expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/FirstSunsetHeight = 9223372036854775807/FirstSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
-        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion/bc_cluster/node${i}/config/app.toml
+        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/node${i}/config/app.toml
     done
     echo $expect_hardfork_height
 }
@@ -290,7 +290,7 @@ function second_sunset_hardfork() {
     expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/SecondSunsetHeight = 9223372036854775807/SecondSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
-        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion/bc_cluster/node${i}/config/app.toml
+        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/node${i}/config/app.toml
     done
     echo $expect_hardfork_height
 }
@@ -301,7 +301,7 @@ function final_sunset_hardfork() {
     expect_hardfork_height=$((${current_height} + ${WAIT_BLOCK_FOR_HARDFORK}))
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         sed -i -e "s/FinalSunsetHeight = 9223372036854775807/FinalSunsetHeight = ${expect_hardfork_height}/g" ${workspace}/.local/bc/node${i}/config/app.toml
-        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion/bc_cluster/node${i}/config/app.toml
+        yes | cp -f ${workspace}/.local/bc/node${i}/config/app.toml /mnt/efs/bsc-qa/bc-fusion-staking-env//bc_cluster/node${i}/config/app.toml
     done
 
     echo $expect_hardfork_height

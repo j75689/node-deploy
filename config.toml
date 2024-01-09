@@ -38,13 +38,13 @@ NoUSB = true
 InsecureUnlockAllowed = true
 HTTPPort = 8545
 HTTPVirtualHosts = ["*"]
-HTTPModules = ["eth", "net", "web3", "txpool", "parlia"]
+HTTPModules = ["eth", "net", "web3", "txpool", "parlia", "debug", "admin", "miner"]
 WSHost = "0.0.0.0"
 WSPort = 8545
 
 [Node.P2P]
 MaxPeers = 50
-NoDiscovery = false
+NoDiscovery = true
 StaticNodes = []
 TrustedNodes = []
 EnableMsgEvents = false

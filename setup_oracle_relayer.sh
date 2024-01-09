@@ -13,7 +13,7 @@ function exit_previous() {
         aws ssm send-command \
           --instance-ids "${dst_id}" \
           --document-name "AWS-RunShellScript" \
-          --parameters commands="mkdir -p /server/relayer/ && cp /mnt/efs/bsc-qa/bc-fusion/relayer/stop_oracle_relayer.sh /server/relayer/ && bash /server/relayer/stop_oracle_relayer.sh"
+          --parameters commands="mkdir -p /server/relayer/ && cp /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/stop_oracle_relayer.sh /server/relayer/ && bash /server/relayer/stop_oracle_relayer.sh"
     done
 }
 
@@ -47,13 +47,13 @@ function cluster_up() {
     done
 
     cp ${workspace}/tmp/oracle-relayer/build/oracle-relayer ${workspace}/.local/relayer/
-    rm -rf /mnt/efs/bsc-qa/bc-fusion/relayer
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion/relayer
-    yes | cp -rf ${workspace}/.local/relayer/* /mnt/efs/bsc-qa/bc-fusion/relayer/
-    yes | cp -rf ${workspace}/stop_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
-    yes | cp -rf ${workspace}/start_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
-    yes | cp -rf ${workspace}/stop_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
-    yes | cp -rf ${workspace}/start_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion/relayer/
+    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer
+    yes | cp -rf ${workspace}/.local/relayer/* /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
+    yes | cp -rf ${workspace}/stop_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
+    yes | cp -rf ${workspace}/start_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
+    yes | cp -rf ${workspace}/stop_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
+    yes | cp -rf ${workspace}/start_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
 
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
         dst_id=${ips2ids[${bc_node_ips[i]}]}
@@ -61,7 +61,7 @@ function cluster_up() {
         aws ssm send-command \
           --instance-ids "${dst_id}" \
           --document-name "AWS-RunShellScript" \
-          --parameters commands="mkdir -p /server/relayer/ && cp /mnt/efs/bsc-qa/bc-fusion/relayer/start_oracle_relayer.sh /server/relayer/ && bash /server/relayer/start_oracle_relayer.sh ${i} reset"
+          --parameters commands="mkdir -p /server/relayer/ && cp /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/start_oracle_relayer.sh /server/relayer/ && bash /server/relayer/start_oracle_relayer.sh ${i} reset"
     done
 }
 

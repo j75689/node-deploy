@@ -3,7 +3,7 @@
 cmd=$1
 
 mkdir -p /server/relayer/
-yes | cp -rf /mnt/efs/bsc-qa/bc-fusion/relayer/* /server/relayer/
+yes | cp -rf /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/* /server/relayer/
 if [ "${cmd}" == "reset" ]; then
     rm -rf /server/relayer/bsc_relayer.db
 fi
