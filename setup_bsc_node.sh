@@ -158,19 +158,19 @@ function initNetwork() {
 }
 
 function cluster_up() {
-    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster
-    cp -r ${workspace}/.local/bsc/* /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/
-    cp -r ${workspace}/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/
-    cp -r ${workspace}/start_geth.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/
-    cp -f ${workspace}/bin/geth /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/
+    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster
+    cp -r ${workspace}/.local/bsc/* /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
+    cp -r ${workspace}/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
+    cp -r ${workspace}/start_geth.sh /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
+    cp -f ${workspace}/bin/geth /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
 
     for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
         dst_id=${ips2ids[${bsc_node_ips[i]}]}
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
+            --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
     done
     sleep 10
     for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
@@ -188,20 +188,20 @@ function cluster_down() {
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
+            --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
     done
 }
 
 function cluster_restart() {
-    yes | cp -r ${workspace}/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/
-    yes | cp -r ${workspace}/start_geth.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/
+    yes | cp -r ${workspace}/stop_geth.sh /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
+    yes | cp -r ${workspace}/start_geth.sh /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
 
     for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
         dst_id=${ips2ids[${bsc_node_ips[i]}]}
         aws ssm send-command \
             --instance-ids "${dst_id}" \
             --document-name "AWS-RunShellScript" \
-            --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
+            --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
     done
     sleep 10
     for ((i = 0; i < ${#bsc_node_ips[@]}; i++)); do
@@ -274,7 +274,7 @@ function fyenman_hardfork(){
 
     cd ${workspace}/tmp/bsc-feynman/bsc && make geth
     yes | cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth ${workspace}/bin/geth_feynman
-    yes | cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/
+    yes | cp -f ${workspace}/tmp/bsc-feynman/bsc/build/bin/geth /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
 
     echo $upgrade_time
 }
@@ -364,18 +364,18 @@ function migrate_validator() {
         sleep 3
     done
 
-    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/clusterNetwork/node${validator_index}/keystore
-    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/clusterNetwork/node${validator_index}/bls
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/clusterNetwork/node${validator_index}/keystore
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/clusterNetwork/node${validator_index}/bls
-    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/keystore/* /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/clusterNetwork/node${validator_index}/keystore/
-    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/bls/* /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/clusterNetwork/node${validator_index}/bls/
+    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/clusterNetwork/node${validator_index}/keystore
+    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/clusterNetwork/node${validator_index}/bls
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/clusterNetwork/node${validator_index}/keystore
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/clusterNetwork/node${validator_index}/bls
+    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/keystore/* /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/clusterNetwork/node${validator_index}/keystore/
+    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/bls/* /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/clusterNetwork/node${validator_index}/bls/
 
     dst_id=${ips2ids[${bsc_node_ips[validator_index]}]}
     aws ssm send-command \
         --instance-ids "${dst_id}" \
         --document-name "AWS-RunShellScript" \
-        --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env//bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
+        --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
     sleep 10
     aws ssm send-command \
         --instance-ids "${dst_id}" \

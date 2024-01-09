@@ -9,7 +9,7 @@ function exit_previous() {
     aws ssm send-command \
       --instance-ids "${dst_id}" \
       --document-name "AWS-RunShellScript" \
-      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/stop_bsc_relayer.sh /server/relayer/ && bash /server/relayer/stop_bsc_relayer.sh"    
+      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer/stop_bsc_relayer.sh /server/relayer/ && bash /server/relayer/stop_bsc_relayer.sh"    
 }
 
 function build_relayer() {
@@ -38,18 +38,18 @@ function prepare_native_config() {
 
 function cluster_up() {
     cp ${workspace}/tmp/bsc-relayer/build/bsc-relayer ${workspace}/.local/relayer/
-    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer
-    yes | cp -rf ${workspace}/.local/relayer/* /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
-    yes | cp -rf ${workspace}/stop_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
-    yes | cp -rf ${workspace}/start_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
-    yes | cp -rf ${workspace}/stop_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
-    yes | cp -rf ${workspace}/start_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/
+    rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer
+    mkdir -p /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer
+    yes | cp -rf ${workspace}/.local/relayer/* /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer/
+    yes | cp -rf ${workspace}/stop_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer/
+    yes | cp -rf ${workspace}/start_bsc_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer/
+    yes | cp -rf ${workspace}/stop_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer/
+    yes | cp -rf ${workspace}/start_oracle_relayer.sh /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer/
 
     aws ssm send-command \
       --instance-ids "${dst_id}" \
       --document-name "AWS-RunShellScript" \
-      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion-staking-env//relayer/start_bsc_relayer.sh /server/relayer/ && bash /server/relayer/start_bsc_relayer.sh reset"
+      --parameters commands="cp /mnt/efs/bsc-qa/bc-fusion-staking-env/relayer/start_bsc_relayer.sh /server/relayer/ && bash /server/relayer/start_bsc_relayer.sh reset"
 }
 
 
