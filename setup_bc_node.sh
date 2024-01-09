@@ -93,6 +93,7 @@ function init() {
     # generate genesis.json
     ${workspace}/bin/bnbchaind collect-gentxs --acc-prefix tbnb --chain-id ${BC_CHAIN_ID} -i ${workspace}/.local/bc/genTx -o ${workspace}/.local/bc/genesis.json
     sed -i -e "s/\"min_self_delegation\": \"1000000000000\"/\"min_self_delegation\": \"100000000\"/g" ${workspace}/.local/bc/genesis.json
+    sed -i -e "s/\"unbonding_time\": \"604800000000000\"/\"unbonding_time\": \"${BC_UNBONDING_TIME}\"/g" ${workspace}/.local/bc/genesis.json
     
     # copy genesis file and set persistent peers
     persistent_peers=$(joinByString ',' ${node_ids})
