@@ -458,7 +458,7 @@ migrate_all_validator)
     migrate_validator 0
     unbond_validator_on_bc 1
     migrate_validator 1
-    migrate_validator 2
+    # migrate_validator 2
     echo "===== end ===="
     ;;
 unbond_validator_on_bc)
