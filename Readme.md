@@ -25,6 +25,8 @@ abigen --abi=./migrate_validator_tool/abi/tokenhub/tokenhub.abi --pkg=tokenhub -
 abigen --abi=./migrate_validator_tool/abi/tokenmanager/tokenmanager.abi --pkg=tokenmanager --out=./migrate_validator_tool/abi/tokenmanager/tokenmanager.go
 abigen --abi=./migrate_validator_tool/abi/staking/staking.abi --pkg=staking --out=./migrate_validator_tool/abi/staking/staking.go
 abigen --abi=./migrate_validator_tool/abi/bep20Test/bep20Test.abi --pkg=bep20Test --alias="_symbol=NewSymbol,name=NewName,_decimals=NewDecimals" --out=./migrate_validator_tool/abi/bep20Test/bep20Test.go
+abigen --abi=./migrate_validator_tool/abi/systemreward/systemreward.abi --pkg=systemreward --out=./migrate_validator_tool/abi/systemreward/systemreward.go
+
 ```
 
 ## Extract Bytecode
