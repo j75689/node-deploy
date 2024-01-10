@@ -4,7 +4,7 @@ workspace=${basedir}
 source ${workspace}/.env
 source ${workspace}/utils.sh
 
-dst_id="i-0d2b8632af953d0f6"
+dst_id="i-061e1e23e2b80d85b"
 
 function start_http_ap() {
     rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env/http_ap
