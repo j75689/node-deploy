@@ -1,11 +1,193 @@
 version: "3"
 services:
   node0:
-    image: tianon/true
-    depends_on: ["postgres", "keycloak"]
+    image: node:bc-fusion
+    user: root
+    ports:
+      - "26657:26657"
+    environment:
+      - NETWORK=bc-fusion
+    volumes:
+      - /server/gaiad.0:/server/gaiad:rw
+    command: 
+      - /usr/bin/bnbchaind
+      - start
+      - --home
+      - /server/gaiad
   node1:
-    image: monroe/noop
-    depends_on: ["grafana"]
-  postgres: ...
-  keycloak: ...
-  grafana: ...
+    image: node:bc-fusion
+    user: root
+    environment:
+      - NETWORK=bc-fusion
+    volumes:
+      - /server/gaiad.1:/server/gaiad:rw
+    command: 
+      - /usr/bin/bnbchaind
+      - start
+      - --home
+      - /server/gaiad
+  node2:
+    image: node:bc-fusion
+    user: root
+    environment:
+      - NETWORK=bc-fusion
+    volumes:
+      - /server/gaiad.2:/server/gaiad:rw
+    command: 
+      - /usr/bin/bnbchaind
+      - start
+      - --home
+      - /server/gaiad
+  bsc0:
+    image: bsc:master
+    user: root
+    ports:
+      - "8545:8545"
+    volumes:
+      - /server/node0:/server/validator:rw
+      - /server/config.toml:/server/validator/config.toml:ro
+    entrypoint: bash
+    command: >
+      -c "/usr/local/bin/geth --ws.port 8545 --ws.addr 0.0.0.0 --light.serve 50 --ws --datadir /server/validator/ --pprof.addr 0.0.0.0 --metrics --rpc.allow-unprotected-txs --history.transactions 0 --pprof -unlock 0x$$(cat /server/validator/keystore/* |  jq -r .address) --miner.etherbase 0x$$(cat /server/validator/keystore/* |  jq -r .address) --password /server/validator/password.txt --mine --http.corsdomain * --http.vhosts * --http.addr 0.0.0.0 --http.port 8545 --config /server/validator/config.toml"
+  bsc1:
+    image: bsc:master
+    user: root
+    volumes:
+      - /server/node1:/server/validator:rw
+      - /server/config.toml:/server/validator/config.toml:ro
+    entrypoint: bash
+    command: >
+      -c "/usr/local/bin/geth --ws.port 8545 --ws.addr 0.0.0.0 --light.serve 50 --ws --datadir /server/validator/ --pprof.addr 0.0.0.0 --metrics --rpc.allow-unprotected-txs --history.transactions 0 --pprof -unlock 0x$$(cat /server/validator/keystore/* |  jq -r .address) --miner.etherbase 0x$$(cat /server/validator/keystore/* |  jq -r .address) --password /server/validator/password.txt --mine --http.corsdomain * --http.vhosts * --http.addr 0.0.0.0 --http.port 8545 --config /server/validator/config.toml"
+  bsc2:
+    image: bsc:master
+    user: root
+    volumes:
+      - /server/node2:/server/validator:rw
+      - /server/config.toml:/server/validator/config.toml:ro
+    entrypoint: bash
+    command: >
+      -c "/usr/local/bin/geth --ws.port 8545 --ws.addr 0.0.0.0 --light.serve 50 --ws --datadir /server/validator/ --pprof.addr 0.0.0.0 --metrics --rpc.allow-unprotected-txs --history.transactions 0 --pprof -unlock 0x$$(cat /server/validator/keystore/* |  jq -r .address) --miner.etherbase 0x$$(cat /server/validator/keystore/* |  jq -r .address) --password /server/validator/password.txt --mine --http.corsdomain * --http.vhosts * --http.addr 0.0.0.0 --http.port 8545 --config /server/validator/config.toml"
+  bsc3:
+    image: bsc:master
+    user: root
+    volumes:
+      - /server/node3:/server/validator:rw
+      - /server/config.toml:/server/validator/config.toml:ro
+    entrypoint: bash
+    command: >
+      -c "/usr/local/bin/geth --ws.port 8545 --ws.addr 0.0.0.0 --light.serve 50 --ws --datadir /server/validator/ --pprof.addr 0.0.0.0 --metrics --rpc.allow-unprotected-txs --history.transactions 0 --pprof -unlock 0x$$(cat /server/validator/keystore/* |  jq -r .address) --miner.etherbase 0x$$(cat /server/validator/keystore/* |  jq -r .address) --password /server/validator/password.txt --mine --http.corsdomain * --http.vhosts * --http.addr 0.0.0.0 --http.port 8545 --config /server/validator/config.toml"
+  bsc4:
+    image: bsc:master
+    user: root
+    volumes:
+      - /server/node4:/server/validator:rw
+      - /server/config.toml:/server/validator/config.toml:ro
+    entrypoint: bash
+    command: >
+      -c "/usr/local/bin/geth --ws.port 8545 --ws.addr 0.0.0.0 --light.serve 50 --ws --datadir /server/validator/ --pprof.addr 0.0.0.0 --metrics --rpc.allow-unprotected-txs --history.transactions 0 --pprof -unlock 0x$$(cat /server/validator/keystore/* |  jq -r .address) --miner.etherbase 0x$$(cat /server/validator/keystore/* |  jq -r .address) --password /server/validator/password.txt --mine --http.corsdomain * --http.vhosts * --http.addr 0.0.0.0 --http.port 8545 --config /server/validator/config.toml"
+  bsc5:
+    image: bsc:master
+    user: root
+    volumes:
+      - /server/node5:/server/validator:rw
+      - /server/config.toml:/server/validator/config.toml:ro
+    entrypoint: bash
+    command: >
+      -c "/usr/local/bin/geth --ws.port 8545 --ws.addr 0.0.0.0 --light.serve 50 --ws --datadir /server/validator/ --pprof.addr 0.0.0.0 --metrics --rpc.allow-unprotected-txs --history.transactions 0 --pprof -unlock 0x$$(cat /server/validator/keystore/* |  jq -r .address) --miner.etherbase 0x$$(cat /server/validator/keystore/* |  jq -r .address) --password /server/validator/password.txt --mine --http.corsdomain * --http.vhosts * --http.addr 0.0.0.0 --http.port 8545 --config /server/validator/config.toml"
+  bsc-relayer:
+    image: bsc-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/bsc-relayer:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/bsc-relayer --bbc-network-type 0 --config-type local --config-path /data/config.json"
+  oracle-relayer1:
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer1:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer2:
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer2:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer3:
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer3:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer4:
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer4:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer5:
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer5:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer6:
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer6:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer7:
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer7:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer8: 
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer8:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer9: 
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer9:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer10: 
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer10:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+  oracle-relayer11: 
+    image: oracle-relayer:latest
+    user: root
+    volumes:
+      - /server/relayer/oracle-relayer11:/data:rw
+    entrypoint: sh
+    command: >
+      -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
+
