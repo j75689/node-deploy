@@ -1,0 +1,11 @@
+version: "3"
+services:
+  node0:
+    image: tianon/true
+    depends_on: ["postgres", "keycloak"]
+  node1:
+    image: monroe/noop
+    depends_on: ["grafana"]
+  postgres: ...
+  keycloak: ...
+  grafana: ...
