@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -22,6 +23,8 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/prysmaticlabs/prysm/v4/validator/keymanager"
+	keystorev4 "github.com/wealdtech/go-eth2-wallet-encryptor-keystorev4"
 
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/bep20"
 	"github.com/bnb-chain/node-deploy/migrate_validator_tool/abi/bep20Test"
@@ -59,8 +62,9 @@ var (
 	getValidatorSet      = flag.Bool("get_validator_set", false, "")
 	getWorkingValidators = flag.Bool("get_working_validators", false, "")
 
-	secretFile = flag.String("secret", "", "secret file path")
-	password   = flag.String("password", "", "password")
+	blsSecretFile = flag.String("bls_secret", "", "bls secret file path")
+	secretFile    = flag.String("secret", "", "secret file path")
+	password      = flag.String("password", "", "password")
 
 	transferAmount = flag.String("amount", "0", "transfer amount")
 	to             = flag.String("to", "", "transfer to address")
@@ -126,6 +130,11 @@ func main() {
 
 	if *secretFile != "" {
 		convertGethPrivateKey()
+		return
+	}
+
+	if *blsSecretFile != "" {
+		convertBlsPrivateKey()
 		return
 	}
 
@@ -627,6 +636,29 @@ func convertGethPrivateKey() {
 	}
 
 	fmt.Println(hex.EncodeToString(crypto.FromECDSA(key.PrivateKey)))
+}
+
+func convertBlsPrivateKey() {
+	keyjson, err := os.ReadFile(*blsSecretFile)
+	if err != nil {
+		fmt.Println("read secret error:", err)
+		return
+	}
+	keystore := &keymanager.Keystore{}
+	err = json.Unmarshal(keyjson, keystore)
+	if err != nil {
+		fmt.Println("unmarshal key error:", err)
+		return
+	}
+
+	encryptor := keystorev4.New()
+	secret, err := encryptor.Decrypt(keystore.Crypto, *password)
+	if err != nil {
+		fmt.Println("DecryptKey key error:", err)
+		return
+	}
+
+	fmt.Println(common.Bytes2Hex(secret))
 }
 
 func getElectionInfo(contract *stakehub.Stakehub) error {
