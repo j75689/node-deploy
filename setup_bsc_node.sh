@@ -280,6 +280,51 @@ function fyenman_hardfork(){
     echo $upgrade_time
 }
 
+function prepare_fyenman_hardfork(){
+    rm -rf ${workspace}/tmp/bsc-feynman
+    mkdir -p ${workspace}/tmp/bsc-feynman
+    cd ${workspace}/tmp/bsc-feynman
+    git clone --branch ${BSC_FYENMAN_BRANCH} ${BSC_FYENMAN_REPO}
+
+    rm -rf ${workspace}/tmp/bsc_fyenman_bytecode
+    mkdir -p ${workspace}/tmp/bsc_fyenman_bytecode
+    cp -r ${workspace}/bsc_fyenman_bytecode/* ${workspace}/tmp/bsc_fyenman_bytecode/
+    
+    genesis_hash=$(curl -s ${BSC_NODE_URL} \
+        -X POST \
+        -H "Content-Type: application/json" \
+        --data '{"method":"eth_getBlockByNumber","params":["0x0",false],"id":1,"jsonrpc":"2.0"}' | jq -r '.result.hash')
+    echo "genesis_hash:" ${genesis_hash}
+    
+    upgrade_time=$1
+    # Check if the input is empty
+    if [ -z "$upgrade_time" ]; then
+      echo "Please provide a timestamp as upgrade_time."
+      exit 1
+    fi
+    echo "upgrade_time:" ${upgrade_time}
+
+    sed -i -e "s/0xee835a629f9cf5510b48b6ba41d69e0ff7d6ef10f977166ef939db41f59f5501/${genesis_hash}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
+    
+    sed -i -e "s/_rialto_upgrade_height_/newUint64(${upgrade_time})/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
+
+    sed -i -e "s/_rialto_parlia_period_/${BSC_BLCOK_INTERVAL}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
+    sed -i -e "s/_rialto_parlia_epoch_/${BSC_EPOCH}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
+    
+    sed -i -e "s/ValidatorContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001000.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/SlashContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001001.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/SystemRewardContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001002.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/TokenHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001004.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/GovHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001007.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/StakingContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002001.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/StakeHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002002.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/StakeCreditContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002003.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/GovernorContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002004.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/GovTokenContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002005.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/TimelockContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002006.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/TokenRecoverPortalContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000003000.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+}
+
 function clean() {
     rm -rf ${workspace}/.local/bsc
 }
@@ -436,6 +481,11 @@ cluster_restart)
     cluster_restart
     echo "===== end ===="
     ;;
+prepare_fyenman_hardfork)
+    echo "===== prepare_fyenman_hardfork ===="
+    prepare_fyenman_hardfork $2
+    echo "===== end ===="
+    ;;
 fyenman_hardfork)
     echo "===== fyenman_hardfork ===="
     current_time=$(date +%s)
@@ -465,6 +515,6 @@ unbond_validator_on_bc)
     echo "===== end ===="
     ;;
 *)
-    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | fyenman_hardfork | migrate_validator | migrate_all_validator | unbond_validator_on_bc"
+    echo "Usage: setup_bsc_node.sh cluster_up | cluster_down | cluster_restart | prepare_fyenman_hardfork | fyenman_hardfork | migrate_validator | migrate_all_validator | unbond_validator_on_bc"
     ;;
 esac
