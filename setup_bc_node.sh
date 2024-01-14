@@ -318,6 +318,23 @@ function wait_for_hardfork() {
     done
 }
 
+function change_sc_unbounding_time() {
+    # change_sc_unbounding_time to 120s
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-sc-change-proposal --sc-param-file ${workspace}/side-unbounding-120s.json --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change_sc_unbounding_time to 120s" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    echo "change sc unbounding time proposal_id: ${proposal_id}"
+    sleep 6
+    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
+        operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk '$1 == "node'${i}'-delegator" {print $3}')
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $operator --amount 200000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
+        sleep 6 #wait for including tx in block
+
+        # vote
+        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i}-delegator --proposal-id ${proposal_id} --option Yes --side-chain-id ${BSC_CHAIN_NAME} --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+        sleep 6 #wait for including tx in block
+    done
+}
+
+
 function get_channel_permission(){
     ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
 }
@@ -387,6 +404,11 @@ final_sunset_hardfork)
     cluster_restart
     sleep 10
     wait_for_hardfork ${target}
+    echo "===== end ===="
+    ;;
+change_sc_unbounding_time)
+    echo "===== change_sc_unbounding_time ===="
+    change_sc_unbounding_time
     echo "===== end ===="
     ;;
 *)
