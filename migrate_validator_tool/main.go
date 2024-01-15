@@ -115,6 +115,8 @@ var (
 	mirrorTokenTransferOutAmountFlag = flag.String("mirror_token_transfer_out_amount", "", "mirror token transfer out amount")
 
 	getUndelegatedAmountFlag = flag.String("get_undelegated_amount", "", "get undelegated amount")
+
+	claimTokenFlag = flag.Bool("claim_token", false, "claim token")
 )
 
 func main() {
@@ -270,6 +272,13 @@ func main() {
 	acc, err := FromHexKey(*bscPrivKey)
 	if err != nil {
 		panic(err)
+	}
+
+	if *claimTokenFlag {
+		err = claimToken(tokenHubContract, ethClient, &acc)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	if len(*mirrorTokenContractFlag) > 0 {
@@ -1148,6 +1157,36 @@ func mirrorToken(rpcClient *ethclient.Client, account ExtAcc, contract common.Ad
 	if mirrorReceipt.Status != 1 {
 		return fmt.Errorf("mirror tx execution failed")
 	}
+
+	return nil
+}
+
+func claimToken(tokenHubContract *tokenhub.Tokenhub,
+	ethClient *ethclient.Client, acc *ExtAcc) error {
+	gasLimit := uint64(3000000)
+	tokenContract := common.HexToAddress("0x0000000000000000000000000000000000000000")
+	txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, nil, gasLimit)
+	if err != nil {
+		return err
+	}
+	tx, err := tokenHubContract.WithdrawUnlockedToken(txOpt, tokenContract, acc.Addr)
+	if err != nil {
+		return err
+	}
+	println("WithdrawUnlockedToken tx:", tx.Hash().String())
+	r, err := bind.WaitMined(context.Background(), ethClient, tx)
+	if err != nil {
+		return err
+	}
+	if r.Status != 1 {
+		return errors.New("WithdrawUnlockedToken tx failed")
+	}
+
+	amt, err := ethClient.BalanceAt(context.Background(), acc.Addr, nil)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("bnb balance of [%s]: %s\n", acc.Addr.Hex(), amt)
 
 	return nil
 }
