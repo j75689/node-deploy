@@ -380,7 +380,7 @@ function migrate_validator() {
     operator_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index}_operator --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
     ${workspace}/bin/geth bls account new --datadir ${workspace}/.local/bsc/new_validator${validator_index} --blspassword ${workspace}/.local/bsc/password.txt
     vote_addr=0x$(cat ${workspace}/.local/bsc/new_validator${validator_index}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
-    vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
+vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
 
     transfer_amt=${BSC_CREATE_DELEGATE_AMOUNT}
     ${workspace}/bin/migrate_tool -priv_key ${BSC_TX_BOT_ADDR_PRV} -bsc_endpoint ${BSC_NODE_URL} \
@@ -401,14 +401,14 @@ function migrate_validator() {
      -commission_rate 800 -commission_max_rate 950 -commission_max_change_rate 300 \
      -moniker "Nval${validator_index}" -details ${cons_addr} -identity ${operator_addr}
 
-    while true; do
-        if ${workspace}/bin/migrate_tool -get_validator_set -bsc_endpoint "${BSC_NODE_URL}" | grep -q "${cons_addr}"; then
-            echo "New validator is ready"
-            break
-        fi
-        echo "Wait for new validator to be ready"
-        sleep 3
-    done
+    # while true; do
+    #     if ${workspace}/bin/migrate_tool -get_validator_set -bsc_endpoint "${BSC_NODE_URL}" | grep -q "${cons_addr}"; then
+    #         echo "New validator is ready"
+    #         break
+    #     fi
+    #     echo "Wait for new validator to be ready"
+    #     sleep 3
+    # done
 
     rm -rf /server/node${validator_index}/keystore
     rm -rf /server/node${validator_index}/bls
