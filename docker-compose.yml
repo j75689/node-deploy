@@ -190,4 +190,13 @@ services:
     entrypoint: sh
     command: >
       -c "/opt/app/relayer --bbc-network 0 --config-type local --config-path /data/config.json"
-
+  token-approver:
+    image: token-approver:latest
+    user: root
+    volumes:
+      - /server/bc/node-dump/output:/data:rw
+    env_file:
+      - /server/token_approver.env
+    ports:
+      - "8088:8088"
+    
