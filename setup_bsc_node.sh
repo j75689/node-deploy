@@ -410,27 +410,12 @@ function migrate_validator() {
         sleep 3
     done
 
-    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
-    rm -rf /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls
-    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/keystore/* /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/keystore/
-    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/bls/* /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/clusterNetwork/node${validator_index}/bls/
-
-    dst_id=${ips2ids[${bsc_node_ips[validator_index]}]}
-    aws ssm send-command \
-        --instance-ids "${dst_id}" \
-        --document-name "AWS-RunShellScript" \
-        --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
-    sleep 10
-    aws ssm send-command \
-        --instance-ids "${dst_id}" \
-        --document-name "AWS-RunShellScript" \
-        --parameters commands="sudo bash +x /server/bsc/start_geth.sh ${validator_index}"
-
-    # wait epoch sync
-    echo "wait for epoch sync validator set $((BSC_BLCOK_INTERVAL * BSC_EPOCH + 60))"
-    sleep $((BSC_BLCOK_INTERVAL * BSC_EPOCH + 60))
+    rm -rf /server/node${validator_index}/keystore
+    rm -rf /server/node${validator_index}/bls
+    mkdir -p /server/node${validator_index}/keystore
+    mkdir -p /server/node${validator_index}/bls
+    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/keystore/* /server/node${validator_index}/keystore/
+    yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/bls/* /server/node${validator_index}/bls/
 }
 
 function unbond_validator_on_bc() {
@@ -442,16 +427,15 @@ function unbond_validator_on_bc() {
     fi
 
     # unbound old validator on bc
-    validator_addr=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${validator_index} | grep node${validator_index} | awk '$1 == "node'${validator_index}'-delegator" {print $3}')
+    validator_addr=$(${workspace}/bin/tbnbcli keys list | grep bsc-operator$((validator_index + 1)) | awk '$1 == "bsc-operator'$((validator_index + 1))'" {print $3}')
     validator_addr=$(echo ${validator_addr} | xargs ${workspace}/bin/tool -network-type 0 -bsc-val-addr)
-    echo "${KEYPASS}" | ${workspace}/bin/tbnbcli staking bsc-unbond \
+    echo "12345678" | ${workspace}/bin/tbnbcli staking bsc-unbond \
      --chain-id ${BC_CHAIN_ID} \
      --side-chain-id ${BSC_CHAIN_NAME} \
      --from node${validator_index}-delegator \
      --validator ${validator_addr} \
      --amount ${BSC_INIT_DELEGATE_AMOUNT}:BNB \
      --node ${BC_NODE_URL} --trust-node \
-     --home ${workspace}/.local/bc/node${validator_index}
 
     # bc_block_interval=$(echo "${BC_BLOCK_TIMEOUT}" | sed 's/s$//')
     # t=$((BC_BREATHE_BLOCK_INTERVAL * bc_block_interval))
