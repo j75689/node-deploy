@@ -14,7 +14,7 @@ bash ./setup_bsc_node.sh prepare_fyenman_hardfork $hardfork_time
 
 cd /mnt/efs/bc-fusion/node-deploy/tmp/bsc-feynman/bsc
 docker build . -t bsc:master
-docker image save -o /mnt/efs/bc-fusion/images/bsc.tar bsc:master
+docker image save -o /mnt/efs/bc-fusion/images/bsc-fyenman.tar bsc:master
 
 echo "hardfork_time: ${hardfork_time}"
 
