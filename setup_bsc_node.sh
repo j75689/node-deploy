@@ -417,6 +417,7 @@ vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --da
     yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/keystore/* /server/node${validator_index}/keystore/
     yes | cp -rf  ${workspace}/.local/bsc/new_validator${validator_index}/bls/* /server/node${validator_index}/bls/
     echo "${KEYPASS}" > /server/node${validator_index}/bls/blspassword.txt
+    echo "${KEYPASS}" > /server/node${validator_index}/password.txt
 }
 
 function unbond_validator_on_bc() {
