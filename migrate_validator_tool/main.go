@@ -1169,6 +1169,11 @@ func claimToken(tokenHubContract *tokenhub.Tokenhub,
 	if err != nil {
 		return err
 	}
+	info, err := tokenHubContract.LockInfoMap(nil, tokenContract, acc.Addr)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("lock info: %+v\n", info)
 	tx, err := tokenHubContract.WithdrawUnlockedToken(txOpt, tokenContract, acc.Addr)
 	if err != nil {
 		return err
