@@ -247,6 +247,18 @@ function change_largeTransferLockPeriod() {
     done
 }
 
+function change_numOfCabinets() {
+    # enable cross redelegation channel on bsc
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "numOfCabinets" --value "0x0000000000000000000000000000000000000000000000000000000000000009" --target 0x0000000000000000000000000000000000001000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change transfer lock period" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
+    echo "enable cross redelegation channel on bsc proposal_id: ${proposal_id}"
+    sleep 6
+    for ((i = 1; i < 7; i++)); do
+        # vote
+        echo "12345678" | ${workspace}/bin/tbnbcli gov vote --from bsc-operator${i} --proposal-id ${proposal_id} --option Yes --side-chain-id ${BSC_CHAIN_NAME} --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL}
+        sleep 6 #wait for including tx in block
+    done
+}
+
 function disable_staking_channel() {
     # disable staking channel
     proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 8 --enable=false --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "disable staking channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
@@ -394,6 +406,11 @@ change_sc_unbounding_time)
 change_largeTransferLockPeriod)
     echo "===== change_largeTransferLockPeriod ===="
     change_largeTransferLockPeriod
+    echo "===== end ===="
+    ;;
+change_numOfCabinets)
+    echo "===== change_numOfCabinets ===="
+    change_numOfCabinets
     echo "===== end ===="
     ;;
 first_sunset_hardfork)
