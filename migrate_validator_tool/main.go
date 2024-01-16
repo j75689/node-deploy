@@ -279,6 +279,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		return
 	}
 
 	if len(*mirrorTokenContractFlag) > 0 {
