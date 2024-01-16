@@ -225,7 +225,7 @@ function enable_mirror_channel() {
 
 function enable_cross_redelegation_channel() {
     # enable cross redelegation channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x11000000000000000000000000000000000000002002" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable cross redelegation channel on bsc" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "12345678" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x11000000000000000000000000000000000000002002" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable cross redelegation channel on bsc" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable cross redelegation channel on bsc proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 1; i < 7; i++)); do
@@ -237,7 +237,7 @@ function enable_cross_redelegation_channel() {
 
 function change_largeTransferLockPeriod() {
     # enable cross redelegation channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "largeTransferLockPeriod" --value "0x0000000000000000000000000000000000000000000000000000000000000078" --target 0x0000000000000000000000000000000000001004 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change transfer lock period" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "12345678" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "largeTransferLockPeriod" --value "0x0000000000000000000000000000000000000000000000000000000000000078" --target 0x0000000000000000000000000000000000001004 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change transfer lock period" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable cross redelegation channel on bsc proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 1; i < 7; i++)); do
@@ -249,7 +249,7 @@ function change_largeTransferLockPeriod() {
 
 function change_numOfCabinets() {
     # enable cross redelegation channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "numOfCabinets" --value "0x0000000000000000000000000000000000000000000000000000000000000009" --target 0x0000000000000000000000000000000000001000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change transfer lock period" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "12345678" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "numOfCabinets" --value "0x0000000000000000000000000000000000000000000000000000000000000009" --target 0x0000000000000000000000000000000000001000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change transfer lock period" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable cross redelegation channel on bsc proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 1; i < 7; i++)); do
