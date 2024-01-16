@@ -225,16 +225,12 @@ function enable_mirror_channel() {
 
 function enable_cross_redelegation_channel() {
     # enable cross redelegation channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x11000000000000000000000000000000000000002002" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable cross redelegation channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x11000000000000000000000000000000000000002002" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable cross redelegation channel on bsc" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable cross redelegation channel on bsc proposal_id: ${proposal_id}"
     sleep 6
-    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
-        operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk '$1 == "node'${i}'-delegator" {print $3}')
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $operator --amount 200000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
-        sleep 6 #wait for including tx in block
-
+    for ((i = 1; i < 7; i++)); do
         # vote
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i}-delegator --proposal-id ${proposal_id} --option Yes --side-chain-id ${BSC_CHAIN_NAME} --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+        echo "12345678" | ${workspace}/bin/tbnbcli gov vote --from bsc-operator${i} --proposal-id ${proposal_id} --option Yes --side-chain-id ${BSC_CHAIN_NAME} --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL}
         sleep 6 #wait for including tx in block
     done
 }
@@ -274,17 +270,13 @@ function enable_staking_channel() {
 }
 
 function change_sc_unbounding_time() {
-    # change_sc_unbounding_time to 120s
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-sc-change-proposal --sc-param-file ${workspace}/side-unbounding-120s.json --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change_sc_unbounding_time to 120s" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    # change_sc_unbounding_time
+    proposal_id=$(echo "12345678" | ${workspace}/bin/tbnbcli params submit-sc-change-proposal --sc-param-file ${workspace}/side-params.json --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change_sc_unbounding_time" --from bsc-operator1 --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --json=true | jq -r '.Response.data' | base64 -d)
     echo "change sc unbounding time proposal_id: ${proposal_id}"
     sleep 6
-    for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
-        operator=$(${workspace}/bin/tbnbcli keys list --home ${workspace}/.local/bc/node${i} | grep node${i} | awk '$1 == "node'${i}'-delegator" {print $3}')
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli send --from node0-delegator --to $operator --amount 200000000:BNB --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node0
-        sleep 6 #wait for including tx in block
-
+    for ((i = 1; i < 7; i++)); do
         # vote
-        echo "${KEYPASS}" | ${workspace}/bin/tbnbcli gov vote --from node${i}-delegator --proposal-id ${proposal_id} --option Yes --side-chain-id ${BSC_CHAIN_NAME} --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL} --home ${workspace}/.local/bc/node${i}
+        echo "12345678" | ${workspace}/bin/tbnbcli gov vote --from bsc-operator${i} --proposal-id ${proposal_id} --option Yes --side-chain-id ${BSC_CHAIN_NAME} --chain-id ${BC_CHAIN_ID} --trust-node --node ${BC_NODE_URL}
         sleep 6 #wait for including tx in block
     done
 }

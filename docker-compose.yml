@@ -96,6 +96,7 @@ services:
       -c "/usr/local/bin/geth --ws.port 8545 --ws.addr 0.0.0.0 --light.serve 50 --ws --datadir /server/validator/ --pprof.addr 0.0.0.0 --metrics --rpc.allow-unprotected-txs --history.transactions 0 --pprof -unlock 0x$$(cat /server/validator/keystore/* |  jq -r .address) --miner.etherbase 0x$$(cat /server/validator/keystore/* |  jq -r .address) --password /server/validator/password.txt --mine --http.corsdomain * --http.vhosts * --http.addr 0.0.0.0 --http.port 8545 --config /server/validator/config.toml"
   bsc-relayer:
     image: bsc-relayer:latest
+    restart: always
     user: root
     volumes:
       - /server/relayer/bsc-relayer:/data:rw
