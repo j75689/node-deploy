@@ -427,6 +427,11 @@ change_numOfCabinets)
     change_numOfCabinets
     echo "===== end ===="
     ;;
+change_maxNumOfWorkingCandidates)
+    echo "===== change_maxNumOfWorkingCandidates ===="
+    change_maxNumOfWorkingCandidates
+    echo "===== end ===="
+    ;;
 first_sunset_hardfork)
     echo "===== first_sunset_hardfork ===="
     target=$(first_sunset_hardfork)
