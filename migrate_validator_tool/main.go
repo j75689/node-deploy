@@ -653,7 +653,18 @@ func getWorkingValidatorSet(contract *validatorset.Validatorset) error {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(address)
+	NumOfCabinets, err := contract.NumOfCabinets(nil)
+	if err != nil {
+		panic(err)
+	}
+	MaxNumOfWorkingCandidates, err := contract.MaxNumOfWorkingCandidates(nil)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("NumOfCabinets: %+v\n", NumOfCabinets.Uint64())
+	fmt.Printf("MaxNumOfWorkingCandidates: %+v\n", MaxNumOfWorkingCandidates.Uint64())
+
+	fmt.Println("working validators:", address)
 	return nil
 }
 
