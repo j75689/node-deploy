@@ -117,6 +117,8 @@ var (
 	getUndelegatedAmountFlag = flag.String("get_undelegated_amount", "", "get undelegated amount")
 
 	claimTokenFlag = flag.Bool("claim_token", false, "claim token")
+
+	getMiniRelayFeeFlag = flag.Bool("get_mini_relay_fee", false, "get mini relay fee")
 )
 
 func main() {
@@ -181,6 +183,15 @@ func main() {
 	stakingContract, err := staking.NewStaking(common.HexToAddress(StakingContractAddr), ethClient)
 	if err != nil {
 		panic(err)
+	}
+
+	if *getMiniRelayFeeFlag {
+		relayFee, err := tokenHubContract.GetMiniRelayFee(nil)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("relayFee:", relayFee)
+		return
 	}
 
 	if *getValidatorElection {
