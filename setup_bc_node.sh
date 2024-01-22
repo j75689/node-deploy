@@ -165,7 +165,7 @@ function cluster_restart() {
 
 function enable_mirror_channel() {
     # enable mirror channel
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 4 --enable=true --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 4 --enable=true --deposit 200000000000:BNB --voting-period 300 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable mirror channel proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -180,7 +180,7 @@ function enable_mirror_channel() {
     ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
 
     # enable mirror sync channel
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 5 --enable=true --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 5 --enable=true --deposit 200000000000:BNB --voting-period 300 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable mirror sync channel proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -195,7 +195,7 @@ function enable_mirror_channel() {
     ${workspace}/bin/tbnbcli side-chain show-channel-permissions --node ${BC_NODE_URL} --trust-node --side-chain-id ${BSC_CHAIN_NAME}
 
     # enable mirror channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x04000000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x04000000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 300 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable mirror channel on bsc proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -209,7 +209,7 @@ function enable_mirror_channel() {
     done
 
     # enable mirror sync channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x05000000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror sync channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x05000000000000000000000000000000000000001008" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 300 --side-chain-id ${BSC_CHAIN_NAME} --title "enable mirror sync channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable mirror channel on bsc proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -225,7 +225,7 @@ function enable_mirror_channel() {
 
 function enable_cross_redelegation_channel() {
     # enable cross redelegation channel on bsc
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x11010000000000000000000000000000000000002002" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "enable cross redelegation channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-cscParam-change-proposal --key "addOrUpdateChannel" --value "0x11010000000000000000000000000000000000002002" --target 0x0000000000000000000000000000000000002000 --deposit 200000000000:BNB --voting-period 300 --side-chain-id ${BSC_CHAIN_NAME} --title "enable cross redelegation channel on bsc" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable cross redelegation channel on bsc proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -241,7 +241,7 @@ function enable_cross_redelegation_channel() {
 
 function disable_staking_channel() {
     # disable staking channel
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 8 --enable=false --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "disable staking channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 8 --enable=false --deposit 200000000000:BNB --voting-period 300 --side-chain-id ${BSC_CHAIN_NAME} --title "disable staking channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "disable staking channel proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -258,7 +258,7 @@ function disable_staking_channel() {
 
 function enable_staking_channel() {
     # disable staking channel
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 8 --enable=true --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "disable staking channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli side-chain submit-channel-manage-proposal --channel-id 8 --enable=true --deposit 200000000000:BNB --voting-period 300 --side-chain-id ${BSC_CHAIN_NAME} --title "disable staking channel" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "enable staking channel proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
@@ -275,7 +275,7 @@ function enable_staking_channel() {
 
 function change_sc_unbounding_time() {
     # change_sc_unbounding_time to 120s
-    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-sc-change-proposal --sc-param-file ${workspace}/side-unbounding-120s.json --deposit 200000000000:BNB --voting-period 100 --side-chain-id ${BSC_CHAIN_NAME} --title "change_sc_unbounding_time to 120s" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
+    proposal_id=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli params submit-sc-change-proposal --sc-param-file ${workspace}/side-unbounding-120s.json --deposit 200000000000:BNB --voting-period 300 --side-chain-id ${BSC_CHAIN_NAME} --title "change_sc_unbounding_time to 120s" --from node0-delegator --node ${BC_NODE_URL} --trust-node --chain-id ${BC_CHAIN_ID} --home ${workspace}/.local/bc/node0 --json=true | jq -r '.Response.data' | base64 -d)
     echo "change sc unbounding time proposal_id: ${proposal_id}"
     sleep 6
     for ((i = 0; i < ${#bc_node_ips[@]}; i++)); do
