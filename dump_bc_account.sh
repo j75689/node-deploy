@@ -9,7 +9,7 @@ mkdir -p /server/bc/node-dump/output
 
 rm -rf /server/token_approver.env
 echo CHAIN_ID=Binance-Chain-Ganges >> /server/token_approver.env
-merkleRoot=$(cat /mnt/efs/bsc-qa/bc-fusion/dump_bc_account/output/base.json | jq -r '.state_root')
+merkleRoot=$(cat /server/bc/node-dump/output/base.json | jq -r '.state_root')
 echo MERKLE_ROOT=${merkleRoot} >> /server/token_approver.env
 echo HTTP_PORT=8088 >> /server/token_approver.env
 echo LOGGER_LEVEL=DEBUG >> /server/token_approver.env
