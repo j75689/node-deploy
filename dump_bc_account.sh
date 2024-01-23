@@ -16,4 +16,4 @@ echo LOGGER_LEVEL=DEBUG >> /server/token_approver.env
 echo LOGGER_FORMAT=json >> /server/token_approver.env
 echo SECRET_LOCAL_SECRET_PRIVATE_KEY=faec46db1c5b777dfce177421d639a432eef2644d1e79866136b4d80b1e41453 >> /server/token_approver.env
 echo STORE_MEMORY_STORE_ACCOUNTS=/data/accounts.json >> /server/token_approver.env
-echo STORE_MEMORY_STORE_MERKLE_PROOFS=/data/merkle_proofs.json >> /server/token_approver.env
+echo STORE_MEMORY_STORE_MERKLE_PROOFS=/data/proofs.json >> /server/token_approver.env
