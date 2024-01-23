@@ -699,7 +699,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 
 	gasLimit := uint64(3000000)
 	gasPrice := big.NewInt(100 * 1e9)
-	amt := new(big.Int).Mul(big.NewInt(100000000), big.NewInt(1e18)) // 100000000 BNB
+	amt := new(big.Int).Mul(big.NewInt(20000000), big.NewInt(1e18)) // 100000000 BNB
 	txOpt, err := acc.BuildTransactOpts(context.Background(), ethClient, amt, gasPrice, gasLimit)
 	if err != nil {
 		panic(err)
