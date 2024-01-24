@@ -1192,6 +1192,12 @@ func claimToken(tokenHubContract *tokenhub.Tokenhub,
 	if err != nil {
 		return err
 	}
+	lockPeriod, err := tokenHubContract.LockPeriod(nil)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("lock period: %+v\n", lockPeriod)
+
 	info, err := tokenHubContract.LockInfoMap(nil, tokenContract, acc.Addr)
 	if err != nil {
 		return err
