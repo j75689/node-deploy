@@ -259,7 +259,8 @@ function fyenman_hardfork(){
 
     sed -i -e "s/_rialto_parlia_period_/${BSC_BLCOK_INTERVAL}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
     sed -i -e "s/_rialto_parlia_epoch_/${BSC_EPOCH}/g" ${workspace}/tmp/bsc-feynman/bsc/params/config.go
-    
+    sed -i -e "s/const SecondsPerDay uint64 = 60/const SecondsPerDay uint64 = 600/g" ${workspace}/tmp/bsc-feynman/bsc/consensus/parlia/feynmanfork.go
+
     sed -i -e "s/ValidatorContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001000.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/SlashContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001001.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/SystemRewardContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001002.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
