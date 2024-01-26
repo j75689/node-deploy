@@ -7,7 +7,7 @@ require (
 	github.com/ethereum/go-ethereum v1.13.5-0.20231027145059-2d7dba024d76
 	github.com/prysmaticlabs/prysm/v4 v4.2.0
 	github.com/tendermint/tendermint v0.32.3
-	github.com/wealdtech/go-eth2-wallet-encryptor-keystorev4 v1.4.1
+	github.com/wealdtech/go-eth2-wallet-encryptor-keystorev4 v1.1.3
 )
 
 require (
