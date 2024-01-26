@@ -10,5 +10,7 @@
 /bin/tool
 /bin/bootnode
 /bin/migrate_tool
+/bin/dump
+/bin/geth_feynman
 /.local
 /tmp
