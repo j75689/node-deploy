@@ -378,7 +378,7 @@ function migrate_validator() {
         --instance-ids "${dst_id}" \
         --document-name "AWS-RunShellScript" \
         --parameters commands="mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh"
-    sleep 10
+    sleep 15
     aws ssm send-command \
         --instance-ids "${dst_id}" \
         --document-name "AWS-RunShellScript" \
