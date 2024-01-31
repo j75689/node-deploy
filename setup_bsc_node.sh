@@ -385,8 +385,8 @@ function migrate_validator() {
         --parameters commands="sudo bash +x /server/bsc/start_geth.sh ${validator_index}"
 
     # wait epoch sync
-    echo "wait for epoch sync validator set $((BSC_BLCOK_INTERVAL * BSC_EPOCH + 60))"
-    sleep $((BSC_BLCOK_INTERVAL * BSC_EPOCH + 60))
+    #echo "wait for epoch sync validator set $((BSC_BLCOK_INTERVAL * BSC_EPOCH + 60))"
+    #sleep $((BSC_BLCOK_INTERVAL * BSC_EPOCH + 60))
 }
 
 function unbond_validator_on_bc() {
