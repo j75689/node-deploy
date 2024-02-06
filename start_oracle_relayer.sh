@@ -4,7 +4,7 @@ index=$1
 cmd=$2
 
 mkdir -p /server/relayer/
-yes | cp -rf /mnt/efs/bsc-qa/bc-fusion-gov-env/relayer/* /server/relayer/
+yes | cp -rf /mnt/efs/bsc-qa/benchmark/relayer/* /server/relayer/
 if [ "${cmd}" == "reset" ]; then
     rm -rf /server/relayer/oracle_relayer.db
 fi

@@ -8,7 +8,7 @@
     {
             "type": "params/StakeParamSet",
             "value": {
-                    "unbonding_time": "120000000000",
+                    "unbonding_time": "520000000000",
                     "max_validators": 21,
                     "bond_denom": "BNB",
                     "min_self_delegation": "2000000000000",

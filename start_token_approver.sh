@@ -1,13 +1,13 @@
 #!/bin/bash
 
 mkdir -p /server/token_approver/
-yes | cp -rf /mnt/efs/bsc-qa/bc-fusion-gov-env/approval_service/approver /server/token_approver/approver
-yes | cp -rf /mnt/efs/bsc-qa/bc-fusion-gov-env/dump_bc_account/output/accounts.json /server/token_approver/accounts.json
-yes | cp -rf /mnt/efs/bsc-qa/bc-fusion-gov-env/dump_bc_account/output/proofs.json /server/token_approver/merkle_proofs.json
+yes | cp -rf /mnt/efs/bsc-qa/benchmark/approval_service/approver /server/token_approver/approver
+yes | cp -rf /mnt/efs/bsc-qa/benchmark/dump_bc_account/output/accounts.json /server/token_approver/accounts.json
+yes | cp -rf /mnt/efs/bsc-qa/benchmark/dump_bc_account/output/proofs.json /server/token_approver/merkle_proofs.json
 
 
 export CHAIN_ID="Binance-Chain-Ganges"
-merkleRoot=$(cat /mnt/efs/bsc-qa/bc-fusion-gov-env/dump_bc_account/output/base.json | jq -r '.state_root')
+merkleRoot=$(cat /mnt/efs/bsc-qa/benchmark/dump_bc_account/output/base.json | jq -r '.state_root')
 export MERKLE_ROOT=${merkleRoot}
 export HTTP_PORT=8546
 export LOGGER_LEVEL=DEBUG

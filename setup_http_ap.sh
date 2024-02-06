@@ -4,25 +4,25 @@ workspace=${basedir}
 source ${workspace}/.env
 source ${workspace}/utils.sh
 
-dst_id="i-007723e75eb8f1dab"
+dst_id="i-0870976185c85a30d"
 
 function start_http_ap() {
-    rm -rf /mnt/efs/bsc-qa/bc-fusion-gov-env/http_ap
-    mkdir -p /mnt/efs/bsc-qa/bc-fusion-gov-env/http_ap
-    yes | cp -rf ${workspace}/stop_http_ap.sh /mnt/efs/bsc-qa/bc-fusion-gov-env/http_ap/
-    yes | cp -rf ${workspace}/start_http_ap.sh /mnt/efs/bsc-qa/bc-fusion-gov-env/http_ap/
+    rm -rf /mnt/efs/bsc-qa/benchmark/http_ap
+    mkdir -p /mnt/efs/bsc-qa/benchmark/http_ap
+    yes | cp -rf ${workspace}/stop_http_ap.sh /mnt/efs/bsc-qa/benchmark/http_ap/
+    yes | cp -rf ${workspace}/start_http_ap.sh /mnt/efs/bsc-qa/benchmark/http_ap/
 
     aws ssm send-command \
       --instance-ids "${dst_id}" \
       --document-name "AWS-RunShellScript" \
-      --parameters commands="mkdir -p /server/http-ap && yes | cp -rf /mnt/efs/bsc-qa/bc-fusion-gov-env/http_ap/start_http_ap.sh /server/http-ap/start_http_ap.sh && bash /server/http-ap/start_http_ap.sh"
+      --parameters commands="mkdir -p /server/http-ap && yes | cp -rf /mnt/efs/bsc-qa/benchmark/http_ap/start_http_ap.sh /server/http-ap/start_http_ap.sh && bash /server/http-ap/start_http_ap.sh"
 }
 
 function stop_http_ap() {
     aws ssm send-command \
       --instance-ids "${dst_id}" \
       --document-name "AWS-RunShellScript" \
-      --parameters commands="mkdir -p /server/http-ap && yes | cp -rf /mnt/efs/bsc-qa/bc-fusion-gov-env/http_ap/stop_http_ap.sh /server/http-ap/stop_http_ap.sh && bash /server/http-ap/stop_http_ap.sh"
+      --parameters commands="mkdir -p /server/http-ap && yes | cp -rf /mnt/efs/bsc-qa/benchmark/http_ap/stop_http_ap.sh /server/http-ap/stop_http_ap.sh && bash /server/http-ap/stop_http_ap.sh"
 }
 
 source ${workspace}/.env

@@ -1,0 +1,117 @@
+===== migrate_all_validator ====
+Committed at block 21592 (tx hash: 2C17537EAF5A0A1F788F3F4B927692A776B216E327E4A9B41374B0F9D46614D7, response: {Code:0 Data:[11 8 142 226 147 173 6 16 239 146 158 25] Log:Msg 0:  Info: GasWanted:0 GasUsed:0 Events:[{Type: Attributes:[{Key:[100 101 108 101 103 97 116 111 114] Value:[116 98 110 98 49 108 101 104 51 103 55 112 120 56 56 48 121 97 103 108 53 53 52 106 55 52 120 110 50 116 103 54 112 120 118 106 97 54 114 97 115 101 54] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0} {Key:[115 111 117 114 99 101 45 118 97 108 105 100 97 116 111 114] Value:[98 118 97 49 108 101 104 51 103 55 112 120 56 56 48 121 97 103 108 53 53 52 106 55 52 120 110 50 116 103 54 112 120 118 106 97 53 50 52 121 56 48] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0} {Key:[101 110 100 45 116 105 109 101] Value:[11 8 142 226 147 173 6 16 239 146 158 25] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0} {Key:[97 99 116 105 111 110] Value:[115 105 100 101 95 117 110 100 101 108 101 103 97 116 101] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0}] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0}] Codespace: XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0})
+INFO [01-15|08:38:31.210] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [01-15|08:38:31.211] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+INFO [01-15|08:38:33.207] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [01-15|08:38:33.209] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+INFO [01-15|08:38:34.914] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [01-15|08:38:34.915] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+BLS wallet not exists, creating BLS wallet...
+time="2024-01-15T08:38:35Z" level=info msg="Successfully created wallet with ability to import keystores" --wallet-dir=/server/dylan/gov_env/node-deploy/.local/bsc/new_validator0/bls/wallet prefix=accounts
+Create BLS wallet successfully!
+Successfully create a BLS account.
+Importing BLS account, this may take a while...
+Importing accounts... 100% [[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m]  [0s:0s][0m
+time="2024-01-15T08:38:35Z" level=info msg="Successfully imported validator key(s)" prefix=local-keymanager publicKeys=0x8af565d99c20
+Successfully import created BLS account.
+INFO [01-15|08:38:35.706] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [01-15|08:38:35.708] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+transfer amount: 4000000000000000000000000 from: 0x556df482854a76E0885C33E302054B8dBD0169c0 to: 0x885F78F64cdB962baC718a2DB95385F52eBc3aa9 gasPrice: 10000000000
+bsc holder balance: 9999999939999997873380000000000
+transfer amount: 10000000000000000000 from: 0x556df482854a76E0885C33E302054B8dBD0169c0 to: 0x885F78F64cdB962baC718a2DB95385F52eBc3aa9 gasPrice: 10000000000
+bsc holder balance: 9999995939999997663380000000000
+create validator tx: 0x794b129566e3fa66c5fc190aaa064f67da11d623e657247dd14e00d9c972620e
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+New validator is ready
+COMMAND	c6d34b2b-43db-4090-a31a-52aa03b16402		0	0	AWS-RunShellScript	$DEFAULT	0	1705315188.83	50	0			ap-northeast-1	1705307988.83		Pending	Pending	1	3600
+CLOUDWATCHOUTPUTCONFIG		False
+INSTANCEIDS	i-007723e75eb8f1dab
+NOTIFICATIONCONFIG		
+COMMANDS	mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-gov-env/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-gov-env/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh
+COMMAND	b7d9f512-1318-43e1-b631-4bf970938a21		0	0	AWS-RunShellScript	$DEFAULT	0	1705315199.31	50	0			ap-northeast-1	1705307999.31		Pending	Pending	1	3600
+CLOUDWATCHOUTPUTCONFIG		False
+INSTANCEIDS	i-007723e75eb8f1dab
+NOTIFICATIONCONFIG		
+COMMANDS	sudo bash +x /server/bsc/start_geth.sh 0
+wait for epoch sync validator set 30
+Committed at block 21704 (tx hash: 3269D9A97CE43EAAC1116BAA6E115D19A5783F622E69E643A455230FBEB0EB0C, response: {Code:0 Data:[12 8 133 227 147 173 6 16 211 213 181 171 3] Log:Msg 0:  Info: GasWanted:0 GasUsed:0 Events:[{Type: Attributes:[{Key:[100 101 108 101 103 97 116 111 114] Value:[116 98 110 98 49 101 102 52 54 55 57 117 48 107 115 56 103 48 120 56 103 51 114 103 56 109 97 54 116 56 103 107 116 108 120 112 104 54 116 114 51 113 50] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0} {Key:[115 111 117 114 99 101 45 118 97 108 105 100 97 116 111 114] Value:[98 118 97 49 101 102 52 54 55 57 117 48 107 115 56 103 48 120 56 103 51 114 103 56 109 97 54 116 56 103 107 116 108 120 112 104 53 122 116 57 55 108] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0} {Key:[101 110 100 45 116 105 109 101] Value:[12 8 133 227 147 173 6 16 211 213 181 171 3] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0} {Key:[97 99 116 105 111 110] Value:[115 105 100 101 95 117 110 100 101 108 101 103 97 116 101] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0}] XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0}] Codespace: XXX_NoUnkeyedLiteral:{} XXX_unrecognized:[] XXX_sizecache:0})
+INFO [01-15|08:40:31.079] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [01-15|08:40:31.081] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+INFO [01-15|08:40:32.561] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [01-15|08:40:32.562] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+INFO [01-15|08:40:33.998] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [01-15|08:40:33.999] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+BLS wallet not exists, creating BLS wallet...
+time="2024-01-15T08:40:34Z" level=info msg="Successfully created wallet with ability to import keystores" --wallet-dir=/server/dylan/gov_env/node-deploy/.local/bsc/new_validator1/bls/wallet prefix=accounts
+Create BLS wallet successfully!
+Successfully create a BLS account.
+Importing BLS account, this may take a while...
+Importing accounts... 100% [[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m[32m=[0m]  [0s:0s][0m
+time="2024-01-15T08:40:34Z" level=info msg="Successfully imported validator key(s)" prefix=local-keymanager publicKeys=0x8a3a9033a4f9
+Successfully import created BLS account.
+INFO [01-15|08:40:34.912] Maximum peer count                       ETH=50 LES=0 total=50
+INFO [01-15|08:40:34.914] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+transfer amount: 4000000000000000000000000 from: 0x556df482854a76E0885C33E302054B8dBD0169c0 to: 0x18621d16d327fCf620c2E1078a32446DA6A42693 gasPrice: 10000000000
+bsc holder balance: 9999995939989997453380000000000
+transfer amount: 10000000000000000000 from: 0x556df482854a76E0885C33E302054B8dBD0169c0 to: 0x18621d16d327fCf620c2E1078a32446DA6A42693 gasPrice: 10000000000
+bsc holder balance: 9999991939989997243380000000000
+create validator tx: 0xa2879a04b6801035d2cb0862599fa67baaa82fa47bd31ff7c86567392b0bb61a
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+Wait for new validator to be ready
+New validator is ready
+COMMAND	950de4be-bfc8-4ef6-83db-5cba2da2ca2b		0	0	AWS-RunShellScript	$DEFAULT	0	1705315315.74	50	0			ap-northeast-1	1705308115.74		Pending	Pending	1	3600
+CLOUDWATCHOUTPUTCONFIG		False
+INSTANCEIDS	i-0f501565decf3b921
+NOTIFICATIONCONFIG		
+COMMANDS	mkdir -p /server/bsc/ && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-gov-env/bsc_cluster/stop_geth.sh /server/bsc/stop_geth.sh && yes | cp -f /mnt/efs/bsc-qa/bc-fusion-gov-env/bsc_cluster/start_geth.sh /server/bsc/start_geth.sh && sudo bash /server/bsc/stop_geth.sh
+COMMAND	1d285e18-d92f-4ef7-b338-d363d8db808e		0	0	AWS-RunShellScript	$DEFAULT	0	1705315326.23	50	0			ap-northeast-1	1705308126.23		Pending	Pending	1	3600
+CLOUDWATCHOUTPUTCONFIG		False
+INSTANCEIDS	i-0f501565decf3b921
+NOTIFICATIONCONFIG		
+COMMANDS	sudo bash +x /server/bsc/start_geth.sh 1
+wait for epoch sync validator set 30
+===== end ====
