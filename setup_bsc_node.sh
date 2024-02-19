@@ -266,6 +266,7 @@ function fyenman_hardfork(){
     sed -i -e "s/SystemRewardContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001002.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/TokenHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001004.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/GovHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000001007.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
+    sed -i -e "s/CrossChainContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002000.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/StakingContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002001.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/StakeHubContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002002.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
     sed -i -e "s/StakeCreditContractByteCode/$(cat ${workspace}/tmp/bsc_fyenman_bytecode/0x0000000000000000000000000000000000002003.txt)/g" ${workspace}/tmp/bsc-feynman/bsc/core/systemcontracts/upgrade.go
@@ -336,7 +337,7 @@ function migrate_validator() {
     operator_addr=$(${workspace}/bin/geth account new --datadir ${workspace}/.local/bsc/new_validator${validator_index}_operator --password ${workspace}/.local/bsc/password.txt | grep "Public address of the key:" | awk -F"   " '{print $2}')
     ${workspace}/bin/geth bls account new --datadir ${workspace}/.local/bsc/new_validator${validator_index} --blspassword ${workspace}/.local/bsc/password.txt
     vote_addr=0x$(cat ${workspace}/.local/bsc/new_validator${validator_index}/bls/keystore/*json| jq .pubkey | sed 's/"//g')
-    vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
+    vote_addr_proof="$(${workspace}/bin/geth_feynman bls account generate-proof --datadir ${workspace}/.local/bsc/new_validator${validator_index} --chain-id ${BSC_CHAIN_ID} --blspassword ${workspace}/.local/bsc/password.txt ${operator_addr} ${vote_addr} | grep -E -o '0x[0-9a-fA-F]+')"
 
     transfer_amt=${BSC_CREATE_DELEGATE_AMOUNT}
     ${workspace}/bin/migrate_tool -priv_key ${BSC_TX_BOT_ADDR_PRV} -bsc_endpoint ${BSC_NODE_URL} \
