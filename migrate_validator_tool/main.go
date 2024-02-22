@@ -120,6 +120,8 @@ var (
 	mirrorTokenTransferOutAmountFlag = flag.String("mirror_token_transfer_out_amount", "", "mirror token transfer out amount")
 
 	getUndelegatedAmountFlag = flag.String("get_undelegated_amount", "", "get undelegated amount")
+
+	getGovParamsFlag = flag.Bool("get_gov_params", false, "")
 )
 
 func main() {
@@ -274,6 +276,11 @@ func main() {
 			panic(err)
 		}
 		fmt.Println("undelegated amount:", amt)
+		return
+	}
+
+	if *getGovParamsFlag {
+		getGovParams(governorContract)
 		return
 	}
 
@@ -696,6 +703,20 @@ func getChannelPermissionFromContract(contract *crosschain.Crosschain, addr comm
 		panic(err)
 	}
 	fmt.Printf("channel permission for [%s]: %v\n", addr, permission)
+}
+
+func getGovParams(govContract *bscgovernor.Bscgovernor) {
+	votingDelay, err := govContract.VotingDelay(nil)
+	if err != nil {
+		panic(err)
+	}
+	votingPeriod, err := govContract.VotingPeriod(nil)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("votingDelay:", votingDelay)
+	fmt.Println("votingPeriod:", votingPeriod)
+
 }
 
 func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
