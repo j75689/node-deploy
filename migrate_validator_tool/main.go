@@ -837,7 +837,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 	fmt.Println("proposal id:", event.ProposalId)
 
 	// vote
-	fmt.Println("wait to start voting")
+	fmt.Println("wait to start voting", new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govDelayVoteFlag))))
 	waitForHeight(new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govDelayVoteFlag))), ethClient)
 
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
@@ -858,7 +858,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 	}
 
 	// queue
-	fmt.Println("wait for voting end")
+	fmt.Println("wait for voting end", new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govVotingFlag))))
 	waitForHeight(new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govVotingFlag))), ethClient)
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
 	if err != nil {
@@ -878,7 +878,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 	}
 
 	// execute
-	fmt.Println("wait for execute tx")
+	fmt.Println("wait for execute tx", new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govDelayVoteFlag))))
 	waitForHeight(new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govDelayVoteFlag))), ethClient)
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
 	if err != nil {
