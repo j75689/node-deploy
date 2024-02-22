@@ -20,7 +20,7 @@ function setup_token_recover_contract() {
 
     ${workspace}/bin/migrate_tool -bsc_endpoint ${BSC_NODE_URL} -priv_key ${INIT_HOLDER_PRV} \
       -token_recover_merkle_root ${merkleRoot} -token_recover_procter ${procter} -token_recover_approver ${approver} \
-      -delegator_vote_operator_addr $operator
+      -delegator_vote_operator_addr $operator -gov_delay_vote $((60/${BSC_BLCOK_INTERVAL})) -gov_voting $((120/${BSC_BLCOK_INTERVAL}))
 }
 
 function start_approval_service() {

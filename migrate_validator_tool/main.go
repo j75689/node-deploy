@@ -122,6 +122,8 @@ var (
 	getUndelegatedAmountFlag = flag.String("get_undelegated_amount", "", "get undelegated amount")
 
 	getGovParamsFlag = flag.Bool("get_gov_params", false, "")
+	govDelayVoteFlag = flag.Int("gov_delay_vote", 0, "gov wait block")
+	govVotingFlag    = flag.Int("gov_voting", 0, "gov voting")
 )
 
 func main() {
@@ -835,8 +837,9 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 	fmt.Println("proposal id:", event.ProposalId)
 
 	// vote
-	fmt.Println("wait 1 min to start voting")
-	time.Sleep(70 * time.Second)
+	fmt.Println("wait to start voting")
+	waitForHeight(new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govDelayVoteFlag))), ethClient)
+
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
 	if err != nil {
 		panic(err)
@@ -855,8 +858,8 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 	}
 
 	// queue
-	fmt.Println("wait 2 min for voting end")
-	time.Sleep(130 * time.Second)
+	fmt.Println("wait for voting end")
+	waitForHeight(new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govVotingFlag))), ethClient)
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
 	if err != nil {
 		panic(err)
@@ -875,8 +878,8 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 	}
 
 	// execute
-	fmt.Println("wait 1 min for execute tx")
-	time.Sleep(70 * time.Second)
+	fmt.Println("wait for execute tx")
+	waitForHeight(new(big.Int).Add(r.BlockNumber, big.NewInt(int64(*govDelayVoteFlag))), ethClient)
 	txOpt, err = acc.BuildTransactOpts(context.Background(), ethClient, common.Big0, gasPrice, gasLimit)
 	if err != nil {
 		panic(err)
@@ -892,6 +895,19 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 	}
 	if r.Status != 1 {
 		panic("execute tx failed")
+	}
+}
+
+func waitForHeight(height *big.Int, ethClient *ethclient.Client) {
+	currentHeight := height.Uint64()
+	var err error
+	for currentHeight > height.Uint64() {
+		time.Sleep(3 * time.Second)
+		currentHeight, err = ethClient.BlockNumber(context.Background())
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("currentHeight:", currentHeight)
 	}
 }
 
