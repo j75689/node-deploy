@@ -967,11 +967,6 @@ func checkTokenRecoverStatus(contract *tokenrecoverportal.Tokenrecoverportal) er
 		return err
 	}
 	fmt.Println("approvalAddress:", approvalAddress)
-	assetProtectorAddress, err := contract.AssetProtector(nil)
-	if err != nil {
-		return err
-	}
-	fmt.Println("assetProtectorAddress:", assetProtectorAddress)
 
 	return nil
 }

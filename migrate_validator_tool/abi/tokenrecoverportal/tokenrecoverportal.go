@@ -31,7 +31,7 @@ var (
 
 // TokenrecoverportalMetaData contains all meta data concerning the Tokenrecoverportal contract.
 var TokenrecoverportalMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"name\":\"AlreadyRecovered\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InBlackList\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidApprovalSignature\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidOwnerPubKeyLength\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidOwnerSignatureLength\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidProof\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"value\",\"type\":\"bytes\"}],\"name\":\"InvalidValue\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"MerkleRootAlreadyInitiated\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"MerkleRootNotInitialize\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"OnlyAssetProtector\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"OnlyCoinbase\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"systemContract\",\"type\":\"address\"}],\"name\":\"OnlySystemContract\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"OnlyZeroGasPrice\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"TokenRecoverPortalPaused\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"value\",\"type\":\"bytes\"}],\"name\":\"UnknownParam\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"value\",\"type\":\"bytes\"}],\"name\":\"ParamChange\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"Paused\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"Resumed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"tokenSymbol\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"TokenRecoverRequested\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"SOURCE_CHAIN_ID\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"approvalAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"assetProtector\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"tokenSymbol\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"attacker\",\"type\":\"address\"}],\"name\":\"cancelTokenRecover\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"isRecovered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"merkleRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"merkleRootAlreadyInit\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"pause\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"tokenSymbol\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"ownerPubKey\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"ownerSignature\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"approvalSignature\",\"type\":\"bytes\"},{\"internalType\":\"bytes32[]\",\"name\":\"merkleProof\",\"type\":\"bytes32[]\"}],\"name\":\"recover\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"resume\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"value\",\"type\":\"bytes\"}],\"name\":\"updateParam\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"type\":\"function\",\"name\":\"BC_FUSION_CHANNELID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SOURCE_CHAIN_ID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"STAKING_CHANNELID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"addToBlackList\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"approvalAddress\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"blackList\",\"inputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"cancelTokenRecover\",\"inputs\":[{\"name\":\"tokenSymbol\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"attacker\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"initialize\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"isPaused\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"isRecovered\",\"inputs\":[{\"name\":\"node\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"merkleRoot\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"merkleRootAlreadyInit\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"pause\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"recover\",\"inputs\":[{\"name\":\"tokenSymbol\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"ownerPubKey\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"ownerSignature\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"approvalSignature\",\"type\":\"bytes\",\"internalType\":\"bytes\"},{\"name\":\"merkleProof\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"removeFromBlackList\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"resume\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"updateParam\",\"inputs\":[{\"name\":\"key\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"value\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"event\",\"name\":\"BlackListed\",\"inputs\":[{\"name\":\"target\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Initialized\",\"inputs\":[{\"name\":\"version\",\"type\":\"uint8\",\"indexed\":false,\"internalType\":\"uint8\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"ParamChange\",\"inputs\":[{\"name\":\"key\",\"type\":\"string\",\"indexed\":false,\"internalType\":\"string\"},{\"name\":\"value\",\"type\":\"bytes\",\"indexed\":false,\"internalType\":\"bytes\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Paused\",\"inputs\":[],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Resumed\",\"inputs\":[],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TokenRecoverRequested\",\"inputs\":[{\"name\":\"ownerAddress\",\"type\":\"bytes\",\"indexed\":false,\"internalType\":\"bytes\"},{\"name\":\"tokenSymbol\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"UnBlackListed\",\"inputs\":[{\"name\":\"target\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"AlreadyPaused\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"AlreadyRecovered\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ApprovalAddressNotInitialized\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InBlackList\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidApprovalSignature\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidOwnerPubKeyLength\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidOwnerSignatureLength\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidProof\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidValue\",\"inputs\":[{\"name\":\"key\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"value\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]},{\"type\":\"error\",\"name\":\"MerkleRootAlreadyInitiated\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"MerkleRootNotInitialized\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"NotPaused\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"OnlyCoinbase\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"OnlyProtector\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"OnlySystemContract\",\"inputs\":[{\"name\":\"systemContract\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"OnlyZeroGasPrice\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"TokenRecoverPortalPaused\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"UnknownParam\",\"inputs\":[{\"name\":\"key\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"value\",\"type\":\"bytes\",\"internalType\":\"bytes\"}]}]",
 }
 
 // TokenrecoverportalABI is the input ABI used to generate the binding from.
@@ -180,6 +180,37 @@ func (_Tokenrecoverportal *TokenrecoverportalTransactorRaw) Transact(opts *bind.
 	return _Tokenrecoverportal.Contract.contract.Transact(opts, method, params...)
 }
 
+// BCFUSIONCHANNELID is a free data retrieval call binding the contract method 0xf1fad104.
+//
+// Solidity: function BC_FUSION_CHANNELID() view returns(uint8)
+func (_Tokenrecoverportal *TokenrecoverportalCaller) BCFUSIONCHANNELID(opts *bind.CallOpts) (uint8, error) {
+	var out []interface{}
+	err := _Tokenrecoverportal.contract.Call(opts, &out, "BC_FUSION_CHANNELID")
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
+}
+
+// BCFUSIONCHANNELID is a free data retrieval call binding the contract method 0xf1fad104.
+//
+// Solidity: function BC_FUSION_CHANNELID() view returns(uint8)
+func (_Tokenrecoverportal *TokenrecoverportalSession) BCFUSIONCHANNELID() (uint8, error) {
+	return _Tokenrecoverportal.Contract.BCFUSIONCHANNELID(&_Tokenrecoverportal.CallOpts)
+}
+
+// BCFUSIONCHANNELID is a free data retrieval call binding the contract method 0xf1fad104.
+//
+// Solidity: function BC_FUSION_CHANNELID() view returns(uint8)
+func (_Tokenrecoverportal *TokenrecoverportalCallerSession) BCFUSIONCHANNELID() (uint8, error) {
+	return _Tokenrecoverportal.Contract.BCFUSIONCHANNELID(&_Tokenrecoverportal.CallOpts)
+}
+
 // SOURCECHAINID is a free data retrieval call binding the contract method 0x74be2150.
 //
 // Solidity: function SOURCE_CHAIN_ID() view returns(string)
@@ -209,6 +240,37 @@ func (_Tokenrecoverportal *TokenrecoverportalSession) SOURCECHAINID() (string, e
 // Solidity: function SOURCE_CHAIN_ID() view returns(string)
 func (_Tokenrecoverportal *TokenrecoverportalCallerSession) SOURCECHAINID() (string, error) {
 	return _Tokenrecoverportal.Contract.SOURCECHAINID(&_Tokenrecoverportal.CallOpts)
+}
+
+// STAKINGCHANNELID is a free data retrieval call binding the contract method 0x4bf6c882.
+//
+// Solidity: function STAKING_CHANNELID() view returns(uint8)
+func (_Tokenrecoverportal *TokenrecoverportalCaller) STAKINGCHANNELID(opts *bind.CallOpts) (uint8, error) {
+	var out []interface{}
+	err := _Tokenrecoverportal.contract.Call(opts, &out, "STAKING_CHANNELID")
+
+	if err != nil {
+		return *new(uint8), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(uint8)).(*uint8)
+
+	return out0, err
+
+}
+
+// STAKINGCHANNELID is a free data retrieval call binding the contract method 0x4bf6c882.
+//
+// Solidity: function STAKING_CHANNELID() view returns(uint8)
+func (_Tokenrecoverportal *TokenrecoverportalSession) STAKINGCHANNELID() (uint8, error) {
+	return _Tokenrecoverportal.Contract.STAKINGCHANNELID(&_Tokenrecoverportal.CallOpts)
+}
+
+// STAKINGCHANNELID is a free data retrieval call binding the contract method 0x4bf6c882.
+//
+// Solidity: function STAKING_CHANNELID() view returns(uint8)
+func (_Tokenrecoverportal *TokenrecoverportalCallerSession) STAKINGCHANNELID() (uint8, error) {
+	return _Tokenrecoverportal.Contract.STAKINGCHANNELID(&_Tokenrecoverportal.CallOpts)
 }
 
 // ApprovalAddress is a free data retrieval call binding the contract method 0xe842426a.
@@ -242,35 +304,66 @@ func (_Tokenrecoverportal *TokenrecoverportalCallerSession) ApprovalAddress() (c
 	return _Tokenrecoverportal.Contract.ApprovalAddress(&_Tokenrecoverportal.CallOpts)
 }
 
-// AssetProtector is a free data retrieval call binding the contract method 0xde88700b.
+// BlackList is a free data retrieval call binding the contract method 0x4838d165.
 //
-// Solidity: function assetProtector() view returns(address)
-func (_Tokenrecoverportal *TokenrecoverportalCaller) AssetProtector(opts *bind.CallOpts) (common.Address, error) {
+// Solidity: function blackList(address ) view returns(bool)
+func (_Tokenrecoverportal *TokenrecoverportalCaller) BlackList(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
 	var out []interface{}
-	err := _Tokenrecoverportal.contract.Call(opts, &out, "assetProtector")
+	err := _Tokenrecoverportal.contract.Call(opts, &out, "blackList", arg0)
 
 	if err != nil {
-		return *new(common.Address), err
+		return *new(bool), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
 
 	return out0, err
 
 }
 
-// AssetProtector is a free data retrieval call binding the contract method 0xde88700b.
+// BlackList is a free data retrieval call binding the contract method 0x4838d165.
 //
-// Solidity: function assetProtector() view returns(address)
-func (_Tokenrecoverportal *TokenrecoverportalSession) AssetProtector() (common.Address, error) {
-	return _Tokenrecoverportal.Contract.AssetProtector(&_Tokenrecoverportal.CallOpts)
+// Solidity: function blackList(address ) view returns(bool)
+func (_Tokenrecoverportal *TokenrecoverportalSession) BlackList(arg0 common.Address) (bool, error) {
+	return _Tokenrecoverportal.Contract.BlackList(&_Tokenrecoverportal.CallOpts, arg0)
 }
 
-// AssetProtector is a free data retrieval call binding the contract method 0xde88700b.
+// BlackList is a free data retrieval call binding the contract method 0x4838d165.
 //
-// Solidity: function assetProtector() view returns(address)
-func (_Tokenrecoverportal *TokenrecoverportalCallerSession) AssetProtector() (common.Address, error) {
-	return _Tokenrecoverportal.Contract.AssetProtector(&_Tokenrecoverportal.CallOpts)
+// Solidity: function blackList(address ) view returns(bool)
+func (_Tokenrecoverportal *TokenrecoverportalCallerSession) BlackList(arg0 common.Address) (bool, error) {
+	return _Tokenrecoverportal.Contract.BlackList(&_Tokenrecoverportal.CallOpts, arg0)
+}
+
+// IsPaused is a free data retrieval call binding the contract method 0xb187bd26.
+//
+// Solidity: function isPaused() view returns(bool)
+func (_Tokenrecoverportal *TokenrecoverportalCaller) IsPaused(opts *bind.CallOpts) (bool, error) {
+	var out []interface{}
+	err := _Tokenrecoverportal.contract.Call(opts, &out, "isPaused")
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// IsPaused is a free data retrieval call binding the contract method 0xb187bd26.
+//
+// Solidity: function isPaused() view returns(bool)
+func (_Tokenrecoverportal *TokenrecoverportalSession) IsPaused() (bool, error) {
+	return _Tokenrecoverportal.Contract.IsPaused(&_Tokenrecoverportal.CallOpts)
+}
+
+// IsPaused is a free data retrieval call binding the contract method 0xb187bd26.
+//
+// Solidity: function isPaused() view returns(bool)
+func (_Tokenrecoverportal *TokenrecoverportalCallerSession) IsPaused() (bool, error) {
+	return _Tokenrecoverportal.Contract.IsPaused(&_Tokenrecoverportal.CallOpts)
 }
 
 // IsRecovered is a free data retrieval call binding the contract method 0xe33f8d32.
@@ -366,6 +459,27 @@ func (_Tokenrecoverportal *TokenrecoverportalCallerSession) MerkleRootAlreadyIni
 	return _Tokenrecoverportal.Contract.MerkleRootAlreadyInit(&_Tokenrecoverportal.CallOpts)
 }
 
+// AddToBlackList is a paid mutator transaction binding the contract method 0x417c73a7.
+//
+// Solidity: function addToBlackList(address account) returns()
+func (_Tokenrecoverportal *TokenrecoverportalTransactor) AddToBlackList(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
+	return _Tokenrecoverportal.contract.Transact(opts, "addToBlackList", account)
+}
+
+// AddToBlackList is a paid mutator transaction binding the contract method 0x417c73a7.
+//
+// Solidity: function addToBlackList(address account) returns()
+func (_Tokenrecoverportal *TokenrecoverportalSession) AddToBlackList(account common.Address) (*types.Transaction, error) {
+	return _Tokenrecoverportal.Contract.AddToBlackList(&_Tokenrecoverportal.TransactOpts, account)
+}
+
+// AddToBlackList is a paid mutator transaction binding the contract method 0x417c73a7.
+//
+// Solidity: function addToBlackList(address account) returns()
+func (_Tokenrecoverportal *TokenrecoverportalTransactorSession) AddToBlackList(account common.Address) (*types.Transaction, error) {
+	return _Tokenrecoverportal.Contract.AddToBlackList(&_Tokenrecoverportal.TransactOpts, account)
+}
+
 // CancelTokenRecover is a paid mutator transaction binding the contract method 0x572c9980.
 //
 // Solidity: function cancelTokenRecover(bytes32 tokenSymbol, address attacker) returns()
@@ -385,6 +499,27 @@ func (_Tokenrecoverportal *TokenrecoverportalSession) CancelTokenRecover(tokenSy
 // Solidity: function cancelTokenRecover(bytes32 tokenSymbol, address attacker) returns()
 func (_Tokenrecoverportal *TokenrecoverportalTransactorSession) CancelTokenRecover(tokenSymbol [32]byte, attacker common.Address) (*types.Transaction, error) {
 	return _Tokenrecoverportal.Contract.CancelTokenRecover(&_Tokenrecoverportal.TransactOpts, tokenSymbol, attacker)
+}
+
+// Initialize is a paid mutator transaction binding the contract method 0x8129fc1c.
+//
+// Solidity: function initialize() returns()
+func (_Tokenrecoverportal *TokenrecoverportalTransactor) Initialize(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Tokenrecoverportal.contract.Transact(opts, "initialize")
+}
+
+// Initialize is a paid mutator transaction binding the contract method 0x8129fc1c.
+//
+// Solidity: function initialize() returns()
+func (_Tokenrecoverportal *TokenrecoverportalSession) Initialize() (*types.Transaction, error) {
+	return _Tokenrecoverportal.Contract.Initialize(&_Tokenrecoverportal.TransactOpts)
+}
+
+// Initialize is a paid mutator transaction binding the contract method 0x8129fc1c.
+//
+// Solidity: function initialize() returns()
+func (_Tokenrecoverportal *TokenrecoverportalTransactorSession) Initialize() (*types.Transaction, error) {
+	return _Tokenrecoverportal.Contract.Initialize(&_Tokenrecoverportal.TransactOpts)
 }
 
 // Pause is a paid mutator transaction binding the contract method 0x8456cb59.
@@ -429,6 +564,27 @@ func (_Tokenrecoverportal *TokenrecoverportalTransactorSession) Recover(tokenSym
 	return _Tokenrecoverportal.Contract.Recover(&_Tokenrecoverportal.TransactOpts, tokenSymbol, amount, ownerPubKey, ownerSignature, approvalSignature, merkleProof)
 }
 
+// RemoveFromBlackList is a paid mutator transaction binding the contract method 0x4a49ac4c.
+//
+// Solidity: function removeFromBlackList(address account) returns()
+func (_Tokenrecoverportal *TokenrecoverportalTransactor) RemoveFromBlackList(opts *bind.TransactOpts, account common.Address) (*types.Transaction, error) {
+	return _Tokenrecoverportal.contract.Transact(opts, "removeFromBlackList", account)
+}
+
+// RemoveFromBlackList is a paid mutator transaction binding the contract method 0x4a49ac4c.
+//
+// Solidity: function removeFromBlackList(address account) returns()
+func (_Tokenrecoverportal *TokenrecoverportalSession) RemoveFromBlackList(account common.Address) (*types.Transaction, error) {
+	return _Tokenrecoverportal.Contract.RemoveFromBlackList(&_Tokenrecoverportal.TransactOpts, account)
+}
+
+// RemoveFromBlackList is a paid mutator transaction binding the contract method 0x4a49ac4c.
+//
+// Solidity: function removeFromBlackList(address account) returns()
+func (_Tokenrecoverportal *TokenrecoverportalTransactorSession) RemoveFromBlackList(account common.Address) (*types.Transaction, error) {
+	return _Tokenrecoverportal.Contract.RemoveFromBlackList(&_Tokenrecoverportal.TransactOpts, account)
+}
+
 // Resume is a paid mutator transaction binding the contract method 0x046f7da2.
 //
 // Solidity: function resume() returns()
@@ -469,6 +625,150 @@ func (_Tokenrecoverportal *TokenrecoverportalSession) UpdateParam(key string, va
 // Solidity: function updateParam(string key, bytes value) returns()
 func (_Tokenrecoverportal *TokenrecoverportalTransactorSession) UpdateParam(key string, value []byte) (*types.Transaction, error) {
 	return _Tokenrecoverportal.Contract.UpdateParam(&_Tokenrecoverportal.TransactOpts, key, value)
+}
+
+// TokenrecoverportalBlackListedIterator is returned from FilterBlackListed and is used to iterate over the raw logs and unpacked data for BlackListed events raised by the Tokenrecoverportal contract.
+type TokenrecoverportalBlackListedIterator struct {
+	Event *TokenrecoverportalBlackListed // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *TokenrecoverportalBlackListedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(TokenrecoverportalBlackListed)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(TokenrecoverportalBlackListed)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *TokenrecoverportalBlackListedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *TokenrecoverportalBlackListedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// TokenrecoverportalBlackListed represents a BlackListed event raised by the Tokenrecoverportal contract.
+type TokenrecoverportalBlackListed struct {
+	Target common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterBlackListed is a free log retrieval operation binding the contract event 0x7fd26be6fc92aff63f1f4409b2b2ddeb272a888031d7f55ec830485ec6194186.
+//
+// Solidity: event BlackListed(address indexed target)
+func (_Tokenrecoverportal *TokenrecoverportalFilterer) FilterBlackListed(opts *bind.FilterOpts, target []common.Address) (*TokenrecoverportalBlackListedIterator, error) {
+
+	var targetRule []interface{}
+	for _, targetItem := range target {
+		targetRule = append(targetRule, targetItem)
+	}
+
+	logs, sub, err := _Tokenrecoverportal.contract.FilterLogs(opts, "BlackListed", targetRule)
+	if err != nil {
+		return nil, err
+	}
+	return &TokenrecoverportalBlackListedIterator{contract: _Tokenrecoverportal.contract, event: "BlackListed", logs: logs, sub: sub}, nil
+}
+
+// WatchBlackListed is a free log subscription operation binding the contract event 0x7fd26be6fc92aff63f1f4409b2b2ddeb272a888031d7f55ec830485ec6194186.
+//
+// Solidity: event BlackListed(address indexed target)
+func (_Tokenrecoverportal *TokenrecoverportalFilterer) WatchBlackListed(opts *bind.WatchOpts, sink chan<- *TokenrecoverportalBlackListed, target []common.Address) (event.Subscription, error) {
+
+	var targetRule []interface{}
+	for _, targetItem := range target {
+		targetRule = append(targetRule, targetItem)
+	}
+
+	logs, sub, err := _Tokenrecoverportal.contract.WatchLogs(opts, "BlackListed", targetRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(TokenrecoverportalBlackListed)
+				if err := _Tokenrecoverportal.contract.UnpackLog(event, "BlackListed", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseBlackListed is a log parse operation binding the contract event 0x7fd26be6fc92aff63f1f4409b2b2ddeb272a888031d7f55ec830485ec6194186.
+//
+// Solidity: event BlackListed(address indexed target)
+func (_Tokenrecoverportal *TokenrecoverportalFilterer) ParseBlackListed(log types.Log) (*TokenrecoverportalBlackListed, error) {
+	event := new(TokenrecoverportalBlackListed)
+	if err := _Tokenrecoverportal.contract.UnpackLog(event, "BlackListed", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
 }
 
 // TokenrecoverportalInitializedIterator is returned from FilterInitialized and is used to iterate over the raw logs and unpacked data for Initialized events raised by the Tokenrecoverportal contract.
@@ -1075,15 +1375,16 @@ func (it *TokenrecoverportalTokenRecoverRequestedIterator) Close() error {
 
 // TokenrecoverportalTokenRecoverRequested represents a TokenRecoverRequested event raised by the Tokenrecoverportal contract.
 type TokenrecoverportalTokenRecoverRequested struct {
-	TokenSymbol [32]byte
-	Account     common.Address
-	Amount      *big.Int
-	Raw         types.Log // Blockchain specific contextual infos
+	OwnerAddress []byte
+	TokenSymbol  [32]byte
+	Account      common.Address
+	Amount       *big.Int
+	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterTokenRecoverRequested is a free log retrieval operation binding the contract event 0x717c40d7a8dbe67bb6371e964c24423645711d1624980e1c74e6956fc2108805.
+// FilterTokenRecoverRequested is a free log retrieval operation binding the contract event 0x39cc0b7297a0ef9102d75ebc4919ffec0347d50008c2b865eda4125d5812cb64.
 //
-// Solidity: event TokenRecoverRequested(bytes32 tokenSymbol, address account, uint256 amount)
+// Solidity: event TokenRecoverRequested(bytes ownerAddress, bytes32 tokenSymbol, address account, uint256 amount)
 func (_Tokenrecoverportal *TokenrecoverportalFilterer) FilterTokenRecoverRequested(opts *bind.FilterOpts) (*TokenrecoverportalTokenRecoverRequestedIterator, error) {
 
 	logs, sub, err := _Tokenrecoverportal.contract.FilterLogs(opts, "TokenRecoverRequested")
@@ -1093,9 +1394,9 @@ func (_Tokenrecoverportal *TokenrecoverportalFilterer) FilterTokenRecoverRequest
 	return &TokenrecoverportalTokenRecoverRequestedIterator{contract: _Tokenrecoverportal.contract, event: "TokenRecoverRequested", logs: logs, sub: sub}, nil
 }
 
-// WatchTokenRecoverRequested is a free log subscription operation binding the contract event 0x717c40d7a8dbe67bb6371e964c24423645711d1624980e1c74e6956fc2108805.
+// WatchTokenRecoverRequested is a free log subscription operation binding the contract event 0x39cc0b7297a0ef9102d75ebc4919ffec0347d50008c2b865eda4125d5812cb64.
 //
-// Solidity: event TokenRecoverRequested(bytes32 tokenSymbol, address account, uint256 amount)
+// Solidity: event TokenRecoverRequested(bytes ownerAddress, bytes32 tokenSymbol, address account, uint256 amount)
 func (_Tokenrecoverportal *TokenrecoverportalFilterer) WatchTokenRecoverRequested(opts *bind.WatchOpts, sink chan<- *TokenrecoverportalTokenRecoverRequested) (event.Subscription, error) {
 
 	logs, sub, err := _Tokenrecoverportal.contract.WatchLogs(opts, "TokenRecoverRequested")
@@ -1130,12 +1431,156 @@ func (_Tokenrecoverportal *TokenrecoverportalFilterer) WatchTokenRecoverRequeste
 	}), nil
 }
 
-// ParseTokenRecoverRequested is a log parse operation binding the contract event 0x717c40d7a8dbe67bb6371e964c24423645711d1624980e1c74e6956fc2108805.
+// ParseTokenRecoverRequested is a log parse operation binding the contract event 0x39cc0b7297a0ef9102d75ebc4919ffec0347d50008c2b865eda4125d5812cb64.
 //
-// Solidity: event TokenRecoverRequested(bytes32 tokenSymbol, address account, uint256 amount)
+// Solidity: event TokenRecoverRequested(bytes ownerAddress, bytes32 tokenSymbol, address account, uint256 amount)
 func (_Tokenrecoverportal *TokenrecoverportalFilterer) ParseTokenRecoverRequested(log types.Log) (*TokenrecoverportalTokenRecoverRequested, error) {
 	event := new(TokenrecoverportalTokenRecoverRequested)
 	if err := _Tokenrecoverportal.contract.UnpackLog(event, "TokenRecoverRequested", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// TokenrecoverportalUnBlackListedIterator is returned from FilterUnBlackListed and is used to iterate over the raw logs and unpacked data for UnBlackListed events raised by the Tokenrecoverportal contract.
+type TokenrecoverportalUnBlackListedIterator struct {
+	Event *TokenrecoverportalUnBlackListed // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *TokenrecoverportalUnBlackListedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(TokenrecoverportalUnBlackListed)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(TokenrecoverportalUnBlackListed)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *TokenrecoverportalUnBlackListedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *TokenrecoverportalUnBlackListedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// TokenrecoverportalUnBlackListed represents a UnBlackListed event raised by the Tokenrecoverportal contract.
+type TokenrecoverportalUnBlackListed struct {
+	Target common.Address
+	Raw    types.Log // Blockchain specific contextual infos
+}
+
+// FilterUnBlackListed is a free log retrieval operation binding the contract event 0xe0db3499b7fdc3da4cddff5f45d694549c19835e7f719fb5606d3ad1a5de4011.
+//
+// Solidity: event UnBlackListed(address indexed target)
+func (_Tokenrecoverportal *TokenrecoverportalFilterer) FilterUnBlackListed(opts *bind.FilterOpts, target []common.Address) (*TokenrecoverportalUnBlackListedIterator, error) {
+
+	var targetRule []interface{}
+	for _, targetItem := range target {
+		targetRule = append(targetRule, targetItem)
+	}
+
+	logs, sub, err := _Tokenrecoverportal.contract.FilterLogs(opts, "UnBlackListed", targetRule)
+	if err != nil {
+		return nil, err
+	}
+	return &TokenrecoverportalUnBlackListedIterator{contract: _Tokenrecoverportal.contract, event: "UnBlackListed", logs: logs, sub: sub}, nil
+}
+
+// WatchUnBlackListed is a free log subscription operation binding the contract event 0xe0db3499b7fdc3da4cddff5f45d694549c19835e7f719fb5606d3ad1a5de4011.
+//
+// Solidity: event UnBlackListed(address indexed target)
+func (_Tokenrecoverportal *TokenrecoverportalFilterer) WatchUnBlackListed(opts *bind.WatchOpts, sink chan<- *TokenrecoverportalUnBlackListed, target []common.Address) (event.Subscription, error) {
+
+	var targetRule []interface{}
+	for _, targetItem := range target {
+		targetRule = append(targetRule, targetItem)
+	}
+
+	logs, sub, err := _Tokenrecoverportal.contract.WatchLogs(opts, "UnBlackListed", targetRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(TokenrecoverportalUnBlackListed)
+				if err := _Tokenrecoverportal.contract.UnpackLog(event, "UnBlackListed", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseUnBlackListed is a log parse operation binding the contract event 0xe0db3499b7fdc3da4cddff5f45d694549c19835e7f719fb5606d3ad1a5de4011.
+//
+// Solidity: event UnBlackListed(address indexed target)
+func (_Tokenrecoverportal *TokenrecoverportalFilterer) ParseUnBlackListed(log types.Log) (*TokenrecoverportalUnBlackListed, error) {
+	event := new(TokenrecoverportalUnBlackListed)
+	if err := _Tokenrecoverportal.contract.UnpackLog(event, "UnBlackListed", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
