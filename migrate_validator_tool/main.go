@@ -899,7 +899,7 @@ func setupTokenRecoveryContract(acc *ExtAcc, ethClient *ethclient.Client,
 }
 
 func waitForHeight(height *big.Int, ethClient *ethclient.Client) {
-	currentHeight := height.Uint64()
+	currentHeight := uint64(0)
 	var err error
 	for currentHeight < height.Uint64() {
 		time.Sleep(3 * time.Second)
