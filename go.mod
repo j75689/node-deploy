@@ -1,6 +1,8 @@
 module github.com/bnb-chain/node-deploy
 
-go 1.18
+go 1.21
+
+toolchain go1.21.6
 
 require (
 	github.com/binance-chain/go-sdk v1.2.8
