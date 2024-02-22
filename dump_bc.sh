@@ -4,7 +4,7 @@ workspace=${basedir}
 source ${workspace}/.env
 source ${workspace}/utils.sh
 
-dst_id="i-0d2b8632af953d0f6"
+dst_id="i-0fbfabb40b50e18b9"
 
 function dump_bc_account() {
     rm -rf /mnt/efs/bsc-qa/bc-fusion-staking-env/dump_bc_account
