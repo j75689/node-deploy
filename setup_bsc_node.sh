@@ -353,7 +353,6 @@ function migrate_validator() {
     operator_priv=$(${workspace}/bin/migrate_tool -secret ${operator_priv_file} -password ${KEYPASS})
     identity=$(echo "${KEYPASS}" | ${workspace}/bin/tbnbcli validator-ownership sign-validator-ownership --bsc-operator-address ${operator_addr} --from node${validator_index}-delegator --chain-id "Binance-Chain-Ganges" --home ${workspace}/.local/bc/node${validator_index} | grep "Signature:" | grep -E -o '0x[0-9a-fA-F]+')
     echo "identity:" ${identity}
-    exit 0
     
     ${workspace}/bin/migrate_tool -priv_key ${operator_priv} -bsc_endpoint ${BSC_NODE_URL} \
      -delegation ${BSC_CREATE_DELEGATE_AMOUNT} \
