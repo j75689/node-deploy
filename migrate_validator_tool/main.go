@@ -56,6 +56,7 @@ var (
 	getValidatorElection = flag.Bool("get_validator_election", false, "")
 	getValidatorSet      = flag.Bool("get_validator_set", false, "")
 	getWorkingValidators = flag.Bool("get_working_validators", false, "")
+	getValidatorDescFlag = flag.String("get_validator_desc", "", "")
 
 	secretFile = flag.String("secret", "", "secret file path")
 	password   = flag.String("password", "", "password")
@@ -183,6 +184,10 @@ func main() {
 	}
 	if *getWorkingValidators {
 		getWorkingValidatorSet(validatorContract)
+		return
+	}
+	if len(*getValidatorDescFlag) > 0 {
+		getValidatorDesc(stakeHubContract, common.HexToAddress(*getValidatorDescFlag))
 		return
 	}
 	if *getChannelPermissionAddr != "" {
@@ -1133,4 +1138,12 @@ func mirrorToken(rpcClient *ethclient.Client, account ExtAcc, contract common.Ad
 	}
 
 	return nil
+}
+
+func getValidatorDesc(stakeHubContract *stakehub.Stakehub, validatorAddr common.Address) {
+	desc, err := stakeHubContract.GetValidatorDescription(nil, validatorAddr)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("validator desc: %+v\n", desc)
 }
