@@ -433,8 +433,14 @@ func main() {
 			panic(err)
 		}
 
-		tx, err := c.TransferOut(txOpt, ccContract,
-			recipient, amt, uint64(time.Now().Add(3*time.Minute).Unix()))
+		tx, err := c.BatchTransferOutBNB(txOpt,
+			[]common.Address{recipient},
+			[]*big.Int{amt},
+			[]common.Address{recipient},
+			uint64(time.Now().Add(3*time.Minute).Unix()))
+
+		// tx, err := c.TransferOut(txOpt, ccContract,
+		// 	recipient, amt, uint64(time.Now().Add(3*time.Minute).Unix()))
 		if err != nil {
 			panic(err)
 		}
