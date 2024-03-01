@@ -18,6 +18,19 @@
   },
   {
     "type": "function",
+    "name": "BC_FUSION_CHANNELID",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "CLOCK_MODE",
     "inputs": [],
     "outputs": [
@@ -51,6 +64,51 @@
         "name": "",
         "type": "bytes32",
         "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "STAKING_CHANNELID",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "uint8"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "addToBlackList",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "blackList",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "stateMutability": "view"
@@ -510,19 +568,6 @@
   },
   {
     "type": "function",
-    "name": "governorProtector",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "hasVoted",
     "inputs": [
       {
@@ -588,6 +633,19 @@
   },
   {
     "type": "function",
+    "name": "isPaused",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "lateQuorumVoteExtension",
     "inputs": [],
     "outputs": [
@@ -595,6 +653,25 @@
         "name": "",
         "type": "uint64",
         "internalType": "uint64"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "latestProposalIds",
+    "inputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -730,19 +807,6 @@
     "inputs": [],
     "outputs": [],
     "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "paused",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -1010,7 +1074,7 @@
     ],
     "outputs": [
       {
-        "name": "",
+        "name": "proposalId",
         "type": "uint256",
         "internalType": "uint256"
       }
@@ -1129,6 +1193,19 @@
     ],
     "outputs": [],
     "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "removeFromBlackList",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -1357,6 +1434,19 @@
   },
   {
     "type": "event",
+    "name": "BlackListed",
+    "inputs": [
+      {
+        "name": "target",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "EIP712DomainChanged",
     "inputs": [],
     "anonymous": false
@@ -1564,6 +1654,25 @@
   },
   {
     "type": "event",
+    "name": "ProtectorChanged",
+    "inputs": [
+      {
+        "name": "oldProtector",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "newProtector",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "QuorumNumeratorUpdated",
     "inputs": [
       {
@@ -1601,6 +1710,19 @@
         "name": "newTimelock",
         "type": "address",
         "indexed": false,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "UnBlackListed",
+    "inputs": [
+      {
+        "name": "target",
+        "type": "address",
+        "indexed": true,
         "internalType": "address"
       }
     ],
@@ -1726,12 +1848,17 @@
   },
   {
     "type": "error",
+    "name": "AlreadyPaused",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "Empty",
     "inputs": []
   },
   {
     "type": "error",
-    "name": "GovernorPaused",
+    "name": "InBlackList",
     "inputs": []
   },
   {
@@ -1752,7 +1879,17 @@
   },
   {
     "type": "error",
+    "name": "NotPaused",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "NotWhitelisted",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "OneLiveProposalPerProposer",
     "inputs": []
   },
   {
@@ -1762,7 +1899,7 @@
   },
   {
     "type": "error",
-    "name": "OnlyGovernorProtector",
+    "name": "OnlyProtector",
     "inputs": []
   },
   {
