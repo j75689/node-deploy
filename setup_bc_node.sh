@@ -88,6 +88,16 @@ function init() {
         sed -i -e "s/FixDoubleSignChainIdHeight = 9223372036854775807/FixDoubleSignChainIdHeight = 4\nBEP171Height = 4/g" ${workspace}/.local/bc/node${i}/config/app.toml
         sed -i -e "s/BEP126Height = 9223372036854775807/BEP126Height = 5/g" ${workspace}/.local/bc/node${i}/config/app.toml
         sed -i -e "s/BEP255Height = 9223372036854775807/BEP255Height = 5/g" ${workspace}/.local/bc/node${i}/config/app.toml
+
+        if [[ ${i} -eq 0 ]]; then
+            sed -i -e "s/publishKafka = false/publishKafka = true/g" ${workspace}/.local/bc/node${i}/config/app.toml
+            sed -i -e "s/publishLocal = false/publishLocal = true/g" ${workspace}/.local/bc/node${i}/config/app.toml
+            sed -i -e "s/publishDistributeReward = false/publishDistributeReward = true/g" ${workspace}/.local/bc/node${i}/config/app.toml
+            sed -i -e "s/publishStaking = false/publishStaking = true/g" ${workspace}/.local/bc/node${i}/config/app.toml
+            sed -i -e "s/publishSlashing = false/publishSlashing = true/g" ${workspace}/.local/bc/node${i}/config/app.toml
+            sed -i -e "s/publishCrossTransfer = false/publishCrossTransfer = true/g" ${workspace}/.local/bc/node${i}/config/app.toml
+            sed -i -e "s/publishBreatheBlock = false/publishBreatheBlock = true/g" ${workspace}/.local/bc/node${i}/config/app.toml
+        fi
     done
 
     # generate genesis.json
