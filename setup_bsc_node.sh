@@ -474,6 +474,7 @@ migrate_all_validator)
     migrate_validator 8
     unbond_validator_on_bc 9
     migrate_validator 9
+    unbond_validator_on_bc 10
     migrate_validator 10
     echo "===== end ===="
     ;;
