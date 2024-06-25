@@ -311,7 +311,7 @@ function haber_fix_hardfork(){
     sed -i -e "s/BreatheBlockInterval               uint64 = 86400/BreatheBlockInterval               uint64 = ${BC_BREATHE_BLOCK_INTERVAL}/g" ${workspace}/tmp/bsc-haber-fix/bsc/params/protocol_params.go
 
     cd ${workspace}/tmp/bsc-haber-fix/bsc && make geth
-    yes | cp -f ${workspace}/tmp/bsc-haber-fix/bsc/build/bin/geth ${workspace}/bin/geth_feynman
+    yes | cp -f ${workspace}/tmp/bsc-haber-fix/bsc/build/bin/geth ${workspace}/bin/geth_haber_fix
     yes | cp -f ${workspace}/tmp/bsc-haber-fix/bsc/build/bin/geth /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
 
     echo $upgrade_time
