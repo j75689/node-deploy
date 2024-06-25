@@ -282,6 +282,41 @@ function fyenman_hardfork(){
     echo $upgrade_time
 }
 
+function haber_fix_hardfork(){
+    rm -rf ${workspace}/tmp/bsc-haber-fix
+    mkdir -p ${workspace}/tmp/bsc-haber-fix
+    cd ${workspace}/tmp/bsc-haber-fix
+    git clone --branch ${BSC_HABER_FIX_BRANCH} ${BSC_HABER_FIX_REPO}
+    
+    genesis_hash=$(curl -s ${BSC_NODE_URL} \
+        -X POST \
+        -H "Content-Type: application/json" \
+        --data '{"method":"eth_getBlockByNumber","params":["0x0",false],"id":1,"jsonrpc":"2.0"}' | jq -r '.result.hash')
+    echo "genesis_hash:" ${genesis_hash}
+
+    upgrade_time=$1
+    # Check if the input is empty
+    if [ -z "$upgrade_time" ]; then
+      echo "Please provide a timestamp as upgrade_time."
+      exit 1
+    fi
+    echo "upgrade_time:" ${upgrade_time}
+
+    sed -i -e "s/0xee835a629f9cf5510b48b6ba41d69e0ff7d6ef10f977166ef939db41f59f5501/${genesis_hash}/g" ${workspace}/tmp/bsc-haber-fix/bsc/params/config.go
+    
+    sed -i -e "s/_rialto_upgrade_height_/newUint64(${upgrade_time})/g" ${workspace}/tmp/bsc-haber-fix/bsc/params/config.go
+
+    sed -i -e "s/_rialto_parlia_period_/${BSC_BLCOK_INTERVAL}/g" ${workspace}/tmp/bsc-haber-fix/bsc/params/config.go
+    sed -i -e "s/_rialto_parlia_epoch_/${BSC_EPOCH}/g" ${workspace}/tmp/bsc-haber-fix/bsc/params/config.go
+    sed -i -e "s/BreatheBlockInterval               uint64 = 86400/BreatheBlockInterval               uint64 = ${BC_BREATHE_BLOCK_INTERVAL}/g" ${workspace}/tmp/bsc-haber-fix/bsc/params/protocol_params.go
+
+    cd ${workspace}/tmp/bsc-haber-fix/bsc && make geth
+    yes | cp -f ${workspace}/tmp/bsc-haber-fix/bsc/build/bin/geth ${workspace}/bin/geth_feynman
+    yes | cp -f ${workspace}/tmp/bsc-haber-fix/bsc/build/bin/geth /mnt/efs/bsc-qa/bc-fusion-staking-env/bsc_cluster/
+
+    echo $upgrade_time
+}
+
 function clean() {
     rm -rf ${workspace}/.local/bsc
 }
@@ -443,6 +478,15 @@ fyenman_hardfork)
     current_time=$(date +%s)
     hardfork_time=$((${current_time} + ${BSC_WAIT_SEC_FOR_FYENMAN}))
     fyenman_hardfork ${hardfork_time}
+    cluster_restart
+    wait_for_hardfork ${hardfork_time}
+    echo "===== end ===="
+    ;;
+haber_fix_hardfork)
+    echo "===== haber_fix_hardfork ===="
+    current_time=$(date +%s)
+    hardfork_time=$((${current_time} + ${BSC_WAIT_SEC_FOR_FYENMAN}))
+    haber_fix_hardfork ${hardfork_time}
     cluster_restart
     wait_for_hardfork ${hardfork_time}
     echo "===== end ===="
